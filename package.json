@@ -1,0 +1,20 @@
+{
+  "name": "room-allocation",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "RoomAllocation — motorul de alocare a sălilor universitare (V0)",
+  "engines": {
+    "node": ">=24"
+  },
+  "scripts": {
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit",
+    "report": "node scripts/render-cases.ts"
+  },
+  "devDependencies": {
+    "@types/node": "24.19.2",
+    "typescript": "7.0.2",
+    "vitest": "5.1.0"
+  }
+}
