@@ -20,6 +20,11 @@ export interface AllocateOptions {
   alternatives?: number;
   /** Propune ruperea blocului ca ultimă opțiune (D20). */
   split?: boolean;
+  /**
+   * Verifică starea rezultată cu verificatorul independent după fiecare decizie (implicit da).
+   * Simulatorul o dezactivează și verifică starea finală o singură dată.
+   */
+  verify?: boolean;
 }
 
 export type RejectCode = 'INVALID_REQUEST' | 'TEACHER_BUSY' | 'GROUP_BUSY' | 'NO_ROOM_OF_TYPE' | 'ROOM_UNAVAILABLE';
@@ -75,11 +80,11 @@ type PlaceResult =
 
 const REQ = '\u0000request';
 
-const DEFAULTS: Required<AllocateOptions> = { strategy: 'score', maxMoves: 2, alternatives: 5, split: true };
+const DEFAULTS: Required<AllocateOptions> = { strategy: 'score', maxMoves: 2, alternatives: 5, split: true, verify: true };
 
 export function allocate(instance: Instance, state: State, request: Request, options: AllocateOptions = {}): Decision {
   const opts = { ...DEFAULTS, ...options };
-  const placed = tryPlace(instance, state, request, opts.strategy, opts.maxMoves);
+  const placed = tryPlace(instance, state, request, opts.strategy, opts.maxMoves, opts.verify);
   if (placed.ok) {
     return {
       kind: 'accepted',
@@ -111,6 +116,7 @@ export function tryPlace(
   request: Request,
   strategy: Strategy,
   maxMoves: number,
+  verify = true,
 ): PlaceResult {
   const P = instance.grid.periods.length;
   const index = buildUnitIndex(instance.units);
@@ -294,7 +300,7 @@ export function tryPlace(
     closures: state.closures,
   };
   // Verificare defensivă cu verificatorul independent (H1–H7).
-  const violations = checkState(instance, newState).filter((v) => !preexisting(instance, state, v));
+  const violations = verify ? checkState(instance, newState).filter((v) => !preexisting(instance, state, v)) : [];
   if (violations.length) {
     throw new Error(`eroare internă: planul ales încalcă ${violations.map((v) => `${v.code} ${v.message}`).join('; ')}`);
   }
@@ -328,13 +334,13 @@ function findAlternatives(
   candidates.sort((a, b) => compareKeys(a.key, b.key));
   for (const c of candidates) {
     if (out.length >= opts.alternatives) break;
-    const r = tryPlace(instance, state, { ...request, date: c.date, start: c.start }, opts.strategy, opts.maxMoves);
+    const r = tryPlace(instance, state, { ...request, date: c.date, start: c.start }, opts.strategy, opts.maxMoves, opts.verify);
     if (r.ok) out.push({ kind: 'slot', date: c.date, start: c.start, length: request.length, roomId: r.booking.roomId, moves: r.plan.moves.length });
   }
   // D20: ruperea blocului, doar ca ultimă opțiune și doar dacă problema e sala
   if (opts.split && request.length > 1 && reasons.every((r) => r.code === 'ROOM_UNAVAILABLE')) {
     for (let cut = 1; cut < request.length; cut++) {
-      const first = tryPlace(instance, state, { ...request, id: `${request.id}#1`, length: cut }, opts.strategy, opts.maxMoves);
+      const first = tryPlace(instance, state, { ...request, id: `${request.id}#1`, length: cut }, opts.strategy, opts.maxMoves, opts.verify);
       if (!first.ok) continue;
       const second = tryPlace(
         instance,
@@ -342,6 +348,7 @@ function findAlternatives(
         { ...request, id: `${request.id}#2`, start: request.start + cut, length: request.length - cut },
         opts.strategy,
         Math.max(0, opts.maxMoves - first.plan.moves.length),
+        opts.verify,
       );
       if (!second.ok || second.booking.roomId === first.booking.roomId) continue;
       out.push({

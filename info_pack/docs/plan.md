@@ -36,14 +36,14 @@ Se bifează doar sarcinile efectiv finalizate și verificate. Structura feliilor
 - [x] Preluarea proiectului, analiza critică, deciziile D01–D24, P01–P15 (06–08.11.2026)
 - [x] Răspunsuri la feedback-ul coordonatorului (`feedback-coordonator.md`)
 - [x] Verificarea mediului pe Mac (D27); versiuni fixate: TypeScript 7.0.2, Vitest 5.1.0, @types/node 24.19.2
-- [ ] Repository Git privat; structura minimă a folderului
+- [x] Repository Git privat; structura minimă a folderului (08.11.2026, creat de autor)
 
-**Lotul 1 — motorul de alocare și cazurile 1–5** — *implementat la 08.11.2026; verificat în mediul lui Claude (Linux, Node 22); se bifează după rularea pe Mac (criteriul 8)*
-- 1a. Model, verificator independent, constrângeri H1–H7 (cu teste negative pentru fiecare)
-- 1b. Alocare online: candidați, scor lexicografic, reparare cu M ≤ 2 mutări, refuz cu motive și alternative; oracol exhaustiv pe instanțe mici
-- 1c. Cazurile 1–5 din concept ca teste automate; raport vizual static „înainte/după” (grila săli × perechi)
+**Lotul 1 — motorul de alocare și cazurile 1–5** — *încheiat la 08.11.2026; verificat în mediul lui Claude și pe Mac de autor*
+- [x] 1a. Model, verificator independent, constrângeri H1–H7 (cu teste negative pentru fiecare)
+- [x] 1b. Alocare online: candidați, scor lexicografic, reparare cu M ≤ 2 mutări, refuz cu motive și alternative; oracol exhaustiv pe instanțe mici
+- [x] 1c. Cazurile 1–5 din concept ca teste automate; raport vizual static „înainte/după” (grila săli × perechi)
 
-**Lotul 2 — simulare și demo**
+**Lotul 2 — simulare și demo** — *implementat la 08.11.2026; verificat în mediul lui Claude; se bifează după rularea pe Mac*
 - 2a. Generator sintetic cu seed (D24): săli pe tipuri, fluxuri/grupe/subgrupe, secvențe de cereri cu încărcare variabilă
 - 2b. Simulator: aceleași secvențe pentru strategiile A (prima sală liberă), B (best-fit), C (scor V0), C + mutări (M = 1, 2); indicatori (secțiunea 5)
 - 2c. Demo interactiv **fără bază de date**: grila săli × perechi, formular de cerere, decizia și explicația, rularea unui scenariu pas cu pas. Prezentat explicit ca demonstrație, nu ca produs
@@ -73,7 +73,13 @@ Se bifează doar sarcinile efectiv finalizate și verificate. Structura feliilor
 7. Raportul vizual se deschide direct în browser și arată, pentru fiecare caz, grila înainte și după, mutările și explicația.
 8. Raport de etapă: implementat / verificat / limite. Testele se rulează de autor pe Mac.
 
-Criteriile Lotului 2 se detaliază la încheierea Lotului 1.
+## 4bis. Criterii de acceptare — Lotul 2
+
+1. **Generator:** același seed dă aceeași instanță și același șir de cereri; unitățile trec validarea (D21); în șirul generat profesorii și grupele nu au suprapuneri între ele, astfel încât refuzurile provin doar din lipsa sălilor; încărcarea obținută este în ±5% față de încărcarea țintă.
+2. **Simulator:** toate strategiile primesc același șir de cereri (comparație pereche); starea finală a fiecărei rulări trece verificatorul; fiecare pas respectă tranzițiile (H8); rezultatele sunt reproductibile (același seed → aceleași cifre, cu excepția timpilor).
+3. **Raport** `out/simulation.html` (+ datele brute JSON): indicatorii din §5 pe strategii și niveluri de încărcare, diferențe pereche față de strategia de referință cu interval de încredere de 95%, marcate explicit ca **preliminare, pe date sintetice**.
+4. **Demo** `out/demo.html`: se deschide direct din fișier, fără rețea; permite rularea pas cu pas a cazurilor 1–5, trimiterea unei cereri noi cu decizia și explicația, aplicarea unei alternative, închiderea unei săli, compararea strategiilor pentru aceeași cerere, revenirea la starea inițială.
+5. Logica demo-ului este separată de DOM și testată; testele existente continuă să treacă.
 
 ## 5. Indicatori (V0, preliminari)
 
@@ -110,3 +116,5 @@ Cereri acceptate; perechi acceptate (D22); mutări per cerere acceptată; locuri
 |---|---|---|
 | 08.11.2026 | Etapa 0 (documente) | Plan creat; nimic implementat |
 | 08.11.2026 | Etapa 0 (mediu), Lotul 1 | Mediu verificat (D27). Lotul 1 implementat: 42 de teste trec în mediul lui Claude; așteaptă rularea pe Mac. Detalii în `handoff.md` |
+| 08.11.2026 | Lotul 2 | Implementat: generator, simulator (720 de rulări, 0 încălcări), raport, demo; 59 de teste trec în mediul lui Claude; așteaptă rularea pe Mac. Detalii în `handoff.md` |
+| 08.11.2026 | Lotul 1 încheiat | Autorul a rulat pe Mac `npm ci`, `npm test`, `npm run typecheck`, `npm run report`: totul trece; raportul coincide. Repository Git privat creat; commit și push |
