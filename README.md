@@ -1,6 +1,6 @@
 # RoomAllocation — V0
 
-Algoritmul de alocare a sălilor universitare (proiect academic). Documentația și deciziile sunt în `info_pack/docs/`; planul activ este `info_pack/docs/plan.md`.
+Algoritmul de alocare a sălilor universitare (proiect academic). Documentația și deciziile sunt în `info_pack/docs/`; planul activ este `info_pack/docs/plan.md`. Ordinea de citire și regulile de modificare a documentelor: `info_pack/docs/docs-guide.md`; starea curentă: `handoff.md`; istoricul: `journal.md`; rezultatele: `results.md`.
 
 ## Stadiul: V0, Loturile 1–2 — motorul de alocare, simularea și demo-ul
 

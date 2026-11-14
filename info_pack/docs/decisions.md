@@ -1,6 +1,6 @@
 # Registrul deciziilor — RoomAllocation
 
-Actualizat: 8 noiembrie 2026 (a doua actualizare). Registrul arată statutul afirmațiilor; nu conține rezultate de implementare.
+Actualizat: 8 noiembrie 2026 (a doua actualizare). Registrul arată statutul afirmațiilor; nu conține rezultate de implementare (vezi `results.md`) și nici istoric (vezi `journal.md`).
 
 ## Confirmate de autor
 
@@ -69,13 +69,4 @@ Propunerile din concept, confirmate de autor cu precizările de mai jos. Detalii
 
 ## Istoric
 
-- 06.11.2026: idee formulată în discuția TableFlow; concept v1.1 și pachet de pornire. Autorul a precizat că ordinea algoritm → dashboard → panou nu este obligatorie (D09, P10). Fără implementare.
-- 06.11.2026: prima sesiune de preluare (analiză critică, întrebări, propunerea primului lot); nimic implementat.
-- 08.11.2026: nume RoomAllocation (D10); deplasarea și preferințele profesorilor excluse (D11, D12); închise O01–O05, O07, O08 (D13–D17); confirmate P01–P10 (P02 fără S4, S5); adăugate O09–O12 din analiza sesiunii 06.11. Fără implementare.
-- 08.11.2026 (a doua actualizare): închise O09 (D18), O11 (D19), O12 (D20). Rămân deschise O06 (analiză în curs) și O10.
-- 08.11.2026: analiza O06 confirmată (D21: fluxuri, grupe, subgrupe, unități atomice). Rămâne deschisă O10.
-- 08.11.2026: O10 închis (D22: perechi, apoi cereri). Nu mai sunt întrebări deschise; urmează `plan.md`.
-- 08.11.2026: feedback-ul coordonatorului analizat (`feedback-coordonator.md`); D23 (V0 întâi); propuneri P11–P15; deschisă O13.
-- 08.11.2026: confirmate P11–P15; O13 închisă (D24: sintetice în V0, ITC 2019 ca validare ulterioară). Nu mai sunt întrebări deschise; urmează `plan.md`.
-- 08.11.2026: D25 (scor lexicografic în V0), D26 (demo static), D27 (mediul); autorizat și implementat Lotul 1 (vezi `handoff.md`).
-- 08.11.2026: precizare D19 — rezervarea fixată, realocată după închiderea sălii, rămâne fixată în sala nouă. Autorizat Lotul 2.
+Istoricul deciziilor (când și în ce context au fost luate) este în `journal.md`.

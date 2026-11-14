@@ -1,6 +1,6 @@
 # Planul proiectului — RoomAllocation
 
-**Versiune:** 1.1 (08.11.2026). **Statut:** propunere de plan, bazată pe deciziile D01–D27 și P01–P15 din `decisions.md`. Singura copie activă a planului.
+**Versiune:** 1.2 (14.11.2026). **Statut:** propunere de plan, bazată pe deciziile D01–D27 și P01–P15 din `decisions.md`. Singura copie activă a planului.
 Se bifează doar sarcinile efectiv finalizate și verificate. Structura feliilor se poate ajusta pe parcurs (P10).
 
 ---
@@ -43,13 +43,13 @@ Se bifează doar sarcinile efectiv finalizate și verificate. Structura feliilor
 - [x] 1b. Alocare online: candidați, scor lexicografic, reparare cu M ≤ 2 mutări, refuz cu motive și alternative; oracol exhaustiv pe instanțe mici
 - [x] 1c. Cazurile 1–5 din concept ca teste automate; raport vizual static „înainte/după” (grila săli × perechi)
 
-**Lotul 2 — simulare și demo** — *implementat la 08.11.2026; verificat în mediul lui Claude; se bifează după rularea pe Mac*
-- 2a. Generator sintetic cu seed (D24): săli pe tipuri, fluxuri/grupe/subgrupe, secvențe de cereri cu încărcare variabilă
-- 2b. Simulator: aceleași secvențe pentru strategiile A (prima sală liberă), B (best-fit), C (scor V0), C + mutări (M = 1, 2); indicatori (secțiunea 5)
-- 2c. Demo interactiv **fără bază de date**: grila săli × perechi, formular de cerere, decizia și explicația, rularea unui scenariu pas cu pas. Prezentat explicit ca demonstrație, nu ca produs
+**Lotul 2 — simulare și demo** — *încheiat; implementat la 08.11.2026, verificat în mediul lui Claude și pe Mac de autor (commit `0ce3c53`, 11.11.2026)*
+- [x] 2a. Generator sintetic cu seed (D24): săli pe tipuri, fluxuri/grupe/subgrupe, secvențe de cereri cu încărcare variabilă
+- [x] 2b. Simulator: aceleași secvențe pentru strategiile A (prima sală liberă), B (best-fit), C (scor V0), C + mutări (M = 1, 2); indicatori (secțiunea 5)
+- [x] 2c. Demo interactiv **fără bază de date**: grila săli × perechi, formular de cerere, decizia și explicația, rularea unui scenariu pas cu pas. Prezentat explicit ca demonstrație, nu ca produs
 
 **În paralel — analiza literaturii (P14)**
-- `literatura.md`: UniTime, ITC 2019, Phillips et al., Carter & Tovey, Müller et al., online matching cu înlocuiri; poziționarea contribuției (adaptare + evaluare)
+- [ ] `literature.md`: UniTime, ITC 2019, Phillips et al., Carter & Tovey, Müller et al., online matching cu înlocuiri; poziționarea contribuției (adaptare + evaluare)
 
 **Sfârșitul V0:** prezentare pentru coordonator (cazurile 1–5, exemplul din `feedback-coordonator.md`, primele simulări); decizia despre forma V1.
 
@@ -107,14 +107,9 @@ Cereri acceptate; perechi acceptate (D22); mutări per cerere acceptată; locuri
 | Demo-ul V0 e confundat cu un produs funcțional | Etichetat ca demonstrație; integritatea și concurența vin în V1, înaintea interfeței reale |
 | Generatorul sintetic favorizează scorul calibrat pe aceeași distribuție | Seed-uri separate pentru calibrare și evaluare; validare ulterioară pe ITC 2019 |
 | Oracolele din cazurile 1–5 sunt scrise de mână | Verificator și oracol exhaustiv independente de motor |
-| Disponibilitate instabilă (D17) | Loturi mici, fiecare încheiat cu verificare și jurnal în `handoff.md` |
+| Disponibilitate instabilă (D17) | Loturi mici, fiecare încheiat cu verificare și intrare în `journal.md` |
 | Scopul crește (orar complet, P11) | P11 și modul lot doar în V1, după evaluarea V0 |
 
 ## 9. Evidență
 
-| Data | Etapă | Rezultat |
-|---|---|---|
-| 08.11.2026 | Etapa 0 (documente) | Plan creat; nimic implementat |
-| 08.11.2026 | Etapa 0 (mediu), Lotul 1 | Mediu verificat (D27). Lotul 1 implementat: 42 de teste trec în mediul lui Claude; așteaptă rularea pe Mac. Detalii în `handoff.md` |
-| 08.11.2026 | Lotul 2 | Implementat: generator, simulator (720 de rulări, 0 încălcări), raport, demo; 59 de teste trec în mediul lui Claude; așteaptă rularea pe Mac. Detalii în `handoff.md` |
-| 08.11.2026 | Lotul 1 încheiat | Autorul a rulat pe Mac `npm ci`, `npm test`, `npm run typecheck`, `npm run report`: totul trece; raportul coincide. Repository Git privat creat; commit și push |
+Evidența etapelor este în `journal.md`; rezultatele în `results.md`. Aici rămân doar bifele din §3.

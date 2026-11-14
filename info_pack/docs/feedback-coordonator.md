@@ -1,6 +1,6 @@
 # Feedback-ul coordonatorului de practică și analiza lui
 
-**Data:** 8 noiembrie 2026. **Sursa:** observațiile coordonatorului la `descriere-tema.md`, transmise de autor.
+**Data:** 8 noiembrie 2026. **Sursa:** observațiile coordonatorului la `descriere-tema.md` (copie în `Claude outputs/`), transmise de autor.
 Statutul se ține în `decisions.md`: D23 (V0 întâi), P11–P15 (confirmate la 08.11.2026), D24 (date sintetice în V0, ITC 2019 ca validare ulterioară). Acest document păstrează contextul și răspunsurile.
 
 ## 1. Observațiile coordonatorului (rezumat fidel)
