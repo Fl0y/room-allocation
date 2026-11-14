@@ -3,5 +3,5 @@ out/
 .DS_Store
 *.log
 .env*
-Claude\ outputs/
+Claude\ outputs/descriere-tema.md
 CLAUDE.md

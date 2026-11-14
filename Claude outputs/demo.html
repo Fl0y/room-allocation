@@ -1,0 +1,1611 @@
+<!DOCTYPE html><html lang="ro"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>RoomAllocation — demo V0</title><style>
+:root{--bg:#f6f7f9;--card:#fff;--ink:#1f2328;--muted:#57606a;--line:#d0d7de;--soft:#f6f8fa;--accent:#1f3a5f;--ok:#1a7f37;--no:#cf222e;
+--free:#fff;--busy:#ddf4ff;--added:#c9f2d0;--moved:#fff1c2;--fixed:#8250df}
+@media (prefers-color-scheme: dark){:root{--bg:#161616;--card:#1f1f1f;--ink:#ecebe8;--muted:#a8a7a0;--line:#3a3a36;--soft:#262625;--accent:#9cc3f0;--ok:#4ac26b;--no:#ff7b72;
+--free:#1f1f1f;--busy:#17324d;--added:#1b4d2a;--moved:#4d3c0d;--fixed:#a78bfa;color-scheme:dark}}
+*{box-sizing:border-box}body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:var(--bg);color:var(--ink);font-size:14px}
+header{background:#1f3a5f;color:#fff;padding:14px 24px;display:flex;align-items:baseline;gap:16px;flex-wrap:wrap}
+header h1{margin:0;font-size:19px}header .tagline{opacity:.85;font-size:13px}
+.bar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;padding:10px 24px;background:var(--card);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:2}
+.bar label{font-size:12px;color:var(--muted);display:flex;gap:6px;align-items:center}
+select,input,button{font:inherit;color:inherit}select,input{background:var(--card);border:1px solid var(--line);border-radius:6px;padding:4px 6px}
+button{background:var(--soft);border:1px solid var(--line);border-radius:6px;padding:5px 10px;cursor:pointer}button:hover:not(:disabled){border-color:var(--accent)}
+button:disabled{opacity:.45;cursor:default}button.primary{background:var(--accent);color:#fff;border-color:var(--accent)}
+@media (prefers-color-scheme: dark){button.primary{color:#111}}
+#step-status{font-weight:600;min-width:110px}#stats{margin-left:auto;font-size:12px;color:var(--muted)}
+.layout{display:grid;grid-template-columns:minmax(0,1fr) 360px;gap:16px;padding:16px 24px;align-items:start}
+@media (max-width:1100px){.layout{grid-template-columns:1fr}}
+.card{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:12px 14px;margin-bottom:14px}
+.card h3{margin:0 0 8px;font-size:14px}#scenario-info h2{margin:0 0 4px;font-size:16px}#scenario-info p{margin:4px 0}
+.expected{background:var(--soft);border-left:3px solid var(--muted);padding:5px 9px;font-size:13px}
+.muted{color:var(--muted);font-size:12px}
+#dates{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px}button.date.on{background:var(--accent);color:#fff;border-color:var(--accent)}
+button.date small{opacity:.7}
+table.grid{border-collapse:collapse;width:100%;table-layout:fixed;font-size:12px}
+table.grid th,table.grid td{border:1px solid var(--line);padding:4px;text-align:center;vertical-align:middle;height:44px}
+table.grid thead th{background:var(--soft);height:auto}table.grid th small,table.grid td small{display:block;font-weight:400;color:var(--muted);font-size:10.5px}
+table.grid th.room{text-align:left;background:var(--soft);width:128px}
+td.free{background:var(--free);cursor:pointer}td.free:hover{outline:2px dashed var(--accent);outline-offset:-3px}
+td.busy{background:var(--busy)}td.added{background:var(--added);outline:2px solid var(--ok);outline-offset:-2px}
+td.moved{background:var(--moved);outline:2px solid #bf8700;outline-offset:-2px}td.fixed{box-shadow:inset 0 0 0 2px var(--fixed)}
+td.frozen{background-image:repeating-linear-gradient(45deg,transparent 0 6px,rgba(9,105,218,.12) 6px 12px)}td.split{border-style:dashed}
+td.closed{background:repeating-linear-gradient(45deg,var(--soft) 0 8px,var(--line) 8px 16px);color:var(--muted);font-weight:600}
+.tag{display:inline-block;margin-left:4px;font-size:10px;padding:0 4px;border-radius:3px;background:rgba(127,127,127,.2)}
+.legend{display:flex;gap:12px;flex-wrap:wrap;font-size:11.5px;color:var(--muted);margin-top:8px}.legend i{display:inline-block;width:14px;height:11px;vertical-align:middle;margin-right:4px;border:1px solid var(--line)}
+.form label{display:block;font-size:12px;color:var(--muted);margin:6px 0 2px}.form select,.form input[type=text],.form input[type=number]{width:100%}
+.form .row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}.form .checks{display:flex;gap:10px;flex-wrap:wrap;font-size:13px}
+.form .checks label{display:inline-flex;gap:4px;color:var(--ink);margin:0}.form .actions{display:flex;gap:8px;margin-top:10px}
+#f-units{height:150px}#f-students{font-size:12px;color:var(--muted);margin-top:4px}
+.entry{border-left:4px solid var(--line);background:var(--soft);border-radius:6px;padding:8px 10px;margin-bottom:8px;font-size:13px}
+.entry.ok{border-left-color:var(--ok)}.entry.no{border-left-color:var(--no)}.entry.repair{border-left-color:#bf8700}
+.entry h4{margin:0 0 4px;font-size:13px}.entry ul{margin:2px 0;padding-left:18px}
+.alts{display:flex;flex-direction:column;gap:4px;margin-top:6px}.alts button{text-align:left;font-size:12px}.alts button.split{border-style:dashed}
+.unres{margin-top:6px;font-size:12.5px}
+table.cmp{border-collapse:collapse;width:100%;font-size:13px}table.cmp th,table.cmp td{border-bottom:1px solid var(--line);padding:5px 6px;text-align:left;vertical-align:top}
+table.cmp th{width:190px;font-weight:600}.no{color:var(--no);font-weight:600}
+#gen-opts{display:flex;gap:6px;align-items:center}#gen-opts[hidden]{display:none}
+footer{padding:4px 24px 24px;font-size:12px;color:var(--muted)}</style></head><body>
+<header><h1>RoomAllocation — demo V0</h1><span class="tagline">Motorul de alocare pe date sintetice · demonstrație, nu produs (fără bază de date, fără salvare)</span></header>
+<div class="bar">
+  <label>Scenariu <select id="sc-select"></select></label>
+  <span id="gen-opts" hidden><label>seed <input id="gen-seed" type="number" value="1" min="1" style="width:70px"></label>
+    <label>încărcare <select id="gen-level"><option>0.6</option><option selected>0.8</option><option>0.95</option></select></label><button id="gen-load">Generează</button></span>
+  <span id="step-status"></span>
+  <button id="btn-next" class="primary">Pasul următor ▸</button><button id="btn-all">Rulează tot ▸▸</button>
+  <button id="btn-undo">◂ Înapoi</button><button id="btn-reset">Resetează</button>
+  <label>Strategie <select id="opt-strategy"><option value="score">C · scor V0</option><option value="best-fit">B · best-fit</option><option value="first-fit">A · prima sală liberă</option></select></label>
+  <label>Mutări M <select id="opt-m"><option>0</option><option>1</option><option selected>2</option></select></label>
+  <span id="stats"></span>
+</div>
+<div class="layout">
+  <main>
+    <section class="card" id="scenario-info"></section>
+    <section class="card"><div id="dates"></div><div id="grid"></div>
+      <div class="legend"><span><i style="background:var(--added)"></i>nou la ultimul pas</span><span><i style="background:var(--moved)"></i>mutat (aceeași oră)</span><span><i style="box-shadow:inset 0 0 0 2px var(--fixed)"></i>fixat (examen/eveniment)</span><span><i style="background-image:repeating-linear-gradient(45deg,transparent 0 3px,rgba(9,105,218,.3) 3px 6px)"></i>orizont înghețat</span><span><i style="background:var(--line)"></i>sală închisă</span><span>Click pe o celulă liberă completează data și perechea în formular.</span></div>
+    </section>
+    <div id="comparison"></div>
+    <section class="card"><h3>Jurnalul deciziilor (cel mai recent sus)</h3><div id="log"></div></section>
+  </main>
+  <aside>
+    <section class="card form"><h3>Cerere nouă</h3>
+      <label for="f-teacher">Profesor</label><input id="f-teacher" type="text">
+      <label for="f-units">Participanți (flux, grupă sau subgrupă; Ctrl/⌘ pentru mai multe)</label><select id="f-units" multiple></select>
+      <div id="f-students"></div>
+      <label for="f-activity">Activitate</label>
+      <select id="f-activity"><option value="seminar">seminar</option><option value="lab">laborator</option><option value="lecture">curs (flux)</option><option value="exam">examen</option><option value="event">eveniment</option></select>
+      <div class="row"><div><label for="f-date">Data</label><select id="f-date"></select></div>
+        <div><label for="f-start">Perechea</label><select id="f-start"><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option></select></div>
+        <div><label for="f-length">Perechi</label><select id="f-length"><option>1</option><option>2</option><option>3</option></select></div></div>
+      <label>Tipuri de sală acceptate</label>
+      <div class="checks"><label><input type="checkbox" id="f-type-seminar">seminar</label><label><input type="checkbox" id="f-type-auditorium">auditoriu</label><label><input type="checkbox" id="f-type-lab">laborator</label></div>
+      <div class="row"><div><label for="f-computers">Calculatoare (min.)</label><input id="f-computers" type="number" min="0"></div>
+        <div><label>&nbsp;</label><div class="checks"><label><input type="checkbox" id="f-projector">proiector</label></div></div>
+        <div><label>&nbsp;</label><div class="checks"><label title="Doar examenele și evenimentele se pot fixa (D19)"><input type="checkbox" id="f-fixed">fixat</label></div></div></div>
+      <div class="actions"><button id="f-submit" class="primary">Trimite cererea</button><button id="f-compare">Compară strategiile</button></div>
+    </section>
+    <section class="card form"><h3>Închide o sală (reparații)</h3>
+      <label for="c-room">Sala</label><select id="c-room"></select>
+      <div class="row"><div><label for="c-from">De la</label><select id="c-from"></select></div><div><label for="c-to">Până la</label><select id="c-to"></select></div><div></div></div>
+      <div class="actions"><button id="c-close">Închide și repară</button></div>
+      <p class="muted">Rezervările afectate se realocă întâi la aceeași oră; fixările se anulează (D19) și rămân fixate în sala nouă.</p>
+    </section>
+  </aside>
+</div>
+<footer>Date fictive. Starea există doar în această pagină și se pierde la reîncărcare.</footer><script>"use strict";
+(() => {
+  // src/engine/grid.ts
+  var DEFAULT_GRID = {
+    periods: [
+      { index: 1, start: "08:00", end: "09:30" },
+      { index: 2, start: "09:40", end: "11:10" },
+      { index: 3, start: "11:20", end: "12:50" },
+      { index: 4, start: "13:00", end: "14:30" },
+      { index: 5, start: "14:40", end: "16:10" },
+      { index: 6, start: "16:20", end: "17:50" },
+      { index: 7, start: "18:00", end: "19:30" }
+    ]
+  };
+  function inGrid(grid, start, length) {
+    return Number.isInteger(start) && Number.isInteger(length) && length >= 1 && start >= 1 && start + length - 1 <= grid.periods.length;
+  }
+  function overlaps(a, b) {
+    return a.date === b.date && a.start < b.start + b.length && b.start < a.start + a.length;
+  }
+  function periodLabel(start, length) {
+    return length === 1 ? `perechea ${start}` : `perechile ${start}\u2013${start + length - 1}`;
+  }
+  function timeLabel(grid, start, length) {
+    const first = grid.periods[start - 1];
+    const last = grid.periods[start + length - 2];
+    return first && last ? `${first.start}\u2013${last.end}` : "?";
+  }
+
+  // src/engine/units.ts
+  function buildUnitIndex(units) {
+    const byId = new Map(units.map((u) => [u.id, u]));
+    const children = /* @__PURE__ */ new Map();
+    for (const u of units) {
+      if (u.parent !== void 0) {
+        const list = children.get(u.parent) ?? [];
+        list.push(u.id);
+        children.set(u.parent, list);
+      }
+    }
+    const atoms = /* @__PURE__ */ new Map();
+    const visit = (id, depth) => {
+      const memo = atoms.get(id);
+      if (memo) return memo;
+      const kids = children.get(id);
+      const result = !kids || depth > units.length ? [id] : [...new Set(kids.flatMap((k) => visit(k, depth + 1)))].sort();
+      atoms.set(id, result);
+      return result;
+    };
+    for (const u of units) visit(u.id, 0);
+    return { byId, children, atoms };
+  }
+  function unknownUnits(index, ids) {
+    return ids.filter((id) => !index.byId.has(id));
+  }
+  function atomsOf(index, ids) {
+    const out = /* @__PURE__ */ new Set();
+    for (const id of ids) for (const a of index.atoms.get(id) ?? []) out.add(a);
+    return out;
+  }
+  function sizeOf(index, ids) {
+    let total = 0;
+    for (const a of atomsOf(index, ids)) total += index.byId.get(a)?.size ?? 0;
+    return total;
+  }
+  function intersects(a, b) {
+    for (const x of a) if (b.has(x)) return true;
+    return false;
+  }
+
+  // src/scenarios/build.ts
+  function room(id, type, capacity, computers = 0) {
+    return { id, type, capacity, computers, projector: true, board: type !== "lab" };
+  }
+  var lab = (id, computers) => room(id, "lab", computers, computers);
+  var seminarRoom = (id, capacity) => room(id, "seminar", capacity);
+  var auditorium = (id, capacity) => room(id, "auditorium", capacity);
+  function needsFor(activity, students2) {
+    switch (activity) {
+      case "lab":
+        return { roomTypes: ["lab"], minComputers: students2 };
+      case "lecture":
+        return { roomTypes: ["auditorium"], projector: true };
+      case "exam":
+        return { roomTypes: ["lab"], minComputers: students2 };
+      default:
+        return { roomTypes: ["seminar", "auditorium", "lab"] };
+    }
+  }
+  function booking(s) {
+    return {
+      id: s.id,
+      teacher: s.teacher,
+      units: s.units,
+      activity: s.activity,
+      needs: s.needs ?? needsFor(s.activity, s.students),
+      date: s.date,
+      start: s.start,
+      length: s.length ?? 1,
+      students: s.students,
+      roomId: s.roomId,
+      status: s.status ?? "movable"
+    };
+  }
+  function request(s) {
+    const r = {
+      id: s.id,
+      teacher: s.teacher,
+      units: s.units,
+      activity: s.activity,
+      needs: s.needs ?? needsFor(s.activity, s.students),
+      date: s.date,
+      start: s.start,
+      length: s.length ?? 1
+    };
+    if (s.declaredStudents !== void 0) r.declaredStudents = s.declaredStudents;
+    if (s.status !== void 0) r.status = s.status;
+    return r;
+  }
+
+  // src/scenarios/cases.ts
+  var MON = "2026-11-16";
+  var TUE = "2026-11-17";
+  var WED = "2026-11-18";
+  var THU = "2026-11-19";
+  var FRI = "2026-11-20";
+  var MON2 = "2026-11-23";
+  var TUE2 = "2026-11-24";
+  var leaf = (id, size, parent) => parent ? { id, size, parent } : { id, size };
+  var group = (id, parent) => parent ? { id, parent } : { id };
+  function instance(rooms, units, dates) {
+    return { grid: DEFAULT_GRID, rooms, units, dates };
+  }
+  var case1 = {
+    id: "case1",
+    title: "Cazul 1 \u2014 Ultimul laborator, ocupat de o activitate care nu are nevoie de el",
+    summary: "Mar\u021Bi, perechea 3. Seminarul prof. C (15 studen\u021Bi) ocup\u0103 deja L-105. Sosesc pe r\xE2nd: prof. B (laborator, 14) \u0219i prof. A (laborator, 22).",
+    expected: "Toate trei activit\u0103\u021Bile au loc, cu 2 mut\u0103ri: C \u2192 S-12, B \u2192 L-105, A prime\u0219te L-201.",
+    instance: instance(
+      [lab("L-201", 24), lab("L-105", 16), seminarRoom("S-12", 30)],
+      [leaf("MK-231", 15), group("TI-222"), leaf("TI-222/1", 14, "TI-222"), leaf("TI-222/2", 14, "TI-222"), leaf("IA-231", 22)],
+      [TUE, WED]
+    ),
+    initial: {
+      bookings: [booking({ id: "C-seminar", teacher: "Prof. C", units: ["MK-231"], activity: "seminar", date: TUE, start: 3, students: 15, roomId: "L-105" })],
+      closures: []
+    },
+    steps: [
+      { kind: "request", request: request({ id: "B-lab", teacher: "Prof. B", units: ["TI-222/1"], activity: "lab", date: TUE, start: 3, students: 14 }) },
+      { kind: "request", request: request({ id: "A-lab", teacher: "Prof. A", units: ["IA-231"], activity: "lab", date: TUE, start: 3, students: 22 }) }
+    ]
+  };
+  var case2 = {
+    id: "case2",
+    title: "Cazul 2 \u2014 Blocul de 3 perechi \u201Erupt\u201D de o pereche izolat\u0103",
+    summary: "Joi, prof. D cere un laborator pentru perechile 2\u20134 (18 studen\u021Bi). L-201 e liber la 2 \u0219i 3, dar la 4 are laboratorul prof. E (10 studen\u021Bi). L-105 (16) e liber la 4.",
+    expected: "Blocul r\u0103m\xE2ne \xEEntreg, cu o mutare: E \u2192 L-105, D prime\u0219te L-201 pentru 2\u20134.",
+    instance: instance(
+      [lab("L-201", 24), lab("L-105", 16)],
+      [leaf("INF-221", 18), group("CIB-231"), leaf("CIB-231/1", 10, "CIB-231"), leaf("CIB-231/2", 10, "CIB-231")],
+      [WED, THU, FRI]
+    ),
+    initial: {
+      bookings: [booking({ id: "E-lab", teacher: "Prof. E", units: ["CIB-231/2"], activity: "lab", date: THU, start: 4, students: 10, roomId: "L-201" })],
+      closures: []
+    },
+    steps: [
+      { kind: "request", request: request({ id: "D-bloc", teacher: "Prof. D", units: ["INF-221"], activity: "lab", date: THU, start: 2, length: 3, students: 18 }) }
+    ]
+  };
+  var case3 = {
+    id: "case3",
+    title: "Cazul 3 \u2014 Auditoriul mare ocupat de o grup\u0103 mic\u0103",
+    summary: "Luni, perechea 2. A-1 (120) are un seminar de 25 de studen\u021Bi, rezervat c\xE2nd nu era alt\u0103 sal\u0103 liber\u0103. S-12 (30) s-a eliberat. Se cere o prelegere pe fluxul EI-23 (110 studen\u021Bi).",
+    expected: "Ambele activit\u0103\u021Bi au loc; seminarul trece \xEEn S-12; locurile neocupate scad de la 95 la 15.",
+    instance: instance(
+      [auditorium("A-1", 120), seminarRoom("S-12", 30)],
+      [
+        group("EI-23"),
+        leaf("EI-231", 28, "EI-23"),
+        leaf("EI-232", 28, "EI-23"),
+        leaf("EI-233", 27, "EI-23"),
+        leaf("EI-234", 27, "EI-23"),
+        leaf("CON-221", 25)
+      ],
+      [MON, TUE]
+    ),
+    initial: {
+      bookings: [
+        booking({
+          id: "G-seminar",
+          teacher: "Prof. G",
+          units: ["CON-221"],
+          activity: "seminar",
+          date: MON,
+          start: 2,
+          students: 25,
+          roomId: "A-1",
+          needs: { roomTypes: ["seminar", "auditorium"] }
+        })
+      ],
+      closures: []
+    },
+    steps: [
+      { kind: "request", request: request({ id: "H-curs-flux", teacher: "Prof. H", units: ["EI-23"], activity: "lecture", date: MON, start: 2, students: 110 }) }
+    ]
+  };
+  var case4 = {
+    id: "case4",
+    title: "Cazul 4 \u2014 Conflict de persoane, nu de s\u0103li",
+    summary: "Miercuri, perechea 2. Prof. F cere o sal\u0103 pentru recuperarea unui seminar cu grupa TI-231. S\u0103li libere exist\u0103, dar subgrupele TI-231/1 \u0219i TI-231/2 au laborator la perechea 2. Prof. F pred\u0103 la perechea 3.",
+    expected: "Refuz GROUP_BUSY, cu activit\u0103\u021Bile suprapuse; alternative la care \u0219i profesorul, \u0219i grupa sunt liberi.",
+    instance: instance(
+      [lab("L-201", 24), lab("L-105", 16), seminarRoom("S-12", 30), seminarRoom("S-14", 25)],
+      [group("TI-231"), leaf("TI-231/1", 13, "TI-231"), leaf("TI-231/2", 13, "TI-231"), leaf("TI-232", 24)],
+      [WED, THU]
+    ),
+    initial: {
+      bookings: [
+        booking({ id: "P-lab-sg1", teacher: "Prof. P", units: ["TI-231/1"], activity: "lab", date: WED, start: 2, students: 13, roomId: "L-201" }),
+        booking({ id: "Q-lab-sg2", teacher: "Prof. Q", units: ["TI-231/2"], activity: "lab", date: WED, start: 2, students: 13, roomId: "L-105" }),
+        booking({ id: "F-seminar-p3", teacher: "Prof. F", units: ["TI-232"], activity: "seminar", date: WED, start: 3, students: 24, roomId: "S-12" })
+      ],
+      closures: []
+    },
+    steps: [
+      { kind: "request", request: request({ id: "F-recuperare", teacher: "Prof. F", units: ["TI-231"], activity: "seminar", date: WED, start: 2, students: 26 }) }
+    ]
+  };
+  var case5 = {
+    id: "case5",
+    title: "Cazul 5 \u2014 Sal\u0103 indisponibil\u0103 \xEEn timpul semestrului (reparare)",
+    summary: "L-201 se \xEEnchide pentru repara\u021Bii dou\u0103 s\u0103pt\u0103m\xE2ni (16\u201327.11). Sunt afectate 9 rezerv\u0103ri: 2 blocuri de 2 perechi, o activitate s\u0103pt\u0103m\xE2nal\u0103 (dou\u0103 date), un examen fixat. Laboratoarele r\u0103mase sunt par\u021Bial ocupate.",
+    expected: "Majoritatea activit\u0103\u021Bilor r\u0103m\xE2n la aceea\u0219i or\u0103; schimb\u0103rile sunt minime \u0219i explicate; nerezolvatele primesc alternative propuse.",
+    instance: instance(
+      [lab("L-201", 24), lab("L-105", 16), lab("L-310", 20), lab("L-312", 24), seminarRoom("S-12", 30)],
+      [
+        leaf("G1", 20),
+        group("G2"),
+        leaf("G2/1", 12, "G2"),
+        leaf("G2/2", 12, "G2"),
+        leaf("G3", 22),
+        leaf("G4", 22),
+        group("G5"),
+        leaf("G5/1", 14, "G5"),
+        leaf("G5/2", 14, "G5"),
+        leaf("G6", 18),
+        leaf("G7", 16),
+        leaf("G8", 18),
+        leaf("H1", 15),
+        leaf("H2", 18),
+        leaf("H3", 20),
+        leaf("H4", 12),
+        leaf("H5", 20)
+      ],
+      [MON, TUE, MON2, TUE2]
+    ),
+    initial: {
+      bookings: [
+        // Rezervările din L-201 (afectate)
+        booking({ id: "b1-bloc", teacher: "T1", units: ["G1"], activity: "lab", date: MON, start: 1, length: 2, students: 20, roomId: "L-201" }),
+        booking({ id: "b2", teacher: "T2", units: ["G2/1"], activity: "lab", date: MON, start: 3, students: 12, roomId: "L-201" }),
+        booking({ id: "b3-examen", teacher: "T3", units: ["G3"], activity: "exam", date: MON, start: 4, students: 22, roomId: "L-201", status: "fixed" }),
+        booking({ id: "b4-bloc", teacher: "T4", units: ["G4"], activity: "lab", date: TUE, start: 2, length: 2, students: 22, roomId: "L-201" }),
+        booking({ id: "b5", teacher: "T5", units: ["G5/1"], activity: "lab", date: TUE, start: 5, students: 14, roomId: "L-201", status: "frozen" }),
+        booking({ id: "b6-sapt1", teacher: "T6", units: ["G6"], activity: "lab", date: MON2, start: 1, students: 18, roomId: "L-201" }),
+        booking({ id: "b7-sapt2", teacher: "T6", units: ["G6"], activity: "lab", date: TUE2, start: 1, students: 18, roomId: "L-201" }),
+        booking({ id: "b8", teacher: "T7", units: ["G7"], activity: "lab", date: MON2, start: 2, students: 16, roomId: "L-201" }),
+        booking({ id: "b9-seminar", teacher: "T8", units: ["G8"], activity: "seminar", date: TUE2, start: 3, students: 18, roomId: "L-201" }),
+        // Alte rezervări (neafectate)
+        booking({ id: "h1", teacher: "U1", units: ["H1"], activity: "lab", date: MON, start: 4, students: 15, roomId: "L-312" }),
+        booking({ id: "h2", teacher: "U2", units: ["H2"], activity: "lab", date: MON, start: 1, length: 2, students: 18, roomId: "L-310", status: "frozen" }),
+        booking({ id: "h3", teacher: "U3", units: ["H3"], activity: "lab", date: TUE, start: 2, students: 20, roomId: "L-312", status: "frozen" }),
+        booking({ id: "h4", teacher: "U4", units: ["H4"], activity: "lab", date: MON2, start: 1, students: 12, roomId: "L-310" }),
+        booking({ id: "h5", teacher: "U5", units: ["H5"], activity: "lab", date: TUE2, start: 1, students: 20, roomId: "L-312" })
+      ],
+      closures: []
+    },
+    steps: [
+      {
+        kind: "closure",
+        closure: { roomId: "L-201", from: "2026-11-16", to: "2026-11-27", reason: "repair" }
+      }
+    ]
+  };
+  var coordinatorExample = {
+    id: "coordinator",
+    title: "Exemplul pentru coordonator \u2014 cinci cereri, patru strategii",
+    summary: "Mar\u021Bi, perechea 3, cinci s\u0103li \xEEn ordinea A-1 (120), S-12 (30), S-14 (25), L-201 (24 calc.), L-105 (16 calc.). Sosesc: r1 seminar 20, r2 laborator 22, r3 seminar 28, r4 curs pe flux 100, r5 laborator 14.",
+    expected: "Prima sal\u0103 liber\u0103 4/5 (r4 refuzat); best-fit 4/5 (r2 refuzat); scor cu raritate 5/5; best-fit + reparare (M = 1) 5/5 cu o mutare.",
+    instance: instance(
+      [auditorium("A-1", 120), seminarRoom("S-12", 30), seminarRoom("S-14", 25), lab("L-201", 24), lab("L-105", 16)],
+      [
+        leaf("SEM-1", 20),
+        leaf("LAB-1", 22),
+        leaf("SEM-2", 28),
+        group("FLX"),
+        leaf("FLX-1", 25, "FLX"),
+        leaf("FLX-2", 25, "FLX"),
+        leaf("FLX-3", 25, "FLX"),
+        leaf("FLX-4", 25, "FLX"),
+        leaf("LAB-2", 14)
+      ],
+      [TUE]
+    ),
+    initial: { bookings: [], closures: [] },
+    steps: [
+      { kind: "request", request: request({ id: "r1", teacher: "Prof. 1", units: ["SEM-1"], activity: "seminar", date: TUE, start: 3, students: 20 }) },
+      { kind: "request", request: request({ id: "r2", teacher: "Prof. 2", units: ["LAB-1"], activity: "lab", date: TUE, start: 3, students: 22 }) },
+      { kind: "request", request: request({ id: "r3", teacher: "Prof. 3", units: ["SEM-2"], activity: "seminar", date: TUE, start: 3, students: 28 }) },
+      { kind: "request", request: request({ id: "r4", teacher: "Prof. 4", units: ["FLX"], activity: "lecture", date: TUE, start: 3, students: 100 }) },
+      { kind: "request", request: request({ id: "r5", teacher: "Prof. 5", units: ["LAB-2"], activity: "lab", date: TUE, start: 3, students: 14 }) }
+    ],
+    options: { alternatives: 0 }
+  };
+  var allCases = [case1, case2, case3, case4, case5];
+
+  // src/engine/compat.ts
+  function roomMismatch(room2, needs, students2) {
+    if (!needs.roomTypes.includes(room2.type)) {
+      return { code: "H5", message: `${room2.id}: tipul ${room2.type} nu este acceptat (${needs.roomTypes.join(", ")})` };
+    }
+    if (room2.capacity < students2) {
+      return { code: "H4", message: `${room2.id}: ${room2.capacity} locuri < ${students2} studen\u021Bi` };
+    }
+    if ((needs.minComputers ?? 0) > room2.computers) {
+      return { code: "H5", message: `${room2.id}: ${room2.computers} calculatoare < ${needs.minComputers} necesare` };
+    }
+    if (needs.projector && !room2.projector) return { code: "H5", message: `${room2.id}: f\u0103r\u0103 proiector/ecran` };
+    if (needs.board && !room2.board) return { code: "H5", message: `${room2.id}: f\u0103r\u0103 tabl\u0103` };
+    return null;
+  }
+  function closureOf(closures, roomId, date2) {
+    return closures.find((c) => c.roomId === roomId && c.from <= date2 && date2 <= c.to);
+  }
+
+  // src/engine/checker.ts
+  function checkState(instance2, state) {
+    const v = [];
+    const rooms = new Map(instance2.rooms.map((r) => [r.id, r]));
+    const index = buildUnitIndex(instance2.units);
+    const seen = /* @__PURE__ */ new Set();
+    const valid = [];
+    for (const b of state.bookings) {
+      if (seen.has(b.id)) {
+        v.push({ code: "INVALID", message: `identificator duplicat ${b.id}`, bookings: [b.id] });
+        continue;
+      }
+      seen.add(b.id);
+      const room2 = rooms.get(b.roomId);
+      if (!room2) {
+        v.push({ code: "INVALID", message: `${b.id}: sal\u0103 necunoscut\u0103 ${b.roomId}`, bookings: [b.id] });
+        continue;
+      }
+      if (!inGrid(instance2.grid, b.start, b.length)) {
+        v.push({ code: "INVALID", message: `${b.id}: perechi \xEEn afara grilei`, bookings: [b.id] });
+        continue;
+      }
+      const unknown = unknownUnits(index, b.units);
+      if (unknown.length) {
+        v.push({ code: "INVALID", message: `${b.id}: unit\u0103\u021Bi necunoscute ${unknown.join(", ")}`, bookings: [b.id] });
+        continue;
+      }
+      if (!(b.students > 0) || b.units.length > 0 && b.students > sizeOf(index, b.units)) {
+        v.push({ code: "INVALID", message: `${b.id}: num\u0103r de studen\u021Bi invalid (${b.students})`, bookings: [b.id] });
+        continue;
+      }
+      if (b.status === "fixed" && b.activity !== "event" && b.activity !== "exam") {
+        v.push({ code: "INVALID", message: `${b.id}: doar evenimentele \u0219i examenele se pot fixa (D19)`, bookings: [b.id] });
+      }
+      const mismatch = roomMismatch(room2, b.needs, b.students);
+      if (mismatch) v.push({ code: mismatch.code, message: `${b.id}: ${mismatch.message}`, bookings: [b.id] });
+      const closed = closureOf(state.closures, b.roomId, b.date);
+      if (closed) v.push({ code: "H6", message: `${b.id}: sala ${b.roomId} este \xEEnchis\u0103 la ${b.date}`, bookings: [b.id] });
+      valid.push(b);
+    }
+    const atoms = new Map(valid.map((b) => [b.id, atomsOf(index, b.units)]));
+    for (let i = 0; i < valid.length; i++) {
+      for (let j = i + 1; j < valid.length; j++) {
+        const a = valid[i];
+        const b = valid[j];
+        if (!overlaps(a, b)) continue;
+        const pair = [a.id, b.id].sort();
+        if (a.roomId === b.roomId) v.push({ code: "H1", message: `sala ${a.roomId} dublu ocupat\u0103`, bookings: pair });
+        if (a.teacher && a.teacher === b.teacher) v.push({ code: "H2", message: `${a.teacher} \xEEn dou\u0103 locuri`, bookings: pair });
+        if (intersects(atoms.get(a.id), atoms.get(b.id))) {
+          v.push({ code: "H3", message: `aceea\u0219i grup\u0103/subgrup\u0103 \xEEn dou\u0103 activit\u0103\u021Bi`, bookings: pair });
+        }
+      }
+    }
+    const blocks = /* @__PURE__ */ new Map();
+    for (const b of valid) {
+      if (b.blockId === void 0) continue;
+      const list = blocks.get(b.blockId) ?? [];
+      list.push(b);
+      blocks.set(b.blockId, list);
+    }
+    for (const [blockId, parts] of blocks) {
+      const roomsUsed = new Set(parts.map((p) => p.roomId));
+      if (roomsUsed.size > 1 && !parts.every((p) => p.splitApproved)) {
+        v.push({ code: "H7", message: `blocul ${blockId} este rupt f\u0103r\u0103 acordul profesorului`, bookings: parts.map((p) => p.id).sort() });
+      }
+    }
+    return v;
+  }
+  function checkTransition(before, after, removed = []) {
+    const violations = [];
+    const moved = [];
+    const afterById = new Map(after.bookings.map((b) => [b.id, b]));
+    for (const b of before.bookings) {
+      const a = afterById.get(b.id);
+      if (!a) {
+        if (!removed.includes(b.id)) violations.push({ code: "INVALID", message: `${b.id} a disp\u0103rut`, bookings: [b.id] });
+        continue;
+      }
+      if (a.date !== b.date || a.start !== b.start || a.length !== b.length || a.teacher !== b.teacher || a.units.join("|") !== b.units.join("|")) {
+        violations.push({ code: "INVALID", message: `${b.id}: ora sau participan\u021Bii s-au schimbat`, bookings: [b.id] });
+      }
+      if (a.roomId !== b.roomId) {
+        moved.push(b.id);
+        const closedNow = closureOf(after.closures, b.roomId, b.date);
+        if (b.status !== "movable" && !closedNow) {
+          violations.push({ code: "H8", message: `${b.id} (${b.status}) a fost mutat\u0103`, bookings: [b.id] });
+        }
+      }
+    }
+    return { violations, moved: moved.sort() };
+  }
+
+  // src/engine/occupancy.ts
+  var key = (roomId, date2) => `${roomId}|${date2}`;
+  function buildOccupancy(bookings, periods) {
+    const occ = /* @__PURE__ */ new Map();
+    for (const b of bookings) setCells(occ, b.roomId, b.date, b.start, b.length, b.id, periods);
+    return occ;
+  }
+  function setCells(occ, roomId, date2, start, length, value, periods) {
+    const k = key(roomId, date2);
+    let row = occ.get(k);
+    if (!row) {
+      row = new Array(periods + 1).fill(null);
+      occ.set(k, row);
+    }
+    for (let p = start; p < start + length; p++) row[p] = value;
+  }
+  function occupantsAt(occ, roomId, date2, start, length) {
+    const row = occ.get(key(roomId, date2));
+    if (!row) return [];
+    const out = /* @__PURE__ */ new Set();
+    for (let p = start; p < start + length; p++) {
+      const v = row[p];
+      if (v) out.add(v);
+    }
+    return [...out].sort();
+  }
+  function isolatedWindows(occ, roomId, date2, periods, asFree) {
+    const row = occ.get(key(roomId, date2));
+    const busy = (p) => {
+      if (asFree && p >= asFree.start && p < asFree.start + asFree.length) return false;
+      return !!row?.[p];
+    };
+    let count = 0;
+    let run = 0;
+    for (let p = 1; p <= periods + 1; p++) {
+      if (p <= periods && !busy(p)) {
+        run++;
+      } else {
+        if (run === 1) count++;
+        run = 0;
+      }
+    }
+    return count;
+  }
+
+  // src/engine/score.ts
+  function rarityOf(room2, needs) {
+    const notes = [];
+    let value = 0;
+    if (room2.type === "lab" && !((needs.minComputers ?? 0) > 0)) {
+      value++;
+      notes.push("laborator ocupat de o activitate f\u0103r\u0103 calculatoare");
+    }
+    if (room2.type === "auditorium" && needs.roomTypes.some((t) => t !== "auditorium")) {
+      value++;
+      notes.push("auditoriu ocupat de o activitate care \xEEncape \u0219i \xEEn alt\u0103 sal\u0103");
+    }
+    return { value, notes };
+  }
+  function requestKey(strategy, roomOrder, e) {
+    switch (strategy) {
+      case "first-fit":
+        return [roomOrder];
+      case "best-fit":
+        return [e.excess];
+      case "score":
+        return [e.rarity, e.excess, e.fragmentation];
+    }
+  }
+  function movedKey(strategy, roomOrder, e) {
+    switch (strategy) {
+      case "first-fit":
+        return [roomOrder];
+      case "best-fit":
+        return [e.excess];
+      case "score":
+        return [e.rarity, e.excess];
+    }
+  }
+  function compareKeys(a, b) {
+    const n = Math.max(a.length, b.length);
+    for (let i = 0; i < n; i++) {
+      const x = a[i];
+      const y = b[i];
+      if (x === y) continue;
+      if (x === void 0) return -1;
+      if (y === void 0) return 1;
+      if (typeof x === "number" && typeof y === "number") return x - y;
+      return String(x) < String(y) ? -1 : 1;
+    }
+    return 0;
+  }
+
+  // src/engine/allocate.ts
+  var REQ = "\0request";
+  var DEFAULTS = { strategy: "score", maxMoves: 2, alternatives: 5, split: true, verify: true };
+  function allocate(instance2, state, request2, options = {}) {
+    const opts = { ...DEFAULTS, ...options };
+    const placed = tryPlace(instance2, state, request2, opts.strategy, opts.maxMoves, opts.verify);
+    if (placed.ok) {
+      return {
+        kind: "accepted",
+        requestId: request2.id,
+        booking: placed.booking,
+        moves: placed.plan.moves,
+        evaluation: placed.plan.evaluation,
+        plansCompared: placed.plansCompared,
+        explanation: explainAccepted(instance2, request2, placed, opts),
+        state: placed.state
+      };
+    }
+    const alternatives = placed.reasons.some((r) => r.code === "INVALID_REQUEST" || r.code === "NO_ROOM_OF_TYPE") ? [] : findAlternatives(instance2, state, request2, placed.reasons, opts);
+    return {
+      kind: "rejected",
+      requestId: request2.id,
+      reasons: placed.reasons,
+      alternatives,
+      explanation: explainRejected(instance2, request2, placed.reasons, alternatives)
+    };
+  }
+  function tryPlace(instance2, state, request2, strategy, maxMoves, verify = true) {
+    const P = instance2.grid.periods.length;
+    const index = buildUnitIndex(instance2.units);
+    const invalid = (message) => ({
+      ok: false,
+      reasons: [{ code: "INVALID_REQUEST", message, bookings: [] }]
+    });
+    if (!inGrid(instance2.grid, request2.start, request2.length)) return invalid("perechile cerute sunt \xEEn afara grilei");
+    if (state.bookings.some((b) => b.id === request2.id)) return invalid(`identificatorul ${request2.id} exist\u0103 deja`);
+    const unknown = unknownUnits(index, request2.units);
+    if (unknown.length) return invalid(`unit\u0103\u021Bi necunoscute: ${unknown.join(", ")}`);
+    if (request2.units.length === 0 && request2.declaredStudents === void 0) {
+      return invalid("cererea nu are nici unit\u0103\u021Bi participante, nici num\u0103r declarat de studen\u021Bi");
+    }
+    const derived = sizeOf(index, request2.units);
+    const students2 = request2.declaredStudents ?? derived;
+    if (!(students2 > 0)) return invalid("num\u0103rul de studen\u021Bi trebuie s\u0103 fie pozitiv");
+    if (request2.units.length > 0 && students2 > derived) {
+      return invalid(`num\u0103rul declarat (${students2}) dep\u0103\u0219e\u0219te m\u0103rimea unit\u0103\u021Bilor (${derived}), D21`);
+    }
+    const status = request2.status ?? "movable";
+    if (status === "fixed" && request2.activity !== "event" && request2.activity !== "exam") {
+      return invalid("doar evenimentele \u0219i examenele se pot fixa (D19)");
+    }
+    const atoms = atomsOf(index, request2.units);
+    const sameTime = state.bookings.filter((b) => overlaps(b, request2)).sort((a, b) => a.id < b.id ? -1 : 1);
+    const teacherBusy = request2.teacher ? sameTime.filter((b) => b.teacher === request2.teacher) : [];
+    const groupBusy = sameTime.filter((b) => intersects(atomsOf(index, b.units), atoms));
+    const peopleReasons = [];
+    if (teacherBusy.length) {
+      peopleReasons.push({
+        code: "TEACHER_BUSY",
+        message: `${request2.teacher} are deja: ${teacherBusy.map((b) => describe(b)).join("; ")}`,
+        bookings: teacherBusy.map((b) => b.id).sort()
+      });
+    }
+    if (groupBusy.length) {
+      peopleReasons.push({
+        code: "GROUP_BUSY",
+        message: `participan\u021Bii (${request2.units.join(", ")}) au deja: ${groupBusy.map((b) => describe(b)).join("; ")}`,
+        bookings: groupBusy.map((b) => b.id).sort()
+      });
+    }
+    if (peopleReasons.length) return { ok: false, reasons: peopleReasons };
+    const roomsSorted = [...instance2.rooms].sort((a, b) => a.id < b.id ? -1 : a.id > b.id ? 1 : 0);
+    const roomOrder = new Map(instance2.rooms.map((r, i) => [r.id, i]));
+    const compatible = roomsSorted.filter((r) => roomMismatch(r, request2.needs, students2) === null);
+    if (!compatible.length) {
+      return {
+        ok: false,
+        reasons: [{ code: "NO_ROOM_OF_TYPE", message: `nicio sal\u0103 nu corespunde cerin\u021Belor (${needsLabel(request2, students2)})`, bookings: [] }]
+      };
+    }
+    const open = compatible.filter((r) => !closureOf(state.closures, r.id, request2.date));
+    if (!open.length) {
+      return {
+        ok: false,
+        reasons: [{ code: "ROOM_UNAVAILABLE", message: "toate s\u0103lile compatibile sunt \xEEnchise la aceast\u0103 dat\u0103", bookings: [] }]
+      };
+    }
+    const occ = buildOccupancy(state.bookings, P);
+    const byId = new Map(state.bookings.map((b) => [b.id, b]));
+    const plans = [];
+    const moved = /* @__PURE__ */ new Set();
+    const clear = (b) => setCells(occ, b.roomId, b.date, b.start, b.length, null, P);
+    const restore = (b) => setCells(occ, b.roomId, b.date, b.start, b.length, b.id, P);
+    const evaluate = (room2, needs, n, date2, start, length) => {
+      const r = rarityOf(room2, needs);
+      const after = isolatedWindows(occ, room2.id, date2, P);
+      const before = isolatedWindows(occ, room2.id, date2, P, { start, length });
+      return { rarity: r.value, excess: room2.capacity - n, fragmentation: after - before, notes: r.notes };
+    };
+    const record = (room2, moves) => {
+      const evaluation = evaluate(room2, request2.needs, students2, request2.date, request2.start, request2.length);
+      const sum = [];
+      for (const m of moves) {
+        const b = byId.get(m.bookingId);
+        const to = roomsSorted.find((r) => r.id === m.to);
+        const k = movedKey(strategy, roomOrder.get(to.id), {
+          ...evaluate(to, b.needs, b.students, b.date, b.start, b.length)
+        });
+        k.forEach((x, i) => sum[i] = (sum[i] ?? 0) + x);
+      }
+      const signature = moves.map((m) => `${m.bookingId}>${m.to}`).sort().join(",");
+      plans.push({
+        room: room2,
+        moves: [...moves],
+        evaluation,
+        key: [moves.length, ...requestKey(strategy, roomOrder.get(room2.id), evaluation), ...sum, signature, room2.id]
+      });
+    };
+    const dfs = (queue, moves, room2) => {
+      if (moves.length + queue.length > maxMoves) return;
+      if (queue.length === 0) {
+        record(room2, moves);
+        return;
+      }
+      const [bid, ...rest] = queue;
+      const b = byId.get(bid);
+      for (const target of roomsSorted) {
+        if (target.id === b.roomId) continue;
+        if (roomMismatch(target, b.needs, b.students) !== null) continue;
+        if (closureOf(state.closures, target.id, b.date)) continue;
+        const occupants = occupantsAt(occ, target.id, b.date, b.start, b.length);
+        if (occupants.some((o) => o === REQ || moved.has(o) || byId.get(o).status !== "movable")) continue;
+        const evicted = occupants.map((o) => byId.get(o));
+        evicted.forEach(clear);
+        setCells(occ, target.id, b.date, b.start, b.length, b.id, P);
+        moved.add(b.id);
+        dfs([.../* @__PURE__ */ new Set([...rest, ...occupants])].sort(), [...moves, { bookingId: b.id, from: b.roomId, to: target.id }], room2);
+        moved.delete(b.id);
+        setCells(occ, target.id, b.date, b.start, b.length, null, P);
+        evicted.forEach(restore);
+      }
+    };
+    for (const room2 of open) {
+      const blockers = occupantsAt(occ, room2.id, request2.date, request2.start, request2.length);
+      if (blockers.some((o) => byId.get(o).status !== "movable")) continue;
+      if (blockers.length > maxMoves) continue;
+      const displaced = blockers.map((o) => byId.get(o));
+      displaced.forEach(clear);
+      setCells(occ, room2.id, request2.date, request2.start, request2.length, REQ, P);
+      dfs(blockers, [], room2);
+      setCells(occ, room2.id, request2.date, request2.start, request2.length, null, P);
+      displaced.forEach(restore);
+    }
+    if (!plans.length) {
+      const blocking = /* @__PURE__ */ new Set();
+      for (const room2 of open) {
+        for (const o of occupantsAt(occ, room2.id, request2.date, request2.start, request2.length)) blocking.add(o);
+      }
+      const fixedOnes = [...blocking].filter((id) => byId.get(id).status !== "movable");
+      const detail = fixedOnes.length ? `; nemutabile: ${fixedOnes.sort().join(", ")}` : "";
+      return {
+        ok: false,
+        reasons: [
+          {
+            code: "ROOM_UNAVAILABLE",
+            message: `${open.length === 1 ? "singura sal\u0103 compatibil\u0103" : `toate cele ${open.length} s\u0103li compatibile`} (${open.map((r) => r.id).join(", ")}) ${open.length === 1 ? "este ocupat\u0103 \u0219i nu se elibereaz\u0103" : "sunt ocupate \u0219i nu se elibereaz\u0103"} cu cel mult ${maxMoves} mut\u0103ri${detail}`,
+            bookings: [...blocking].sort()
+          }
+        ]
+      };
+    }
+    plans.sort((a, b) => compareKeys(a.key, b.key));
+    const best = plans[0];
+    const booking2 = {
+      id: request2.id,
+      teacher: request2.teacher,
+      units: [...request2.units],
+      activity: request2.activity,
+      needs: request2.needs,
+      date: request2.date,
+      start: request2.start,
+      length: request2.length,
+      students: students2,
+      roomId: best.room.id,
+      status
+    };
+    const movedTo = new Map(best.moves.map((m) => [m.bookingId, m.to]));
+    const newState = {
+      bookings: [...state.bookings.map((b) => movedTo.has(b.id) ? { ...b, roomId: movedTo.get(b.id) } : b), booking2],
+      closures: state.closures
+    };
+    const violations = verify ? checkState(instance2, newState).filter((v) => !preexisting(instance2, state, v)) : [];
+    if (violations.length) {
+      throw new Error(`eroare intern\u0103: planul ales \xEEncalc\u0103 ${violations.map((v) => `${v.code} ${v.message}`).join("; ")}`);
+    }
+    return { ok: true, booking: booking2, plan: best, plansCompared: plans.length, state: newState };
+  }
+  function preexisting(instance2, state, v) {
+    return checkState(instance2, state).some((w) => w.code === v.code && w.bookings.join() === v.bookings.join());
+  }
+  function findAlternatives(instance2, state, request2, reasons, opts) {
+    const out = [];
+    const dates = [.../* @__PURE__ */ new Set([...instance2.dates, request2.date])].sort();
+    const dayIndex = new Map(dates.map((d2, i) => [d2, i]));
+    const P = instance2.grid.periods.length;
+    const candidates = [];
+    for (const date2 of dates) {
+      for (let start = 1; start + request2.length - 1 <= P; start++) {
+        if (date2 === request2.date && start === request2.start) continue;
+        const dd = Math.abs(dayIndex.get(date2) - dayIndex.get(request2.date));
+        candidates.push({ date: date2, start, key: [date2 === request2.date ? 0 : 1, dd, Math.abs(start - request2.start), dayIndex.get(date2), start] });
+      }
+    }
+    candidates.sort((a, b) => compareKeys(a.key, b.key));
+    for (const c of candidates) {
+      if (out.length >= opts.alternatives) break;
+      const r = tryPlace(instance2, state, { ...request2, date: c.date, start: c.start }, opts.strategy, opts.maxMoves, opts.verify);
+      if (r.ok) out.push({ kind: "slot", date: c.date, start: c.start, length: request2.length, roomId: r.booking.roomId, moves: r.plan.moves.length });
+    }
+    if (opts.split && request2.length > 1 && reasons.every((r) => r.code === "ROOM_UNAVAILABLE")) {
+      for (let cut = 1; cut < request2.length; cut++) {
+        const first = tryPlace(instance2, state, { ...request2, id: `${request2.id}#1`, length: cut }, opts.strategy, opts.maxMoves, opts.verify);
+        if (!first.ok) continue;
+        const second = tryPlace(
+          instance2,
+          first.state,
+          { ...request2, id: `${request2.id}#2`, start: request2.start + cut, length: request2.length - cut },
+          opts.strategy,
+          Math.max(0, opts.maxMoves - first.plan.moves.length),
+          opts.verify
+        );
+        if (!second.ok || second.booking.roomId === first.booking.roomId) continue;
+        out.push({
+          kind: "split",
+          date: request2.date,
+          parts: [
+            { start: request2.start, length: cut, roomId: first.booking.roomId },
+            { start: request2.start + cut, length: request2.length - cut, roomId: second.booking.roomId }
+          ],
+          moves: first.plan.moves.length + second.plan.moves.length
+        });
+        break;
+      }
+    }
+    return out;
+  }
+  function describe(b) {
+    return `${b.id} (${b.activity}, ${b.units.join("+") || "\u2014"}, sala ${b.roomId}, ${periodLabel(b.start, b.length)})`;
+  }
+  function needsLabel(r, students2) {
+    const parts = [`${students2} studen\u021Bi`, `tip: ${r.needs.roomTypes.join("/")}`];
+    if (r.needs.minComputers) parts.push(`\u2265 ${r.needs.minComputers} calculatoare`);
+    if (r.needs.projector) parts.push("proiector");
+    if (r.needs.board) parts.push("tabl\u0103");
+    return parts.join(", ");
+  }
+  var STRATEGY_LABEL = {
+    "first-fit": "prima sal\u0103 compatibil\u0103",
+    "best-fit": "cele mai pu\u021Bine locuri neocupate",
+    score: "scor lexicografic (raritate \u2192 excedent \u2192 fragmentare)"
+  };
+  function explainAccepted(instance2, request2, placed, opts) {
+    const { booking: booking2, plan } = placed;
+    const lines = [
+      `Cererea ${request2.id} este acceptat\u0103: sala ${booking2.roomId}, ${booking2.date}, ${periodLabel(booking2.start, booking2.length)} (${timeLabel(instance2.grid, booking2.start, booking2.length)}), ${booking2.students} studen\u021Bi.`
+    ];
+    if (plan.moves.length === 0) {
+      lines.push("Nicio rezervare existent\u0103 nu a fost mutat\u0103.");
+    } else {
+      lines.push(`${plan.moves.length === 1 ? "A fost necesar\u0103 o mutare" : `Au fost necesare ${plan.moves.length} mut\u0103ri`} (doar sala, la aceea\u0219i or\u0103):`);
+      for (const m of plan.moves) lines.push(`\u2022 ${m.bookingId}: ${m.from} \u2192 ${m.to}`);
+    }
+    const e = plan.evaluation;
+    lines.push(
+      `Criteriul (${STRATEGY_LABEL[opts.strategy]}): raritate ${e.rarity}${e.notes.length ? ` (${e.notes.join("; ")})` : ""}, locuri neocupate ${e.excess}, ferestre izolate ${e.fragmentation >= 0 ? "+" : ""}${e.fragmentation}; ${placed.plansCompared === 1 ? "un singur plan valid" : `${placed.plansCompared} planuri valide comparate`}.`
+    );
+    return lines;
+  }
+  function explainRejected(instance2, request2, reasons, alternatives) {
+    const lines = [`Cererea ${request2.id} este refuzat\u0103 (${request2.date}, ${periodLabel(request2.start, request2.length)}).`];
+    for (const r of reasons) lines.push(`${r.code}: ${r.message}`);
+    if (!alternatives.length) {
+      lines.push("Nu s-au g\u0103sit alternative \xEEn orizontul dat.");
+    } else {
+      lines.push("Alternative propuse (necesit\u0103 confirmarea profesorului):");
+      for (const a of alternatives) {
+        if (a.kind === "slot") {
+          lines.push(`\u2022 ${a.date}, ${periodLabel(a.start, a.length)} (${timeLabel(instance2.grid, a.start, a.length)}), sala ${a.roomId}${a.moves ? `, cu ${a.moves === 1 ? "o mutare" : `${a.moves} mut\u0103ri`}` : ""}`);
+        } else {
+          lines.push(
+            `\u2022 ultima op\u021Biune, ruperea blocului (D20): ${a.parts.map((p) => `${periodLabel(p.start, p.length)} \xEEn ${p.roomId}`).join(" + ")}`
+          );
+        }
+      }
+    }
+    return lines;
+  }
+
+  // src/engine/repair.ts
+  function repairClosure(instance2, state, closure, options = {}) {
+    const affected = state.bookings.filter((b) => b.roomId === closure.roomId && closure.from <= b.date && b.date <= closure.to).sort(
+      (a, b) => b.length - a.length || b.students - a.students || (b.needs.minComputers ?? 0) - (a.needs.minComputers ?? 0) || (a.id < b.id ? -1 : 1)
+    );
+    const affectedIds = new Set(affected.map((b) => b.id));
+    let current = {
+      bookings: state.bookings.filter((b) => !affectedIds.has(b.id)),
+      closures: [...state.closures, closure]
+    };
+    const report = {
+      closure,
+      affected: affected.map((b) => b.id),
+      sameTimeDirect: [],
+      sameTimeWithMoves: [],
+      unresolved: [],
+      unfixed: affected.filter((b) => b.status === "fixed").map((b) => b.id),
+      frozenRelocated: affected.filter((b) => b.status === "frozen").map((b) => b.id),
+      state: current,
+      violations: [],
+      explanation: []
+    };
+    const asRequest = (b) => ({
+      id: b.id,
+      teacher: b.teacher,
+      units: b.units,
+      activity: b.activity,
+      needs: b.needs,
+      date: b.date,
+      start: b.start,
+      length: b.length,
+      declaredStudents: b.students,
+      status: b.status
+    });
+    const pending = [];
+    for (const b of affected) {
+      const decision = allocate(instance2, current, asRequest(b), { ...options, alternatives: 0, split: false });
+      if (decision.kind === "accepted") {
+        current = decision.state;
+        if (decision.moves.length === 0) report.sameTimeDirect.push({ bookingId: b.id, from: b.roomId, to: decision.booking.roomId });
+        else report.sameTimeWithMoves.push({ bookingId: b.id, from: b.roomId, to: decision.booking.roomId, moves: decision.moves });
+      } else {
+        pending.push(b);
+      }
+    }
+    for (const b of pending) {
+      const decision = allocate(instance2, current, asRequest(b), options);
+      if (decision.kind === "rejected") {
+        report.unresolved.push({ booking: b, reasons: decision.reasons, alternatives: decision.alternatives });
+      } else {
+        current = decision.state;
+        report.sameTimeWithMoves.push({ bookingId: b.id, from: b.roomId, to: decision.booking.roomId, moves: decision.moves });
+      }
+    }
+    report.state = current;
+    report.violations = [
+      ...checkState(instance2, current),
+      ...checkTransition(state, current, report.unresolved.map((u) => u.booking.id)).violations
+    ];
+    const n = affected.length;
+    report.explanation = [
+      `Sala ${closure.roomId} se \xEEnchide (${closure.reason === "repair" ? "repara\u021Bii" : "alt motiv"}) \xEEntre ${closure.from} \u0219i ${closure.to}: ${n} rezerv\u0103ri afectate.`,
+      `La aceea\u0219i or\u0103, f\u0103r\u0103 alte mut\u0103ri: ${report.sameTimeDirect.length}; la aceea\u0219i or\u0103, cu mut\u0103ri: ${report.sameTimeWithMoves.length}; necesit\u0103 decizie uman\u0103: ${report.unresolved.length}.`
+    ];
+    if (report.unfixed.length) {
+      report.explanation.push(`Fixare anulat\u0103 de \xEEnchidere (D19): ${report.unfixed.join(", ")}.`);
+    }
+    if (report.frozenRelocated.length) {
+      report.explanation.push(`Rezerv\u0103ri din orizontul \xEEnghe\u021Bat, realocate din cauza \xEEnchiderii: ${report.frozenRelocated.join(", ")}.`);
+    }
+    for (const u of report.unresolved) {
+      report.explanation.push(`${u.booking.id}: ${u.reasons.map((r) => r.message).join("; ")}`);
+    }
+    return report;
+  }
+
+  // src/sim/rng.ts
+  function mulberry32(seed) {
+    let a = seed >>> 0;
+    return () => {
+      a = a + 1831565813 >>> 0;
+      let t = a;
+      t = Math.imul(t ^ t >>> 15, t | 1);
+      t ^= t + Math.imul(t ^ t >>> 7, t | 61);
+      return ((t ^ t >>> 14) >>> 0) / 4294967296;
+    };
+  }
+  var randInt = (rnd, lo, hi) => lo + Math.floor(rnd() * (hi - lo + 1));
+  var pick = (rnd, xs) => xs[Math.floor(rnd() * xs.length)];
+  function weighted(rnd, weights) {
+    const total = weights.reduce((s, [, w]) => s + w, 0);
+    let x = rnd() * total;
+    for (const [value, w] of weights) {
+      x -= w;
+      if (x < 0) return value;
+    }
+    return weights[weights.length - 1][0];
+  }
+
+  // src/sim/generator.ts
+  var DEFAULT_PROFILE = {
+    days: ["2026-11-16", "2026-11-17", "2026-11-18", "2026-11-19", "2026-11-20"],
+    rooms: {
+      auditorium: { count: 4, capacity: [80, 150] },
+      seminar: { count: 10, capacity: [20, 35] },
+      lab: { count: 8, computers: [14, 30] }
+    },
+    fluxes: 10,
+    groupsPerFlux: [2, 4],
+    groupSize: [18, 30],
+    subgroupShare: 0.6,
+    teachers: 60,
+    // Ponderi alese astfel încât cererea de perechi pe tip să fie aproximativ proporțională cu oferta
+    // (auditorii 4/22, seminare 10/22, laboratoare 8/22). Seminarele pot folosi și alte tipuri de sală.
+    mix: [
+      ["lecture", 0.27],
+      ["seminar", 0.45],
+      ["lab", 0.28]
+    ],
+    lengths: [
+      [1, 0.6],
+      [2, 0.35],
+      [3, 0.05]
+    ]
+  };
+  function buildRooms(rnd, p) {
+    const rooms = [];
+    for (let i = 0; i < p.rooms.auditorium.count; i++) {
+      const [lo, hi] = p.rooms.auditorium.capacity;
+      rooms.push({ id: `A-${i + 1}`, type: "auditorium", capacity: i === 0 ? hi : randInt(rnd, lo, hi), computers: 0, projector: true, board: true });
+    }
+    for (let i = 0; i < p.rooms.seminar.count; i++) {
+      const [lo, hi] = p.rooms.seminar.capacity;
+      rooms.push({ id: `S-${String(i + 1).padStart(2, "0")}`, type: "seminar", capacity: randInt(rnd, lo, hi), computers: 0, projector: rnd() < 0.8, board: true });
+    }
+    for (let i = 0; i < p.rooms.lab.count; i++) {
+      const [lo, hi] = p.rooms.lab.computers;
+      const c = i === 0 ? hi : randInt(rnd, lo, hi);
+      rooms.push({ id: `L-${String(i + 1).padStart(2, "0")}`, type: "lab", capacity: c, computers: c, projector: true, board: false });
+    }
+    return rooms;
+  }
+  function buildUnits(rnd, p) {
+    const units = [];
+    const fluxes = [];
+    const groups = [];
+    const labUnits = [];
+    for (let f = 0; f < p.fluxes; f++) {
+      const fid = `F${String(f + 1).padStart(2, "0")}`;
+      units.push({ id: fid });
+      fluxes.push(fid);
+      const n = randInt(rnd, p.groupsPerFlux[0], p.groupsPerFlux[1]);
+      for (let g = 1; g <= n; g++) {
+        const gid = `${fid}-${g}`;
+        const size = randInt(rnd, p.groupSize[0], p.groupSize[1]);
+        groups.push(gid);
+        if (rnd() < p.subgroupShare) {
+          const a = Math.ceil(size / 2);
+          units.push({ id: gid, parent: fid });
+          units.push({ id: `${gid}/1`, parent: gid, size: a });
+          units.push({ id: `${gid}/2`, parent: gid, size: size - a });
+          labUnits.push(`${gid}/1`, `${gid}/2`);
+        } else {
+          units.push({ id: gid, parent: fid, size });
+          labUnits.push(gid);
+        }
+      }
+    }
+    return { units, fluxes, groups, labUnits };
+  }
+  function needsFor2(activity, students2) {
+    if (activity === "lab") return { roomTypes: ["lab"], minComputers: students2 };
+    if (activity === "lecture") return { roomTypes: ["auditorium"], projector: true };
+    return { roomTypes: ["seminar", "auditorium", "lab"] };
+  }
+  function generateWorkload(seed, targetLoad, profile = DEFAULT_PROFILE) {
+    const rnd = mulberry32(seed);
+    const rooms = buildRooms(rnd, profile);
+    const { units, fluxes, groups, labUnits } = buildUnits(rnd, profile);
+    const instance2 = { grid: DEFAULT_GRID, rooms, units, dates: [...profile.days] };
+    const index = buildUnitIndex(units);
+    const P = DEFAULT_GRID.periods.length;
+    const capacityPeriods = rooms.length * profile.days.length * P;
+    const teachers = Array.from({ length: profile.teachers }, (_, i) => `T${String(i + 1).padStart(2, "0")}`);
+    const requests = [];
+    const taken = [];
+    let requestedPeriods = 0;
+    let attempts = 0;
+    const maxAttempts = 5e4;
+    while (requestedPeriods < targetLoad * capacityPeriods && attempts < maxAttempts) {
+      attempts++;
+      const activity = weighted(rnd, profile.mix);
+      const participants = activity === "lecture" ? pick(rnd, fluxes) : activity === "seminar" ? pick(rnd, groups) : pick(rnd, labUnits);
+      const students2 = sizeOf(index, [participants]);
+      const needs = needsFor2(activity, students2);
+      if (!rooms.some((r) => roomMismatch(r, needs, students2) === null)) continue;
+      const length = weighted(rnd, profile.lengths);
+      if (requestedPeriods + length > targetLoad * capacityPeriods + 1) continue;
+      const date2 = pick(rnd, profile.days);
+      const start = randInt(rnd, 1, P - length + 1);
+      const atoms = atomsOf(index, [participants]);
+      const span = { date: date2, start, length };
+      const busy = taken.filter((t) => overlaps(t, span));
+      if (busy.some((t) => intersects(t.atoms, atoms))) continue;
+      const freeTeachers = teachers.filter((t) => !busy.some((b) => b.teacher === t));
+      if (!freeTeachers.length) continue;
+      const teacher = pick(rnd, freeTeachers);
+      const id = `q${String(requests.length + 1).padStart(4, "0")}`;
+      requests.push({ id, teacher, units: [participants], activity, needs, date: date2, start, length });
+      taken.push({ teacher, atoms, date: date2, start, length });
+      requestedPeriods += length;
+    }
+    return {
+      seed,
+      targetLoad,
+      instance: instance2,
+      requests,
+      capacityPeriods,
+      requestedPeriods,
+      achievedLoad: requestedPeriods / capacityPeriods
+    };
+  }
+
+  // src/demo/controller.ts
+  function load(scenario, options = {}) {
+    return {
+      scenario,
+      state: scenario.initial,
+      stepIndex: 0,
+      log: [],
+      options: { strategy: "score", maxMoves: 2, ...options },
+      history: []
+    };
+  }
+  function allocOptions(d2) {
+    return { strategy: d2.options.strategy, maxMoves: d2.options.maxMoves, alternatives: 5, split: true };
+  }
+  function push(d2, entry, state, stepIndex = d2.stepIndex) {
+    return {
+      ...d2,
+      state,
+      stepIndex,
+      log: [...d2.log, entry],
+      history: [...d2.history, { state: d2.state, stepIndex: d2.stepIndex, log: d2.log }]
+    };
+  }
+  function setOptions(d2, options) {
+    return { ...d2, options: { ...d2.options, ...options } };
+  }
+  function hasNextStep(d2) {
+    return d2.stepIndex < d2.scenario.steps.length;
+  }
+  function nextStep(d2) {
+    const step = d2.scenario.steps[d2.stepIndex];
+    if (!step) return d2;
+    if (step.kind === "request") {
+      return submitInternal(d2, step.request, `Pasul ${d2.stepIndex + 1}: cererea ${step.request.id}`, d2.stepIndex + 1);
+    }
+    return closeRoomInternal(d2, step.closure, `Pasul ${d2.stepIndex + 1}: \xEEnchiderea s\u0103lii ${step.closure.roomId}`, d2.stepIndex + 1);
+  }
+  function submitInternal(d2, request2, title, stepIndex) {
+    const decision = allocate(d2.scenario.instance, d2.state, request2, allocOptions(d2));
+    const after = decision.kind === "accepted" ? decision.state : d2.state;
+    return push(d2, { kind: "decision", title, request: request2, decision, before: d2.state, after }, after, stepIndex);
+  }
+  function submit(d2, request2) {
+    return submitInternal(d2, request2, `Cerere nou\u0103: ${request2.id}`, d2.stepIndex);
+  }
+  function closeRoomInternal(d2, closure, title, stepIndex) {
+    const report = repairClosure(d2.scenario.instance, d2.state, closure, allocOptions(d2));
+    return push(d2, { kind: "repair", title, report, before: d2.state, after: report.state }, report.state, stepIndex);
+  }
+  function closeRoom(d2, closure) {
+    return closeRoomInternal(d2, closure, `\xCEnchiderea s\u0103lii ${closure.roomId} (${closure.from} \u2013 ${closure.to})`, d2.stepIndex);
+  }
+  function applyAlternative(d2, request2, alt) {
+    if (alt.kind === "slot") {
+      const moved = { ...request2, date: alt.date, start: alt.start };
+      return submitInternal(d2, moved, `Alternativ\u0103 confirmat\u0103 pentru ${request2.id}: ${alt.date}, perechea ${alt.start}`, d2.stepIndex);
+    }
+    const [p1, p2] = alt.parts;
+    if (!p1 || !p2) return d2;
+    const opts = allocOptions(d2);
+    const first = allocate(d2.scenario.instance, d2.state, { ...request2, id: `${request2.id}#1`, start: p1.start, length: p1.length }, opts);
+    if (first.kind !== "accepted") {
+      return push(d2, { kind: "decision", title: `Ruperea blocului ${request2.id} nu mai este posibil\u0103`, request: request2, decision: first, before: d2.state, after: d2.state }, d2.state);
+    }
+    const second = allocate(d2.scenario.instance, first.state, { ...request2, id: `${request2.id}#2`, start: p2.start, length: p2.length }, opts);
+    if (second.kind !== "accepted") {
+      return push(d2, { kind: "decision", title: `Ruperea blocului ${request2.id} nu mai este posibil\u0103`, request: request2, decision: second, before: d2.state, after: d2.state }, d2.state);
+    }
+    const ids = /* @__PURE__ */ new Set([`${request2.id}#1`, `${request2.id}#2`]);
+    const state = {
+      ...second.state,
+      bookings: second.state.bookings.map((b) => ids.has(b.id) ? { ...b, blockId: request2.id, splitApproved: true } : b)
+    };
+    const decision = {
+      ...second,
+      explanation: [
+        `Blocul ${request2.id} a fost rupt cu acordul profesorului (D20): ${p1.roomId} pentru ${p1.length} perechi, ${p2.roomId} pentru ${p2.length}.`,
+        ...first.explanation,
+        ...second.explanation
+      ],
+      state
+    };
+    return push(d2, { kind: "decision", title: `Ruperea blocului ${request2.id} (cu acordul profesorului)`, request: request2, decision, before: d2.state, after: state, applied: "split" }, state);
+  }
+  function undo(d2) {
+    const prev = d2.history[d2.history.length - 1];
+    if (!prev) return d2;
+    return { ...d2, state: prev.state, stepIndex: prev.stepIndex, log: prev.log, history: d2.history.slice(0, -1) };
+  }
+  function reset(d2) {
+    return load(d2.scenario, d2.options);
+  }
+  var COMPARED = [
+    { id: "A", label: "A \xB7 prima sal\u0103 liber\u0103", strategy: "first-fit", maxMoves: 0 },
+    { id: "B", label: "B \xB7 best-fit", strategy: "best-fit", maxMoves: 0 },
+    { id: "C", label: "C \xB7 scor V0", strategy: "score", maxMoves: 0 },
+    { id: "C+M2", label: "C + mut\u0103ri (M = 2)", strategy: "score", maxMoves: 2 }
+  ];
+  function compareStrategies(d2, request2) {
+    return COMPARED.map((c) => ({
+      id: c.id,
+      label: c.label,
+      decision: allocate(d2.scenario.instance, d2.state, request2, { strategy: c.strategy, maxMoves: c.maxMoves, alternatives: 0, split: false })
+    }));
+  }
+  function generatedScenario(seed, loadLevel) {
+    const day = DEFAULT_PROFILE.days[0];
+    const w = generateWorkload(seed, loadLevel, { ...DEFAULT_PROFILE, days: [day] });
+    return {
+      id: `gen-${seed}-${loadLevel}`,
+      title: `Generat \u2014 seed ${seed}, \xEEnc\u0103rcare ${loadLevel}`,
+      summary: `O zi, ${w.instance.rooms.length} s\u0103li, ${w.requests.length} cereri sosite pe r\xE2nd (date sintetice).`,
+      expected: "Nu exist\u0103 un rezultat scris de m\xE2n\u0103; se observ\u0103 deciziile pas cu pas.",
+      instance: w.instance,
+      initial: { bookings: [], closures: [] },
+      steps: w.requests.map((request2) => ({ kind: "request", request: request2 }))
+    };
+  }
+  function requestFromBooking(b) {
+    return {
+      id: b.id,
+      teacher: b.teacher,
+      units: b.units,
+      activity: b.activity,
+      needs: b.needs,
+      date: b.date,
+      start: b.start,
+      length: b.length,
+      declaredStudents: b.students,
+      status: b.status
+    };
+  }
+
+  // src/demo/main.ts
+  var PRESETS = [...allCases, coordinatorExample];
+  var TYPE = { lab: "laborator", seminar: "seminar", auditorium: "auditoriu" };
+  var ACT = { lecture: "curs", seminar: "seminar", lab: "laborator", exam: "examen", event: "eveniment", other: "alt\u0103 activitate" };
+  var STRATEGY = { "first-fit": "prima sal\u0103 liber\u0103", "best-fit": "best-fit", score: "scor V0" };
+  var WEEKDAY = ["dum.", "luni", "mar\u021Bi", "miercuri", "joi", "vineri", "s\xE2mb."];
+  var esc = (s) => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+  var dayLabel = (d2) => `${WEEKDAY[(/* @__PURE__ */ new Date(`${d2}T12:00:00Z`)).getUTCDay()]} ${d2.slice(8, 10)}.${d2.slice(5, 7)}`;
+  var $ = (sel) => document.querySelector(sel);
+  var d = load(PRESETS[0]);
+  var date = d.scenario.instance.dates[0];
+  var comparison = null;
+  var counter = 1;
+  var form = {
+    teacher: "Prof. Demo",
+    units: [],
+    activity: "seminar",
+    date: "",
+    start: 1,
+    length: 1,
+    roomTypes: ["seminar", "auditorium", "lab"],
+    minComputers: 0,
+    projector: false,
+    fixed: false
+  };
+  function defaultRoomTypes(a) {
+    if (a === "lab" || a === "exam") return ["lab"];
+    if (a === "lecture") return ["auditorium"];
+    return ["seminar", "auditorium", "lab"];
+  }
+  function students() {
+    return form.units.length ? sizeOf(buildUnitIndex(d.scenario.instance.units), form.units) : 0;
+  }
+  function formRequest() {
+    const n = students();
+    const r = {
+      id: `cerere-${counter}`,
+      teacher: form.teacher.trim() || "Prof. Demo",
+      units: [...form.units],
+      activity: form.activity,
+      needs: {
+        roomTypes: form.roomTypes.length ? [...form.roomTypes] : defaultRoomTypes(form.activity),
+        ...form.minComputers > 0 ? { minComputers: form.minComputers } : {},
+        ...form.projector ? { projector: true } : {}
+      },
+      date: form.date,
+      start: form.start,
+      length: form.length
+    };
+    if (!n) r.declaredStudents = 1;
+    if (form.fixed && (form.activity === "exam" || form.activity === "event")) r.status = "fixed";
+    return r;
+  }
+  function syncNeedsToActivity() {
+    form.roomTypes = defaultRoomTypes(form.activity);
+    form.minComputers = form.activity === "lab" || form.activity === "exam" ? students() : 0;
+    form.projector = form.activity === "lecture";
+    if (form.activity !== "exam" && form.activity !== "event") form.fixed = false;
+  }
+  function loadScenario(sc) {
+    d = load(sc, d.options);
+    date = sc.instance.dates[0];
+    comparison = null;
+    form.date = date;
+    form.units = [];
+    form.start = 1;
+    form.length = 1;
+    syncNeedsToActivity();
+    renderForms();
+    renderView();
+  }
+  function lastMarks() {
+    const last = d.log.at(-1);
+    const added = /* @__PURE__ */ new Set();
+    const moved = /* @__PURE__ */ new Map();
+    if (!last) return { added, moved };
+    const before = new Map(last.before.bookings.map((b) => [b.id, b]));
+    for (const b of last.after.bookings) {
+      const o = before.get(b.id);
+      if (!o) added.add(b.id);
+      else if (o.roomId !== b.roomId) moved.set(b.id, o.roomId);
+    }
+    return { added, moved };
+  }
+  function gridHtml(state) {
+    const inst = d.scenario.instance;
+    const P = inst.grid.periods.length;
+    const marks = lastMarks();
+    const rooms = [...inst.rooms].sort((a, b) => a.id < b.id ? -1 : 1);
+    const head = inst.grid.periods.map((p) => `<th>${p.index}<small>${p.start}\u2013${p.end}</small></th>`).join("");
+    const rows = rooms.map((room2) => {
+      const closed = state.closures.some((c) => c.roomId === room2.id && c.from <= date && date <= c.to);
+      const label = `<th class="room">${esc(room2.id)}<small>${TYPE[room2.type]} \xB7 ${room2.capacity} loc.${room2.computers ? ` \xB7 ${room2.computers} calc.` : ""}</small></th>`;
+      if (closed) return `<tr>${label}<td class="closed" colspan="${P}">\xEEnchis\u0103</td></tr>`;
+      const day = state.bookings.filter((b) => b.roomId === room2.id && b.date === date).sort((a, b) => a.start - b.start);
+      let cells = "";
+      let p = 1;
+      for (const b of day) {
+        for (; p < b.start; p++) cells += `<td class="free" data-start="${p}" title="Liber \u2014 click pentru a completa formularul cu aceast\u0103 pereche"></td>`;
+        cells += bookingCell(b, room2.capacity, marks);
+        p = b.start + b.length;
+      }
+      for (; p <= P; p++) cells += `<td class="free" data-start="${p}" title="Liber \u2014 click pentru a completa formularul cu aceast\u0103 pereche"></td>`;
+      return `<tr>${label}${cells}</tr>`;
+    });
+    return `<table class="grid"><thead><tr><th></th>${head}</tr></thead><tbody>${rows.join("")}</tbody></table>`;
+  }
+  function bookingCell(b, capacity, marks) {
+    const cls = ["busy"];
+    let tag = "";
+    if (marks.added.has(b.id)) {
+      cls.push("added");
+      tag = '<span class="tag">nou</span>';
+    } else if (marks.moved.has(b.id)) {
+      cls.push("moved");
+      tag = `<span class="tag">din ${esc(marks.moved.get(b.id))}</span>`;
+    }
+    if (b.status === "fixed") cls.push("fixed");
+    if (b.status === "frozen") cls.push("frozen");
+    if (b.blockId) cls.push("split");
+    const status = b.status === "fixed" ? " \xB7 fixat" : b.status === "frozen" ? " \xB7 \xEEnghe\u021Bat" : "";
+    const title = `${b.id}: ${ACT[b.activity]}, ${b.units.join("+") || "\u2014"}, ${b.students} studen\u021Bi, ${b.teacher}${status}`;
+    return `<td class="${cls.join(" ")}" colspan="${b.length}" title="${esc(title)}"><b>${esc(b.id)}</b>${tag}<small>${esc(b.units.join("+") || "\u2014")} \xB7 ${b.students}/${capacity}${status}</small></td>`;
+  }
+  function altLabel(a) {
+    return a.kind === "slot" ? `${dayLabel(a.date)}, ${periodLabel(a.start, a.length)}, sala ${a.roomId}${a.moves ? ` (${a.moves} mut\u0103ri)` : ""}` : `Rupe blocul (cu acordul profesorului): ${a.parts.map((p) => `${periodLabel(p.start, p.length)} \xEEn ${p.roomId}`).join(" + ")}`;
+  }
+  function decisionHtml(dec, entryIndex, interactive) {
+    const lines = dec.explanation.map((l) => `<li>${esc(l)}</li>`).join("");
+    let alts = "";
+    if (dec.kind === "rejected" && dec.alternatives.length && interactive) {
+      alts = `<div class="alts">${dec.alternatives.map((a, i) => `<button class="alt${a.kind === "split" ? " split" : ""}" data-entry="${entryIndex}" data-alt="${i}">Aplic\u0103: ${esc(altLabel(a))}</button>`).join("")}</div>`;
+    }
+    return `<ul>${lines}</ul>${alts}`;
+  }
+  function logEntryHtml(e, i) {
+    const isLast = i === d.log.length - 1;
+    if (e.kind === "decision") {
+      const ok = e.decision.kind === "accepted";
+      return `<article class="entry ${ok ? "ok" : "no"}"><h4>${esc(e.title)} \u2014 ${ok ? `acceptat\u0103 \xEEn ${esc(e.decision.kind === "accepted" ? e.decision.booking.roomId : "")}` : "refuzat\u0103"}</h4>${decisionHtml(e.decision, i, isLast)}</article>`;
+    }
+    if (e.kind === "repair") {
+      const r = e.report;
+      const unresolved = r.unresolved.map(
+        (u, k) => `<div class="unres"><b>${esc(u.booking.id)}</b>: ${esc(u.reasons.map((x) => x.message).join("; "))}${isLast && u.alternatives.length ? `<div class="alts">${u.alternatives.map((a, j) => `<button class="alt${a.kind === "split" ? " split" : ""}" data-entry="${i}" data-unres="${k}" data-alt="${j}">Aplic\u0103: ${esc(altLabel(a))}</button>`).join("")}</div>` : ""}</div>`
+      ).join("");
+      return `<article class="entry repair"><h4>${esc(e.title)}</h4><ul>${r.explanation.map((l) => `<li>${esc(l)}</li>`).join("")}</ul>${unresolved}</article>`;
+    }
+    return `<article class="entry"><h4>${esc(e.title)}</h4><p>${esc(e.text)}</p></article>`;
+  }
+  function comparisonHtml() {
+    if (!comparison) return "";
+    const rows = comparison.rows.map((r) => {
+      const dec = r.decision;
+      const result = dec.kind === "accepted" ? `<b>${esc(dec.booking.roomId)}</b>${dec.moves.length ? ` \xB7 ${dec.moves.length} mut\u0103ri: ${esc(dec.moves.map((m) => `${m.bookingId} \u2192 ${m.to}`).join(", "))}` : ""} <small>(locuri neocupate ${dec.evaluation.excess}${dec.evaluation.rarity ? `, ${esc(dec.evaluation.notes.join("; "))}` : ""})</small>` : `<span class="no">refuz</span> <small>${esc(dec.reasons[0]?.code ?? "")}</small>`;
+      return `<tr><th>${esc(r.label)}</th><td>${result}</td></tr>`;
+    }).join("");
+    return `<section class="card"><h3>Compara\u021Bia strategiilor pentru ${esc(comparison.request.teacher)}, ${periodLabel(comparison.request.start, comparison.request.length)}, ${dayLabel(comparison.request.date)}</h3>
+  <p class="muted">Ce ar decide fiecare strategie pe starea curent\u0103. Starea nu se modific\u0103.</p><table class="cmp">${rows}</table></section>`;
+  }
+  function renderView() {
+    const sc = d.scenario;
+    $("#scenario-info").innerHTML = `<h2>${esc(sc.title)}</h2><p>${esc(sc.summary)}</p><p class="expected"><b>Rezultat a\u0219teptat (scris de m\xE2n\u0103):</b> ${esc(sc.expected)}</p>`;
+    const total = sc.steps.length;
+    $("#step-status").textContent = `Pasul ${d.stepIndex} din ${total}`;
+    $("#btn-next").disabled = !hasNextStep(d);
+    $("#btn-all").disabled = !hasNextStep(d);
+    $("#btn-undo").disabled = d.history.length === 0;
+    $("#dates").innerHTML = sc.instance.dates.map((x) => {
+      const n = d.state.bookings.filter((b) => b.date === x).length;
+      return `<button class="date${x === date ? " on" : ""}" data-date="${x}">${esc(dayLabel(x))} <small>${n}</small></button>`;
+    }).join("");
+    $("#grid").innerHTML = gridHtml(d.state);
+    $("#comparison").innerHTML = comparisonHtml();
+    $("#log").innerHTML = d.log.length ? [...d.log].map((e, i) => logEntryHtml(e, i)).reverse().join("") : '<p class="muted">Niciun pas \xEEnc\u0103. Apas\u0103 \u201EPasul urm\u0103tor\u201D sau trimite o cerere.</p>';
+    const accepted = d.state.bookings.length;
+    $("#stats").textContent = `${accepted} rezerv\u0103ri \xB7 strategie: ${STRATEGY[d.options.strategy]} \xB7 M = ${d.options.maxMoves}`;
+  }
+  function renderForms() {
+    const inst = d.scenario.instance;
+    const idx = buildUnitIndex(inst.units);
+    const depth = (id) => {
+      let k = 0;
+      let u = idx.byId.get(id);
+      while (u?.parent !== void 0 && k < 5) {
+        u = idx.byId.get(u.parent);
+        k++;
+      }
+      return k;
+    };
+    const ordered = [];
+    const visit = (id) => {
+      ordered.push(id);
+      for (const c of [...idx.children.get(id) ?? []].sort()) visit(c);
+    };
+    for (const u of [...inst.units].filter((x) => x.parent === void 0).sort((a, b) => a.id < b.id ? -1 : 1)) visit(u.id);
+    $("#f-units").innerHTML = ordered.map((id) => `<option value="${esc(id)}"${form.units.includes(id) ? " selected" : ""}>${"\xA0\xA0".repeat(depth(id))}${esc(id)} (${sizeOf(idx, [id])})</option>`).join("");
+    const dateOpts = inst.dates.map((x) => `<option value="${x}">${esc(dayLabel(x))}</option>`).join("");
+    $("#f-date").innerHTML = dateOpts;
+    $("#c-from").innerHTML = dateOpts;
+    $("#c-to").innerHTML = dateOpts;
+    $("#c-room").innerHTML = [...inst.rooms].sort((a, b) => a.id < b.id ? -1 : 1).map((r) => `<option value="${esc(r.id)}">${esc(r.id)} (${TYPE[r.type]})</option>`).join("");
+    $("#c-to").value = inst.dates[inst.dates.length - 1];
+    writeForm();
+  }
+  function writeForm() {
+    $("#f-teacher").value = form.teacher;
+    $("#f-activity").value = form.activity;
+    $("#f-date").value = form.date;
+    $("#f-start").value = String(form.start);
+    $("#f-length").value = String(form.length);
+    for (const t of ["auditorium", "seminar", "lab"]) $(`#f-type-${t}`).checked = form.roomTypes.includes(t);
+    $("#f-computers").value = String(form.minComputers);
+    $("#f-projector").checked = form.projector;
+    $("#f-fixed").checked = form.fixed;
+    $("#f-fixed").disabled = !(form.activity === "exam" || form.activity === "event");
+    $("#f-students").textContent = form.units.length ? `${students()} studen\u021Bi (din unit\u0103\u021Bile alese)` : "alege cel pu\u021Bin o unitate";
+  }
+  function act(next) {
+    d = next;
+    comparison = null;
+    const last = d.log.at(-1);
+    if (last?.kind === "decision") date = last.request.date;
+    renderView();
+  }
+  function bind() {
+    $("#sc-select").innerHTML = PRESETS.map((s, i) => `<option value="p${i}">${esc(s.title.split(" \u2014 ")[0])} \u2014 ${esc(s.title.split(" \u2014 ")[1] ?? "")}</option>`).join("") + '<option value="gen">Generat (o zi, date sintetice)</option>';
+    $("#sc-select").addEventListener("change", () => {
+      const v = $("#sc-select").value;
+      $("#gen-opts").hidden = v !== "gen";
+      if (v === "gen") loadGenerated();
+      else loadScenario(PRESETS[Number(v.slice(1))]);
+    });
+    $("#gen-load").addEventListener("click", loadGenerated);
+    $("#btn-next").addEventListener("click", () => act(nextStep(d)));
+    $("#btn-all").addEventListener("click", () => {
+      let x = d;
+      while (hasNextStep(x)) x = nextStep(x);
+      act(x);
+    });
+    $("#btn-undo").addEventListener("click", () => act(undo(d)));
+    $("#btn-reset").addEventListener("click", () => act(reset(d)));
+    $("#opt-strategy").addEventListener("change", (e) => {
+      d = setOptions(d, { strategy: e.target.value });
+      renderView();
+    });
+    $("#opt-m").addEventListener("change", (e) => {
+      d = setOptions(d, { maxMoves: Number(e.target.value) });
+      renderView();
+    });
+    $("#dates").addEventListener("click", (e) => {
+      const b = e.target.closest("button[data-date]");
+      if (!b) return;
+      date = b.dataset.date;
+      renderView();
+    });
+    $("#grid").addEventListener("click", (e) => {
+      const td = e.target.closest("td.free");
+      if (!td) return;
+      form.date = date;
+      form.start = Number(td.dataset.start);
+      writeForm();
+      $("#f-units").focus();
+    });
+    $("#f-teacher").addEventListener("input", (e) => form.teacher = e.target.value);
+    $("#f-units").addEventListener("change", (e) => {
+      form.units = [...e.target.selectedOptions].map((o) => o.value);
+      if (form.activity === "lab" || form.activity === "exam") form.minComputers = students();
+      writeForm();
+    });
+    $("#f-activity").addEventListener("change", (e) => {
+      form.activity = e.target.value;
+      syncNeedsToActivity();
+      writeForm();
+    });
+    $("#f-date").addEventListener("change", (e) => form.date = e.target.value);
+    $("#f-start").addEventListener("change", (e) => form.start = Number(e.target.value));
+    $("#f-length").addEventListener("change", (e) => form.length = Number(e.target.value));
+    for (const t of ["auditorium", "seminar", "lab"]) {
+      $(`#f-type-${t}`).addEventListener("change", (e) => {
+        const on = e.target.checked;
+        form.roomTypes = on ? [.../* @__PURE__ */ new Set([...form.roomTypes, t])] : form.roomTypes.filter((x) => x !== t);
+      });
+    }
+    $("#f-computers").addEventListener("input", (e) => form.minComputers = Math.max(0, Number(e.target.value) || 0));
+    $("#f-projector").addEventListener("change", (e) => form.projector = e.target.checked);
+    $("#f-fixed").addEventListener("change", (e) => form.fixed = e.target.checked);
+    $("#f-submit").addEventListener("click", () => {
+      if (!form.units.length) {
+        $("#f-students").textContent = "alege cel pu\u021Bin o unitate (flux, grup\u0103 sau subgrup\u0103)";
+        return;
+      }
+      const r = formRequest();
+      counter++;
+      act(submit(d, r));
+    });
+    $("#f-compare").addEventListener("click", () => {
+      if (!form.units.length) {
+        $("#f-students").textContent = "alege cel pu\u021Bin o unitate (flux, grup\u0103 sau subgrup\u0103)";
+        return;
+      }
+      const r = formRequest();
+      comparison = { request: r, rows: compareStrategies(d, r) };
+      $("#comparison").innerHTML = comparisonHtml();
+      $("#comparison").scrollIntoView({ behavior: "smooth", block: "nearest" });
+    });
+    $("#c-close").addEventListener("click", () => {
+      const roomId = $("#c-room").value;
+      let from = $("#c-from").value;
+      let to = $("#c-to").value;
+      if (from > to) [from, to] = [to, from];
+      act(closeRoom(d, { roomId, from, to, reason: "repair" }));
+    });
+    $("#log").addEventListener("click", (e) => {
+      const b = e.target.closest("button.alt");
+      if (!b) return;
+      const entry = d.log[Number(b.dataset.entry)];
+      if (!entry) return;
+      const altIndex = Number(b.dataset.alt);
+      if (entry.kind === "decision" && entry.decision.kind === "rejected") {
+        const alt = entry.decision.alternatives[altIndex];
+        if (alt) {
+          if (alt.kind === "split" && !confirm("Ruperea blocului \xEEn s\u0103li diferite cere acordul profesorului (D20). Confirmi?")) return;
+          act(applyAlternative(d, entry.request, alt));
+        }
+      } else if (entry.kind === "repair") {
+        const u = entry.report.unresolved[Number(b.dataset.unres)];
+        const alt = u?.alternatives[altIndex];
+        if (u && alt) act(applyAlternative(d, requestFromBooking(u.booking), alt));
+      }
+    });
+  }
+  function loadGenerated() {
+    const seed = Math.max(1, Math.floor(Number($("#gen-seed").value) || 1));
+    const level = Number($("#gen-level").value);
+    loadScenario(generatedScenario(seed, level));
+  }
+  bind();
+  loadScenario(PRESETS[0]);
+})();
+</script></body></html>
