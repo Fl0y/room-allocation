@@ -49,11 +49,11 @@ Se bifează doar sarcinile efectiv finalizate și verificate. Structura feliilor
 - [x] 2c. Demo interactiv **fără bază de date**: grila săli × perechi, formular de cerere, decizia și explicația, rularea unui scenariu pas cu pas. Prezentat explicit ca demonstrație, nu ca produs
 
 **În paralel — analiza literaturii (P14)**
-- [ ] `literature.md`: UniTime, ITC 2019, Phillips et al., Carter & Tovey, Müller et al., online matching cu înlocuiri; poziționarea contribuției (adaptare + evaluare)
+- [x] `literature.md` (versiunea 1, 14.11.2026; de aprofundat lista din §9): UniTime, ITC 2019, Phillips et al., Carter & Tovey, Müller et al., online matching cu înlocuiri; poziționarea contribuției (adaptare + evaluare)
 
-**Sfârșitul V0:** prezentare pentru coordonator (cazurile 1–5, exemplul din `coordinator-feedback.md`, primele simulări); decizia despre forma V1.
+**Sfârșitul V0:** ✅ prezentat coordonatorului de autor, proiect acceptat (14.11.2026); ideile noi: P16, P17. Conținutul prezentării: (cazurile 1–5, exemplul din `coordinator-feedback.md`, primele simulări); decizia despre forma V1.
 
-### V1 — versiunea matură (ordine propusă, de revizuit după V0)
+### V1 — versiunea matură (ordine propusă, de revizuit după V0; de reconsiderat după O14–O20 și P16, P17)
 
 1. **Back-end:** PostgreSQL cu constrângeri (sală, profesor, unitate atomică pe slot), tranzacții cu lacăt, mutări atomice, idempotență; teste de integrare pe BD reală, teste de concurență, teste de mutație (moștenire TableFlow)
 2. **API + dashboard de rezervare** pentru profesori, refolosind grila din V0

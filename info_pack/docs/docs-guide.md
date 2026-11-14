@@ -21,6 +21,7 @@ Pentru agenții AI și pentru autor: în ce ordine se citesc documentele ca să 
 | Planifici, implementezi sau bifezi o sarcină | `plan.md` (etapa curentă și criteriile ei de acceptare) |
 | Delegi la sub-agenți sau alegi modelul | `agent-rules.md` |
 | Interpretezi, prezinți sau compari rezultate | `results.md` |
+| Formulezi contribuția, compari cu alte lucrări, alegi metode | `literature.md` |
 | Lucrezi pe algoritm, constrângeri sau cazuri | `concept.md` — **doar secțiunile relevante** (§3 model și constrângeri, §5 algoritm, §6 cazuri, §7 cercetare) |
 | Pregătești materiale pentru coordonator | `coordinator-feedback.md` |
 | Configurezi mediul, Docker, PostgreSQL, concurența (V1) | `tableflow-legacy.md` |
@@ -67,7 +68,7 @@ Tipuri: **viu** — se actualizează odată cu proiectul; **regulă** — se sch
 | `coordinator-feedback.md` | referință | La fiecare feedback nou al coordonatorului | Secțiune nouă datată |
 | `topic-discussions.md` | referință | Când se schimbă regulile discuțiilor | Editare punctuală |
 | `tableflow-legacy.md` | arhivă | Nu se modifică | — |
-| `literature.md` (planificat, P14) | viu | În timpul analizei literaturii | Pe surse și teme |
+| `literature.md` | viu | La fiecare aprofundare a literaturii (P14) | Pe teme; bibliografia numerotată la final; lucrările necitite integral marcate ◐ |
 | `README.md` (rădăcină) | viu | Când apar comenzi, foldere sau dependențe noi | Editare punctuală |
 
 Reguli comune:

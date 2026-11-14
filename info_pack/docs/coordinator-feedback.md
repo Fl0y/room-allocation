@@ -87,3 +87,33 @@ Prioritatea proiectului este algoritmul (D14), deci integrarea se descrie ca arh
 - Phillips et al. (2017), *Integer programming for minimal perturbation problems in university course timetabling*, Annals of Operations Research 252, 283–304; lucrări înrudite ale aceluiași grup despre alocarea sălilor prin programare în numere întregi.
 - Carter & Tovey (1992), complexitatea alocării sălilor; Müller, Rudová, Barták (2005), problema perturbării minime.
 - Bernstein, Holm, Rotenberg (2019): potrivire bipartită online cu înlocuiri (fundament teoretic pentru mutări).
+
+---
+
+## 4. A doua discuție cu coordonatorul (raportată de autor la 14.11.2026)
+
+**Context:** autorul a prezentat coordonatorului demo-ul V0 și materialele; **proiectul a fost acceptat**. Din discuție au rezultat două idei pentru versiunea următoare. Decizia despre forma V1 se ia mai târziu, după clarificarea obiectivelor (autor, 14.11.2026). Statutul: propuneri P16, P17 și întrebări O14–O20 în `decisions.md`.
+
+### 4.1 Date reale despre structura universității (P16)
+
+**Ideea:** versiunea următoare să folosească structura reală: numărul, denumirea și configurația sălilor (cabinetelor), profesorii.
+
+**Analiză:**
+- Schimbă D08 („nu se pornește de la un orar real”), D24 (sintetice în V0) și regula din `CLAUDE.md` („Folosește date fictive”). Nu se aplică până nu decide autorul.
+- **Sălile, grupele și mărimile lor nu sunt date personale**; numele profesorilor sunt (Legea nr. 133/2011, `literature.md` §8). Propunere: structura reală se folosește, profesorii se **pseudonimizează** în repository (de ex. `P-017`), iar corespondența, dacă e necesară, rămâne în afara Git.
+- Datele reale nu înlocuiesc complet datele sintetice: experimentele au nevoie de multe instanțe reproductibile (seed-uri) și de niveluri de încărcare controlate. Propunere: **structura reală** (săli, grupe) + **orarul real ca rezervări existente** (scenariul de pilot P15) + **cereri suplimentare** sintetice pentru experimente; ITC 2019 rămâne validarea externă (D24).
+- Necesită: sursa datelor, permisiunea, formatul (de exemplu un export CSV/Excel), o etapă de import și de validare (capacități, tipuri, echipamente — P13).
+
+### 4.2 Reducerea „ferestrelor” din orarul studenților (P17)
+
+**Ideea:** dacă profesorul indică un interval de timp (P11) — la o cerere sau pentru planificarea semestrului — algoritmul să aleagă perechea astfel încât grupa să nu aibă ore libere între perechi (de exemplu, să nu aștepte între perechea 1 și perechea 4), sau cel puțin să aibă cât mai puține. Criteriul este în favoarea studenților și se evaluează pe ordinea perechilor fiecărei grupe.
+
+**Analiză:**
+1. **Ferestrele se decid la alegerea orei, nu a sălii.** Motorul V0 primește perechea fixată și alege doar sala, deci nu poate reduce ferestrele. Ideea cere ca cererea să aibă mai multe perechi acceptabile (intervalul profesorului, P11) și ca motorul să aleagă și perechea. Aceasta este o temă cunoscută a orarului complet (*curriculum compactness*, *Limit Idle Times*, `MaxBreaks`; `literature.md` §6).
+2. **Definiția măsurii (de stabilit, O17).** Propunere: pentru fiecare **unitate atomică** (subgrupa sau grupa fără subgrupe, D21) și fiecare zi, fereastra = perechile libere dintre prima și ultima activitate a zilei; activitățile fluxului și ale grupei contează pentru toate subgrupele lor. Indicatorul total = suma ferestrelor, eventual ponderată cu numărul de studenți. Subtilitate: dacă subgrupele au laborator la perechi diferite (subgrupa 1 la perechea 2, subgrupa 2 la perechea 3) și grupa are seminar la 1 și 4, fiecare subgrupă are o fereastră, deși grupa „în ansamblu” nu pare să aibă.
+3. **Două variante, cu scop foarte diferit (O19):**
+   - **(a) Online, per cerere** — extensie naturală a motorului: cererea vine cu un interval (de exemplu, perechile 2–5 marți); pentru fiecare start posibil se verifică persoanele, se calculează variația ferestrelor pentru unitățile afectate, apoi se caută sala (cu ≤ M mutări, ca acum). Exemplu: grupa are deja perechile 1 și 2, profesorul acceptă 3–5 → perechea 3 (nicio fereastră nouă) e preferată perechii 5 (două ferestre). Costul de calcul crește doar cu numărul de starturi posibile (cel mult 7).
+   - **(b) Planificarea semestrului din intervalele profesorilor** — înseamnă construirea orarului complet (problemă NP-dificilă, literatura CB-CTT / ITC); este în afara scopului actual (P01) și ar necesita și recurența (D16) și un solver (P08). Poate fi tratată ca **comparație**: decizia online (a) față de soluția offline exactă pe instanțe mici (Î3).
+4. **Locul criteriului în „cea mai bună variantă” (O18).** Propunere de discutat: valid → ferestrele studenților → mutări → scorul sălii (raritate, excedent, fragmentare). Alternativ: mutări înaintea ferestrelor. Ambele se pot compara în simulator.
+5. **Ce rămâne neschimbat:** orele rezervărilor existente nu se mută niciodată automat (mutările schimbă doar sala, D18); ferestrele profesorilor sunt cel mult un criteriu secundar (O20), conform ideii coordonatorului (în favoarea studenților).
+6. **Primul pas, înaintea oricărei schimbări de algoritm:** adăugarea indicatorului „ferestre pe unitate atomică” în simulator și în raport, ca situația de bază să fie măsurată.

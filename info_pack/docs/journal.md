@@ -23,6 +23,17 @@ Reguli (detalii în `docs-guide.md`):
 
 ---
 
+## 2026-11-14 — V0 prezentat; analiza literaturii (P14); ideile noi ale coordonatorului
+
+- Context / autorizare: autorul a făcut commit-ul restructurării; a autorizat analiza literaturii. Autorul a prezentat coordonatorului demo-ul V0 și materialele; **proiectul a fost acceptat**. Din discuție: date reale despre structura universității și reducerea ferestrelor din orarul studenților. Decizia despre V1: mai târziu, după clarificarea obiectivelor.
+- Implementat: `literature.md` (versiunea 1: clasificarea problemei, complexitate, UniTime și ITC 2019, perturbarea minimă, analogii, compactarea orarului, utilizarea spațiului, date reale și protecția datelor, poziționare, 26 de surse); `coordinator-feedback.md` §4 (analiza celor două idei); `decisions.md`: propuneri P16, P17 și întrebări O14–O20.
+- Constatări principale din literatură: alocarea sălilor pe o perioadă este polinomială (potrivire bipartită), legăturile între perioade (stabilitatea sălii) o îngreunează, dar stabilitatea pe perioade contigue poate rămâne tratabilă — afirmația din concept §4.2 despre H7 trebuie formulată prudent; perturbarea minimă și compactarea sunt teme cunoscute; analogul cel mai apropiat al mutărilor este *room committing* din hoteluri (RoomTetris); contribuția plauzibilă rămâne combinația online + explicații + bloc + raritate + mutări limitate, evaluată reproductibil.
+- Verificat: fiecare sursă din `literature.md` provine din rezultatele căutării (lucrările necitite integral sunt marcate ◐); detaliile bibliografice neconfirmate au fost eliminate.
+- Limite: prima trecere, pe rezumate și fragmente; lista de citit integral în `literature.md` §9.
+- Pasul următor: răspunsurile autorului la O14–O20; apoi decizia despre V1.
+
+---
+
 ## 2026-11-14 — Denumiri în engleză pentru documentele rămase
 
 - Context / autorizare: cerută de autor.

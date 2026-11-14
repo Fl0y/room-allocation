@@ -1,6 +1,6 @@
 # Registrul deciziilor — RoomAllocation
 
-Actualizat: 8 noiembrie 2026 (a doua actualizare). Registrul arată statutul afirmațiilor; nu conține rezultate de implementare (vezi `results.md`) și nici istoric (vezi `journal.md`).
+Actualizat: 14 noiembrie 2026. Registrul arată statutul afirmațiilor; nu conține rezultate de implementare (vezi `results.md`) și nici istoric (vezi `journal.md`).
 
 ## Confirmate de autor
 
@@ -61,11 +61,26 @@ Propunerile din concept, confirmate de autor cu precizările de mai jos. Detalii
 | P14 | Analiza literaturii ca sarcină explicită, în paralel cu V0 și înaintea oricărei afirmații de contribuție: UniTime, ITC 2019, Phillips et al., Carter & Tovey, Müller et al., online matching cu înlocuiri | Profunzimea; contribuția se formulează ca adaptare + evaluare până la concluziile analizei |
 | P15 | Integrarea în ASEM ca scenariu descris (actori, interfețe, pilot pentru rezervări suplimentare și reparații peste orarul existent); se implementează doar importul CSV și exportul iCalendar | Confirmarea scenariului |
 
+## Propuneri noi (14.11.2026, din a doua discuție cu coordonatorul) — neaprobate
+
+Analiza: `coordinator-feedback.md` §4 și `literature.md` §6, §8. Decizia despre V1 se ia după clarificarea întrebărilor O14–O20 (autor, 14.11.2026).
+
+| ID | Propunere | Ce trebuie decis |
+|---|---|---|
+| P16 | Versiunea următoare folosește **structura reală a universității**: săli (denumire, capacitate, tip, echipamente), grupe și mărimile lor, orarul existent ca rezervări existente; profesorii **pseudonimizați** în repository; datele sintetice rămân pentru experimentele reproductibile, iar ITC 2019 pentru validarea externă | Modifică D08, D24 și regula „date fictive” din `CLAUDE.md`; O14–O16 |
+| P17 | **Reducerea ferestrelor din orarul studenților:** când cererea are un interval de perechi acceptabile (P11), motorul alege și perechea, minimizând ferestrele unităților atomice afectate; întâi varianta online (per cerere), planificarea semestrială doar ca extensie sau comparație | Definiția ferestrei (O17), locul în ierarhia D18 (O18), scopul (O19), profesorii (O20); primul pas: indicatorul „ferestre” în simulator |
+
 ## Deschise — de clarificat
 
 | ID | Întrebare |
 |---|---|
-| — | Nicio întrebare deschisă la 08.11.2026 |
+| O14 | Sursa datelor reale (P16): ce date sunt disponibile (săli, echipamente, grupe și mărimi, orarul existent, profesori), de la cine, în ce format și cu ce permisiune? |
+| O15 | Profesorii în datele reale: pseudonimizați (propunere) sau nume reale? |
+| O16 | Datele reale înlocuiesc datele sintetice sau le completează? Propunere: structură reală + orarul real ca rezervări existente + cereri suplimentare sintetice; ITC 2019 ca validare |
+| O17 | Definiția „ferestrei” (P17): pe unitate atomică și zi, perechile libere dintre prima și ultima activitate? Ponderată cu numărul de studenți? Este tolerată o fereastră (de exemplu, pentru masă)? |
+| O18 | Locul ferestrelor în ierarhia „celei mai bune variante” (D18): înaintea mutărilor sau după ele? Înaintea rarității sălii? |
+| O19 | Scopul P17: (a) doar online, per cerere cu interval; (b) și planificarea semestrială din intervalele profesorilor (orar complet, în afara P01, cere recurența D16 și un solver P08)? |
+| O20 | Ferestrele profesorilor: ignorate sau criteriu secundar? |
 
 ## Istoric
 
