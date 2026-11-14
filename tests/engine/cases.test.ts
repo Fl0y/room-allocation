@@ -162,7 +162,7 @@ describe('Cazul 5 — reparare după închiderea sălii', () => {
   });
 });
 
-describe('Exemplul pentru coordonator (calculat de mână în feedback-coordonator.md)', () => {
+describe('Exemplul pentru coordonator (calculat de mână în coordinator-feedback.md)', () => {
   const rooms = (opts: Parameters<typeof runScenario>[1]) =>
     runScenario(coordinatorExample, opts).map((s) => (s.decision!.kind === 'accepted' ? s.decision!.booking.roomId : 'refuz'));
 

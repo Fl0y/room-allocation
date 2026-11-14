@@ -23,6 +23,13 @@ Reguli (detalii în `docs-guide.md`):
 
 ---
 
+## 2026-11-14 — Denumiri în engleză pentru documentele rămase
+
+- Context / autorizare: cerută de autor.
+- Implementat: redenumiri în `info_pack/docs/`: `mostenire-tableflow.md` → `tableflow-legacy.md`, `feedback-coordonator.md` → `coordinator-feedback.md`, `discutii-tematice.md` → `topic-discussions.md`. Trimiterile actualizate în toate documentele active și în două comentarii din cod (`src/scenarios/cases.ts`, `tests/engine/cases.test.ts`). Conținutul fișierelor nu s-a schimbat.
+- Notă: intrările mai vechi ale jurnalului folosesc numele vechi; corespondența este cea de mai sus.
+- Pasul următor: analiza literaturii (P14, `literature.md`).
+
 ## 2026-11-14 — Restructurarea documentației
 
 - Context / autorizare: cerută de autor.

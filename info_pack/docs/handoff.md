@@ -19,7 +19,7 @@
 ## Pasul următor
 
 1. **Analiza literaturii (P14)** în `literature.md`: UniTime, ITC 2019, Phillips et al., Carter & Tovey, Müller et al., potrivirea online cu înlocuiri; poziționarea contribuției ca adaptare + evaluare. Nivel: greu (`agent-rules.md`).
-2. **Prezentarea V0 pentru coordonator:** cazurile 1–5, exemplul din `feedback-coordonator.md`, simularea preliminară, demo-ul.
+2. **Prezentarea V0 pentru coordonator:** cazurile 1–5, exemplul din `coordinator-feedback.md`, simularea preliminară, demo-ul.
 3. **Decizia despre forma V1**, după prezentare (`plan.md` §3).
 
 Nu se începe implementarea fără autorizarea explicită a autorului.

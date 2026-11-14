@@ -32,7 +32,7 @@ Sursa: `npm test` (`tests/engine/cases.test.ts`) și `npm run report` (`out/case
 | 3. Auditoriul ocupat de o grupă mică | Seminarul → S-12, fluxul (110) în A-1 (1 mutare); locuri neocupate 95 → 15 | Da |
 | 4. Conflict de persoane | `GROUP_BUSY`, cu cele două laboratoare ale subgrupelor; 5 alternative valide în aceeași zi (perechile 1, 4–7) | Da |
 | 5. Sală închisă (date sintetice construite pentru caz) | 9 rezervări afectate: 7 la aceeași oră fără alte mutări, 1 (examenul, fixare anulată D19) cu o mutare, 1 (blocul b4) nerezolvată cu 5 alternative propuse; 0 încălcări | Da (rezultatul așteptat era calitativ) |
-| Exemplul pentru coordonator (`feedback-coordonator.md` §2.1) | A 4/5 (r4 refuzat), B 4/5 (r2 refuzat), C 5/5, B + M = 1 5/5 cu o mutare | Identic cu calculul de mână |
+| Exemplul pentru coordonator (`coordinator-feedback.md` §2.1) | A 4/5 (r4 refuzat), B 4/5 (r2 refuzat), C 5/5, B + M = 1 5/5 cu o mutare | Identic cu calculul de mână |
 
 Proprietăți verificate: motorul ⇔ oracolul exhaustiv pe 2000 de instanțe aleatoare mici × M = 0, 1, 2 (existența planului și numărul minim de mutări); determinism la amestecarea sălilor, rezervărilor și datelor.
 

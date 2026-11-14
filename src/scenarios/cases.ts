@@ -1,5 +1,5 @@
 // Cele cinci cazuri conflictuale din concept §6, ca secvențe de evenimente, plus exemplul
-// din feedback-coordonator.md. Date sintetice (D08). Notație: L = laborator, S = seminar, A = auditoriu.
+// din coordinator-feedback.md. Date sintetice (D08). Notație: L = laborator, S = seminar, A = auditoriu.
 
 import { DEFAULT_GRID } from '../engine/grid.ts';
 import type { Instance, Unit } from '../engine/types.ts';
@@ -192,7 +192,7 @@ export const case5: Scenario = {
   ],
 };
 
-// ── Exemplul pentru coordonator (feedback-coordonator.md §2.1) ─────────────
+// ── Exemplul pentru coordonator (coordinator-feedback.md §2.1) ─────────────
 export const coordinatorExample: Scenario = {
   id: 'coordinator',
   title: 'Exemplul pentru coordonator — cinci cereri, patru strategii',

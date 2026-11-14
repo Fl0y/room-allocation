@@ -34,7 +34,7 @@ Se bifează doar sarcinile efectiv finalizate și verificate. Structura feliilor
 
 **Etapa 0 — documente și mediu** (fără cod de aplicație)
 - [x] Preluarea proiectului, analiza critică, deciziile D01–D24, P01–P15 (06–08.11.2026)
-- [x] Răspunsuri la feedback-ul coordonatorului (`feedback-coordonator.md`)
+- [x] Răspunsuri la feedback-ul coordonatorului (`coordinator-feedback.md`)
 - [x] Verificarea mediului pe Mac (D27); versiuni fixate: TypeScript 7.0.2, Vitest 5.1.0, @types/node 24.19.2
 - [x] Repository Git privat; structura minimă a folderului (08.11.2026, creat de autor)
 
@@ -51,7 +51,7 @@ Se bifează doar sarcinile efectiv finalizate și verificate. Structura feliilor
 **În paralel — analiza literaturii (P14)**
 - [ ] `literature.md`: UniTime, ITC 2019, Phillips et al., Carter & Tovey, Müller et al., online matching cu înlocuiri; poziționarea contribuției (adaptare + evaluare)
 
-**Sfârșitul V0:** prezentare pentru coordonator (cazurile 1–5, exemplul din `feedback-coordonator.md`, primele simulări); decizia despre forma V1.
+**Sfârșitul V0:** prezentare pentru coordonator (cazurile 1–5, exemplul din `coordinator-feedback.md`, primele simulări); decizia despre forma V1.
 
 ### V1 — versiunea matură (ordine propusă, de revizuit după V0)
 

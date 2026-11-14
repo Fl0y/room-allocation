@@ -22,9 +22,9 @@ Pentru agenții AI și pentru autor: în ce ordine se citesc documentele ca să 
 | Delegi la sub-agenți sau alegi modelul | `agent-rules.md` |
 | Interpretezi, prezinți sau compari rezultate | `results.md` |
 | Lucrezi pe algoritm, constrângeri sau cazuri | `concept.md` — **doar secțiunile relevante** (§3 model și constrângeri, §5 algoritm, §6 cazuri, §7 cercetare) |
-| Pregătești materiale pentru coordonator | `feedback-coordonator.md` |
-| Configurezi mediul, Docker, PostgreSQL, concurența (V1) | `mostenire-tableflow.md` |
-| Pornești o discuție tematică | `discutii-tematice.md` |
+| Pregătești materiale pentru coordonator | `coordinator-feedback.md` |
+| Configurezi mediul, Docker, PostgreSQL, concurența (V1) | `tableflow-legacy.md` |
+| Pornești o discuție tematică | `topic-discussions.md` |
 | Rulezi comenzi sau cauți în cod | `README.md` (rădăcină): comenzi și structura codului |
 
 ### Cum se citește
@@ -64,9 +64,9 @@ Tipuri: **viu** — se actualizează odată cu proiectul; **regulă** — se sch
 | `plan.md` | viu | Bifă: după ce sarcina e **verificată** (inclusiv pe Mac, când e cazul). Structura: doar cu acordul autorului | Editare punctuală; o singură copie activă |
 | `results.md` | viu | După rulări de teste/simulări/experimente care produc cifre noi | Se înlocuiește secțiunea respectivă, cu sursa (comandă, seed-uri, commit) |
 | `concept.md` | referință | Doar pentru alinierea cu deciziile, cu versiunea notată în antet | Editare punctuală; nu e jurnal |
-| `feedback-coordonator.md` | referință | La fiecare feedback nou al coordonatorului | Secțiune nouă datată |
-| `discutii-tematice.md` | referință | Când se schimbă regulile discuțiilor | Editare punctuală |
-| `mostenire-tableflow.md` | arhivă | Nu se modifică | — |
+| `coordinator-feedback.md` | referință | La fiecare feedback nou al coordonatorului | Secțiune nouă datată |
+| `topic-discussions.md` | referință | Când se schimbă regulile discuțiilor | Editare punctuală |
+| `tableflow-legacy.md` | arhivă | Nu se modifică | — |
 | `literature.md` (planificat, P14) | viu | În timpul analizei literaturii | Pe surse și teme |
 | `README.md` (rădăcină) | viu | Când apar comenzi, foldere sau dependențe noi | Editare punctuală |
 
