@@ -16,7 +16,7 @@ Reguli:
 |---|---|
 | Motorul respectă constrângerile H1–H8 și găsește numărul minim de mutări | **Verificat** (teste automate, oracol exhaustiv pe instanțe mici) — §2 |
 | Î1. Cât contează scorul cu raritate față de first-fit / best-fit | **Preliminar** — §3 |
-| Î2. Valoarea mutărilor | **Preliminar** — §3 |
+| Î2. Valoarea mutărilor | **Preliminar** — §3; câte mutări merită (M = 0–4): §3.5 |
 | Î3. Decizia online față de optimul global | Nestudiat (V1, solver exact P08) |
 | Î4. Costul în timp | **Preliminar** (timpi pe o singură mașină) — §3 |
 | Validarea pe date reale (ITC 2019, D24) | Nestudiat (V1) |
@@ -95,3 +95,36 @@ Valorile pentru 0,7 și 0,85, C+M1 și intervalele de încredere: `out/simulatio
 - Fără orizont înghețat (toate rezervările mutabile) și fără recurență; ordinea de sosire aleatoare.
 - Fără calibrare pe seed-uri separate (scorul V0 nu are ponderi) și fără comparație cu optimul exact.
 - Timpii depind de mașină.
+
+### 3.5 Explorare: câte mutări merită (M = 0–4) — preliminar
+
+**Întrebarea:** merită permise mai mult de 2 mutări per cerere (căutare mai adâncă)? Legată de Î2.
+
+**Sursa:** rulare exploratorie în mediul lui Claude, la 2026-11-14, cu codul din commit-ul `0ce3c53`, prin `runOnce` din `src/sim/simulate.ts`, strategia C (scor V0) cu M = 0…4; seed-uri 1001–1015 (15); încărcări 0,85 și 0,95; profilul implicit al generatorului. Scriptul nu este în repository; codul lui:
+
+```ts
+import { generateWorkload } from './src/sim/generator.ts';
+import { runOnce } from './src/sim/simulate.ts';
+for (const load of [0.85, 0.95])
+  for (let seed = 1001; seed <= 1015; seed++) {
+    const w = generateWorkload(seed, load);
+    for (const M of [0, 1, 2, 3, 4])
+      runOnce(w, { id: `C+M${M}`, label: `C+M${M}`, strategy: 'score', maxMoves: M }); // se fac mediile pe seed-uri
+  }
+```
+
+**Rezultate** (medii pe 15 seed-uri; fără intervale de încredere):
+
+| M | Perechi acceptate, încărcare 0,85 | Perechi acceptate, încărcare 0,95 | Rezervări mutate (0,95) | Timp / cerere, p95 (0,95) |
+|---|---|---|---|---|
+| 0 | 93,38% | 90,14% | 0% | 0,14 ms |
+| 1 | 94,15% | 91,11% | 1,60% | 0,35 ms |
+| 2 | 94,41% | 91,55% | 2,65% | 1,59 ms |
+| 3 | 94,48% | 91,61% | 2,97% | 10,77 ms |
+| 4 | 94,49% | 91,62% | 3,01% | 78,55 ms |
+
+**Observații (preliminare):**
+- Câștigul scade foarte repede: la 0,95, prima mutare aduce +0,97 p.p., a doua +0,44, a treia +0,06, a patra +0,01.
+- Timpul crește de aproximativ 7 ori cu fiecare mutare permisă în plus (creștere exponențială a numărului de variante).
+- Pe acest generator, M = 2 este un compromis bun; M ≥ 3 nu se justifică pentru modul online. Concordă cu limita de două activități afectate din UniTime (`literature.md` §3) și cu rezultatul teoretic despre numărul mic de înlocuiri necesare în medie (`literature.md` §2).
+- Limita principală a modului online este necunoașterea cererilor viitoare, nu adâncimea căutării; câștiguri mai mari se așteaptă de la prevenire (scorul) și de la reoptimizarea periodică (de testat în V1).

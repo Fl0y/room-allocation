@@ -53,7 +53,7 @@ Se bifează doar sarcinile efectiv finalizate și verificate. Structura feliilor
 
 **Sfârșitul V0:** ✅ prezentat coordonatorului de autor, proiect acceptat (14.11.2026); ideile noi: P16, P17. Conținutul prezentării: (cazurile 1–5, exemplul din `coordinator-feedback.md`, primele simulări); decizia despre forma V1.
 
-### V1 — versiunea matură (ordine propusă, de revizuit după V0; de reconsiderat după O14–O20 și P16, P17)
+### V1 — versiunea matură (ordine propusă inițial; se revizuiește în versiunea 2 a planului, ținând cont de D28 și D29)
 
 1. **Back-end:** PostgreSQL cu constrângeri (sală, profesor, unitate atomică pe slot), tranzacții cu lacăt, mutări atomice, idempotență; teste de integrare pe BD reală, teste de concurență, teste de mutație (moștenire TableFlow)
 2. **API + dashboard de rezervare** pentru profesori, refolosind grila din V0

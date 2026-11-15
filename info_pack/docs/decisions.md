@@ -13,7 +13,7 @@ Actualizat: 14 noiembrie 2026. Registrul arată statutul afirmațiilor; nu conț
 | D05 | Criteriile de rezervare includ: data, ora/perechea, capacitatea, tipul de sală (laborator, auditoriu sau tipuri similare) | Lista minimă de echipamente: P13 |
 | D06 | Perechile consecutive ale aceluiași profesor, cerute împreună, rămân în **aceeași sală** | Coeziunea blocului; vezi H7 în concept și D20 |
 | D07 | La conflicte, algoritmul caută varianta fără conflicte; dacă nu există, **cea mai bună variantă posibilă** | Definiția: D18 |
-| D08 | **Nu** se pornește de la un orar real cu date fixe (date, ore, grupe, profesori); se folosesc date sintetice | 06.11.2026 |
+| D08 | **Nu** se pornește de la un orar real cu date fixe (date, ore, grupe, profesori); se folosesc date sintetice | 06.11.2026. Pentru versiunea următoare: **modificat de D28** (14.11.2026) |
 | D09 | Componentele: algoritmul (motorul), dashboard-ul de rezervare și panoul/orarul rezervărilor (grupă, sală, oră, pereche, profesor). **Ordinea de dezvoltare nu este impusă**: se alege una eficientă, care arată vizual devreme cum funcționează algoritmul și acoperă și back-end-ul | 06.11.2026 |
 | D10 | Numele proiectului: **RoomAllocation**; folderul rădăcină: `room-allocation/` | 08.11.2026; închide O07 |
 | D11 | **Deplasarea nu intră în scop:** schimbarea clădirii, posibilitatea și timpul de deplasare între clădiri nu se modelează și nu intră în scor | 08.11.2026; motiv: îngreunează soluționarea fără beneficiu proporțional. Elimină S4 și componenta „deplasare” din scor; închide O05 |
@@ -29,10 +29,12 @@ Actualizat: 14 noiembrie 2026. Registrul arată statutul afirmațiilor; nu conț
 | D21 | **Fluxuri, grupe, subgrupe:** (1) ierarhie pe trei niveluri flux → grupă → subgrupă, cu o singură împărțire pe grupă; grupele fără subgrupe sunt permise; (2) numărul de studenți se declară doar pe unitatea cea mai mică, restul se calculează; (3) numărul de studenți al cererii se deduce din unitățile selectate; excepții declarate (recuperare parțială, activitate fără grupă), ≤ mărimea unităților; (4) H3 se verifică prin unități atomice (subgrupa sau grupa fără subgrupe), în motor și în baza de date; (5) împărțirile multiple ale unei grupe, cursurile opționale și grupele mixte rămân în afara primei versiuni | 08.11.2026; închide O06. Consecință: subgrupele în paralel sunt cereri separate (două săli, doi profesori) |
 | D22 | **Criteriul modului lot:** se maximizează întâi numărul de **perechi** satisfăcute, iar la egalitate numărul de **cereri** satisfăcute; urmează ordinea din D18 (blocuri rupte, mutări, scor). Numărul de cereri și perechi × studenți se raportează ca indicatori în experimente | 08.11.2026; închide O10. Motiv: numărul de cereri dezavantajează blocurile, iar perechi × studenți dezavantajează grupele mici (S7) |
 | D23 | **Întâi o versiune simplă (V0) cu algoritmul funcțional** (cel puțin partea principală), ca funcționarea și rezultatele să fie vizibile devreme; apoi se decide forma versiunii mature | 08.11.2026; după feedback-ul coordonatorului (`coordinator-feedback.md`). Conținutul exact al V0 se fixează în `plan.md` |
-| D24 | **Datele:** V0 folosește date sintetice (generator cu seed, calibrat pe structura unei facultăți); instanțele reale anonimizate ITC 2019, adaptate la alocarea sălilor cu orele fixate, servesc ca validare ulterioară | 08.11.2026; închide O13; completează D08 |
+| D24 | **Datele:** V0 folosește date sintetice (generator cu seed, calibrat pe structura unei facultăți); instanțele reale anonimizate ITC 2019, adaptate la alocarea sălilor cu orele fixate, servesc ca validare ulterioară | 08.11.2026; închide O13; completează D08. Completat de D28 (14.11.2026) |
 | D25 | **Scorul în V0 este lexicografic:** raritate, apoi excedent, apoi fragmentare simplă (ferestre izolate de o pereche); fără ponderi de calibrat. Varianta ponderată și fragmentarea ponderată de cerere (P03) se compară în V1 | 08.11.2026 |
 | D26 | **Demo-ul V0 este static, fără framework** (pagină HTML + motorul împachetat); Next.js intră abia în V1 (P07) | 08.11.2026 |
 | D27 | Mediul pe Mac (verificat de autor, 08.11.2026): Node 24.22.1, Docker 29.9.2, Git 2.51.0. V0 rulează local cu Node, fără containere; Docker și PostgreSQL intră în V1 | 08.11.2026 |
+| D28 | **Date reale despre structura universității** (închide O14–O16; confirmă P16): versiunea următoare folosește săli (denumire, capacitate, tip, echipamente), grupe și mărimile lor, profesorii (număr, ce discipline predau și la ce grupe) și orarul real ca rezervări existente; **profesorii au nume fictive**; cererile suplimentare pentru experimente rămân sintetice (seed); ITC 2019 rămâne validarea externă (D24). Datele originale care conțin nume reale nu intră în Git și nici în documente; importul le înlocuiește cu nume fictive | 14.11.2026. Modifică D08 și regula „date fictive” din `CLAUDE.md`. Disponibile, după autor: săli, capacități, echipamente, grupe și mărimi, orarul existent, profesori și repartizarea lor; orarul real e util și pentru planificarea semestrului (varianta b) |
+| D29 | **Reducerea ferestrelor din orarul studenților** (închide O17–O20; confirmă P17): fereastra = pentru fiecare **subgrupă** (unitate atomică, D21) și zi, perechile libere dintre prima și ultima activitate; **fără excepție pentru pauza de masă**; ferestrele profesorilor se **ignoră**. În ierarhia D18, ferestrele contează **mai puțin decât mutările și decât protejarea sălilor rare** (prioritate: cât mai multe cereri acceptate). Varianta **(a) online, per cerere cu interval (P11), este principală**; varianta **(b) planificarea semestrului** rămâne pentru o versiune ulterioară, separat sau împreună cu (a), cu comparație a eficienței | 14.11.2026. Ordinea exactă față de excedent și fragmentare: de stabilit la planificarea V1 (propunere: mutări → raritate → ferestre → excedent → fragmentare) |
 
 ## Propuneri confirmate (08.11.2026)
 
@@ -61,26 +63,20 @@ Propunerile din concept, confirmate de autor cu precizările de mai jos. Detalii
 | P14 | Analiza literaturii ca sarcină explicită, în paralel cu V0 și înaintea oricărei afirmații de contribuție: UniTime, ITC 2019, Phillips et al., Carter & Tovey, Müller et al., online matching cu înlocuiri | Profunzimea; contribuția se formulează ca adaptare + evaluare până la concluziile analizei |
 | P15 | Integrarea în ASEM ca scenariu descris (actori, interfețe, pilot pentru rezervări suplimentare și reparații peste orarul existent); se implementează doar importul CSV și exportul iCalendar | Confirmarea scenariului |
 
-## Propuneri noi (14.11.2026, din a doua discuție cu coordonatorul) — neaprobate
+## Propuneri din a doua discuție cu coordonatorul (14.11.2026) — confirmate de autor prin D28, D29
 
-Analiza: `coordinator-feedback.md` §4 și `literature.md` §6, §8. Decizia despre V1 se ia după clarificarea întrebărilor O14–O20 (autor, 14.11.2026).
+Analiza: `coordinator-feedback.md` §4 și `literature.md` §6, §8. Precizările autorului: D28, D29.
 
-| ID | Propunere | Ce trebuie decis |
+| ID | Propunere (confirmată) | Precizată de |
 |---|---|---|
-| P16 | Versiunea următoare folosește **structura reală a universității**: săli (denumire, capacitate, tip, echipamente), grupe și mărimile lor, orarul existent ca rezervări existente; profesorii **pseudonimizați** în repository; datele sintetice rămân pentru experimentele reproductibile, iar ITC 2019 pentru validarea externă | Modifică D08, D24 și regula „date fictive” din `CLAUDE.md`; O14–O16 |
-| P17 | **Reducerea ferestrelor din orarul studenților:** când cererea are un interval de perechi acceptabile (P11), motorul alege și perechea, minimizând ferestrele unităților atomice afectate; întâi varianta online (per cerere), planificarea semestrială doar ca extensie sau comparație | Definiția ferestrei (O17), locul în ierarhia D18 (O18), scopul (O19), profesorii (O20); primul pas: indicatorul „ferestre” în simulator |
+| P16 | Versiunea următoare folosește **structura reală a universității**: săli (denumire, capacitate, tip, echipamente), grupe și mărimile lor, orarul existent ca rezervări existente; profesorii **pseudonimizați** în repository; datele sintetice rămân pentru experimentele reproductibile, iar ITC 2019 pentru validarea externă | D28 |
+| P17 | **Reducerea ferestrelor din orarul studenților:** când cererea are un interval de perechi acceptabile (P11), motorul alege și perechea, minimizând ferestrele unităților atomice afectate; întâi varianta online (per cerere), planificarea semestrială doar ca extensie sau comparație | D29 |
 
 ## Deschise — de clarificat
 
 | ID | Întrebare |
 |---|---|
-| O14 | Sursa datelor reale (P16): ce date sunt disponibile (săli, echipamente, grupe și mărimi, orarul existent, profesori), de la cine, în ce format și cu ce permisiune? |
-| O15 | Profesorii în datele reale: pseudonimizați (propunere) sau nume reale? |
-| O16 | Datele reale înlocuiesc datele sintetice sau le completează? Propunere: structură reală + orarul real ca rezervări existente + cereri suplimentare sintetice; ITC 2019 ca validare |
-| O17 | Definiția „ferestrei” (P17): pe unitate atomică și zi, perechile libere dintre prima și ultima activitate? Ponderată cu numărul de studenți? Este tolerată o fereastră (de exemplu, pentru masă)? |
-| O18 | Locul ferestrelor în ierarhia „celei mai bune variante” (D18): înaintea mutărilor sau după ele? Înaintea rarității sălii? |
-| O19 | Scopul P17: (a) doar online, per cerere cu interval; (b) și planificarea semestrială din intervalele profesorilor (orar complet, în afara P01, cere recurența D16 și un solver P08)? |
-| O20 | Ferestrele profesorilor: ignorate sau criteriu secundar? |
+| — | Nicio întrebare deschisă la 14.11.2026 (O14–O20 închise prin D28, D29) |
 
 ## Istoric
 

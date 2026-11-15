@@ -92,7 +92,7 @@ Prioritatea proiectului este algoritmul (D14), deci integrarea se descrie ca arh
 
 ## 4. A doua discuție cu coordonatorul (raportată de autor la 14.11.2026)
 
-**Context:** autorul a prezentat coordonatorului demo-ul V0 și materialele; **proiectul a fost acceptat**. Din discuție au rezultat două idei pentru versiunea următoare. Decizia despre forma V1 se ia mai târziu, după clarificarea obiectivelor (autor, 14.11.2026). Statutul: propuneri P16, P17 și întrebări O14–O20 în `decisions.md`.
+**Context:** autorul a prezentat coordonatorului demo-ul V0 și materialele; **proiectul a fost acceptat**. Din discuție au rezultat două idei pentru versiunea următoare. Decizia despre forma V1 se ia mai târziu, după clarificarea obiectivelor (autor, 14.11.2026). Statutul: P16 și P17 confirmate, cu precizările din **D28** (date reale) și **D29** (ferestre) în `decisions.md`; analiza de mai jos a precedat deciziile.
 
 ### 4.1 Date reale despre structura universității (P16)
 

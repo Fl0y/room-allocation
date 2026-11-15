@@ -23,6 +23,35 @@ Reguli (detalii în `docs-guide.md`):
 
 ---
 
+## 2026-11-15 — Testul automat pentru harta proiectului
+
+- Context / autorizare: autorizat de autor.
+- Implementat: `tests/docs/project-map.test.ts` — citește `project-map.md` pe secțiuni și compară căile complete cu fișierele din `src/`, `tests/`, `scripts/`, iar lista din §5 cu documentele din `info_pack/docs/`; conține și o verificare a propriului cititor de hartă. `project-map.md`: rândul pentru noul test și formatul cerut de test.
+- Verificat (copie a folderului, mediul lui Claude, Node 22): `tsc` fără erori; 63 de teste trec (59 anterioare + 4 noi). Verificări negative: un fișier nou nedeclarat, un rând șters din hartă și un document nou nelistat fac testul să pice, cu mesaj care numește fișierul. Prima rulare a găsit o problemă reală de format în hartă (lista documentelor nu era pe un rând propriu), corectată.
+- Limite: testul verifică doar prezența fișierelor, nu corectitudinea descrierilor. Nerulat încă pe Mac.
+- Pasul următor: autorul rulează `npm test` pe Mac și face commit; apoi discuția despre ordinea V1.
+
+---
+
+## 2026-11-15 — Dicționarul, harta proiectului, experimentul cu M = 0–4
+
+- Context / autorizare: cerute de autor.
+- Implementat: `glossary.md` (termenii proiectului, pe cinci grupe: domeniu, algoritm, testare, simulare, proces); `project-map.md` (rolul fiecărui fișier de cod, test și script; ordinea de citire a codului pentru code review); `results.md` §3.5 (câte mutări merită: M = 0–4). `docs-guide.md`: cele două documente noi la nivelul 2 de citire, în tabelele de responsabilități și în lista de verificare de la încheierea etapelor. `README.md`: trimiteri.
+- Rezultat (preliminar, `results.md` §3.5): peste M = 2 câștigul este neglijabil (+0,07 p.p. pentru M = 3–4 la încărcarea 0,95), iar timpul crește de ~7 ori pe fiecare mutare în plus.
+- Discutat, nedecis: un test automat care compară harta cu fișierele existente (explicat autorului, neimplementat).
+- Pasul următor: discuția despre ordinea V1.
+
+---
+
+## 2026-11-14 — Răspunsurile la O14–O20: D28 (date reale), D29 (ferestre)
+
+- Context: răspunsurile autorului la întrebările deschise.
+- Decizii: **D28** — structura reală (săli, echipamente, grupe și mărimi, profesori și repartizarea lor, orarul real ca rezervări existente), profesori cu nume fictive, cereri suplimentare sintetice, ITC 2019 ca validare; modifică D08 și regula „date fictive” din `CLAUDE.md`. **D29** — fereastra pe subgrupă și zi (perechile libere dintre prima și ultima activitate), fără excepție pentru masă; ferestrele profesorilor ignorate; ferestrele contează mai puțin decât mutările și protejarea sălilor rare; varianta online (a) principală, planificarea semestrului (b) într-o versiune ulterioară. P16 și P17 confirmate; O14–O20 închise; nicio întrebare deschisă.
+- Implementat: `decisions.md`, `CLAUDE.md` (regula datelor), `coordinator-feedback.md` (statut), `handoff.md`, `plan.md` (notă V1).
+- Pasul următor: propunerea planului V1 (`plan.md` versiunea 2), pentru aprobarea autorului.
+
+---
+
 ## 2026-11-14 — V0 prezentat; analiza literaturii (P14); ideile noi ale coordonatorului
 
 - Context / autorizare: autorul a făcut commit-ul restructurării; a autorizat analiza literaturii. Autorul a prezentat coordonatorului demo-ul V0 și materialele; **proiectul a fost acceptat**. Din discuție: date reale despre structura universității și reducerea ferestrelor din orarul studenților. Decizia despre V1: mai târziu, după clarificarea obiectivelor.

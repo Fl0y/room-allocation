@@ -26,7 +26,8 @@ Pentru agenții AI și pentru autor: în ce ordine se citesc documentele ca să 
 | Pregătești materiale pentru coordonator | `coordinator-feedback.md` |
 | Configurezi mediul, Docker, PostgreSQL, concurența (V1) | `tableflow-legacy.md` |
 | Pornești o discuție tematică | `topic-discussions.md` |
-| Rulezi comenzi sau cauți în cod | `README.md` (rădăcină): comenzi și structura codului |
+| Rulezi comenzi sau cauți în cod | `README.md` (rădăcină): comenzile; `project-map.md`: rolul fiecărui fișier și ordinea de citire a codului |
+| Întâlnești un termen neclar sau introduci unul nou | `glossary.md` |
 
 ### Cum se citește
 
@@ -48,6 +49,8 @@ Fiecare informație are **un singur loc**. În celelalte documente se pune o tri
 | Regulile permanente de lucru | `CLAUDE.md` |
 | Regulile pentru agenți, sub-agenți și modele | `agent-rules.md` |
 | Ordinea de citire și regulile de modificare a documentelor | `docs-guide.md` |
+| Definițiile termenilor | `glossary.md` |
+| Rolul fiecărui fișier de cod, test, script | `project-map.md` |
 | Comenzile și structura codului | `README.md` (rădăcină) |
 
 ## 3. Cine modifică fiecare fișier și cum
@@ -68,6 +71,8 @@ Tipuri: **viu** — se actualizează odată cu proiectul; **regulă** — se sch
 | `coordinator-feedback.md` | referință | La fiecare feedback nou al coordonatorului | Secțiune nouă datată |
 | `topic-discussions.md` | referință | Când se schimbă regulile discuțiilor | Editare punctuală |
 | `tableflow-legacy.md` | arhivă | Nu se modifică | — |
+| `glossary.md` | viu | Când se introduce un termen nou sau se schimbă sensul unuia | Editare punctuală; definiții scurte, cu trimitere la decizii, fără copierea regulilor |
+| `project-map.md` | viu | Când apar, se mută sau dispar fișiere | Editare punctuală; rolul fișierelor, fără numere de linie |
 | `literature.md` | viu | La fiecare aprofundare a literaturii (P14) | Pe teme; bibliografia numerotată la final; lucrările necitite integral marcate ◐ |
 | `README.md` (rădăcină) | viu | Când apar comenzi, foldere sau dependențe noi | Editare punctuală |
 
@@ -85,4 +90,5 @@ Reguli comune:
 4. `plan.md`: bife doar pentru sarcinile verificate; criteriile etapei următoare, dacă s-au stabilit.
 5. `results.md`: cifrele noi, cu sursa (doar dacă există).
 6. `README.md`: comenzi sau foldere noi (doar dacă există).
-7. Raport către autor: ce s-a implementat, ce s-a verificat (unde), ce limite rămân. Comenzile de verificare pe Mac le rulează autorul.
+7. `project-map.md`: fișiere noi, mutate sau eliminate (doar dacă există); `glossary.md`: termeni noi (doar dacă există).
+8. Raport către autor: ce s-a implementat, ce s-a verificat (unde), ce limite rămân. Comenzile de verificare pe Mac le rulează autorul.
