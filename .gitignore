@@ -3,7 +3,6 @@ out/
 .DS_Store
 *.log
 .env*
-Claude\ outputs/descriere-tema.md
 CLAUDE.md
 
 # Documente de uz personal (discuții reale cu decanatul, coordonatorul)
