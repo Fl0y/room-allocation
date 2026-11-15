@@ -73,7 +73,7 @@ C+M2 − C: niciun seed (din 30, la fiecare încărcare) cu pierdere.
 | Rezervări mutate cel puțin o dată (%) | 0,50 / 0,95 | 0 / 0 | 0 / 0 | 0 / 0 | 2,7 / 10,7 | 0,1 / 2,6 |
 | Perechi de săli rare folosite inutil | 0,50 / 0,95 | 90,5 / 100,4 | 84,0 / 121,7 | 3,7 / 55,6 | 74,0 / 75,8 | 3,7 / 53,9 |
 | Locuri neocupate / pereche acceptată | 0,50 / 0,95 | 37,8 / 24,9 | 10,9 / 12,1 | 11,4 / 14,9 | 11,0 / 15,4 | 11,5 / 15,6 |
-| Ferestre izolate (final) | 0,50 / 0,95 | 53,5 / 57,4 | 80,7 / 64,1 | 81,7 / 66,9 | 83,2 / 59,1 | 81,6 / 63,2 |
+| Goluri izolate în programul sălilor (final) | 0,50 / 0,95 | 53,5 / 57,4 | 80,7 / 64,1 | 81,7 / 66,9 | 83,2 / 59,1 | 81,6 / 63,2 |
 | Timp / cerere, p95 (ms) | 0,50 / 0,95 | 0,08 / 0,12 | 0,09 / 0,13 | 0,08 / 0,13 | 0,77 / 1,33 | 0,70 / 1,40 |
 
 Valorile pentru 0,7 și 0,85, C+M1 și intervalele de încredere: `out/simulation.html`.
@@ -83,7 +83,7 @@ Valorile pentru 0,7 și 0,85, C+M1 și intervalele de încredere: `out/simulatio
 1. **Raritatea (C)** acceptă cu 6–7,5 p.p. mai multe perechi decât A la toate încărcările; avantajul provine în principal din păstrarea laboratoarelor și auditoriilor pentru activitățile care au nevoie de ele (perechi de săli rare folosite inutil: 3,7–55,6 față de 84–122 la B).
 2. **Best-fit (B)** ajută la încărcare mică, dar avantajul dispare la 0,85–0,95: pune seminare în laboratoare (laboratoare acceptate 60% la 0,95).
 3. **Mutările** adaugă peste C +0,2…+1,4 p.p., crescând cu încărcarea, fără pierderi pe seed-uri, cu cel mult 2,6% rezervări mutate. B+M2 atinge aproximativ același nivel de acceptare, dar mută de 4–20 de ori mai multe rezervări. Pe aceste date, prevenirea (raritatea) reduce nevoia de reparare (mutări) — relevant pentru Î2 și P04.
-4. **Costurile lui C:** mai multe ferestre izolate și 2–3 locuri neocupate în plus pe pereche față de B.
+4. **Costurile lui C:** mai multe goluri izolate în programul sălilor (fragmentare) și 2–3 locuri neocupate în plus pe pereche față de B.
 5. **Timpul** rămâne sub 1,5 ms per cerere (p95) chiar cu M = 2, la scara unei facultăți.
 
 ### 3.4 Limite

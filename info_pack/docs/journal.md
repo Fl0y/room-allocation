@@ -23,6 +23,37 @@ Reguli (detalii în `docs-guide.md`):
 
 ---
 
+## 2026-11-15 — Folderul pentru documente personale
+
+- Context / autorizare: cerut de autor.
+- Implementat: `Claude outputs/personal/`, cu `descriere-tema.md`, `coordinator-next-steps.md`, `dean-office-data-request.md` mutate acolo; folderul adăugat în `.gitignore` (verificat cu `git check-ignore`). Trimiterile actualizate în `coordinator-feedback.md`, `docs-guide.md`, `project-map.md`. Textul pentru coordonator oferit și ca email.
+
+---
+
+## 2026-11-15 — Materiale pentru decanat și coordonator
+
+- Context / autorizare: cerute de autor, pentru uz personal în discuțiile reale; nu se actualizează ulterior.
+- Implementat: `Claude outputs/dean-office-data-request.md` (descrierea proiectului pentru decanat, inclusiv variantele a și b; lista datelor necesare; întrebări despre nevoile decanatului) și `Claude outputs/coordinator-next-steps.md` (ce s-a făcut după V0, pașii V1, întrebări pentru coordonator).
+- Pasul următor: autorul obține datele și revine cu răspunsurile decanatului și ale coordonatorului; răspunsurile utile se trec în `coordinator-feedback.md` și `decisions.md`.
+
+---
+
+## 2026-11-15 — Planul V1 aprobat ca ordine (versiunea 2 a planului)
+
+- Context: autorul a cerut documentarea celor stabilite, fără începerea implementării.
+- Decizii: D30 (ordinea loturilor 3 → 4 → 5 → 6, fără autorizarea implementării), D31 (ordinea de alegere cu interval), D32 (o singură facultate întâi; permisiunea confirmată; datele în curs de solicitare). Deschise: O21 (structura pseudonimizată în repository?), O22 (locul datelor originale).
+- Implementat (documentație): `plan.md` versiunea 2.0 — loturile V1 cu sub-pași și modelul recomandat, criterii de acceptare propuse (§4ter); `decisions.md`; `handoff.md`. Termeni aliniați cu `glossary.md` în documentele active: „goluri izolate” pentru programul sălilor (fragmentare), „ferestre” doar pentru orarul studenților; codul folosește încă „ferestre izolate” pentru fragmentare — de aliniat în Lotul 4.
+- Pasul următor: autorul obține datele reale și revine cu întrebări despre locul lor și despre O21; implementarea începe doar după autorizare.
+
+---
+
+## 2026-11-15 — Testul hărții verificat pe Mac
+
+- Verificat: autorul a rulat `npm test` pe Mac: 63 de teste trec; commit și push.
+- Pasul următor: descrierea detaliată a V1, pentru aprobare.
+
+---
+
 ## 2026-11-15 — Testul automat pentru harta proiectului
 
 - Context / autorizare: autorizat de autor.

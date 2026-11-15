@@ -1,28 +1,26 @@
 # Starea curentă — RoomAllocation
 
-**Actualizat:** 15 noiembrie 2026. Fișierul descrie doar starea de acum; se rescrie la fiecare etapă încheiată. Istoricul este în `journal.md`, ordinea de citire în `docs-guide.md`.
+**Actualizat:** 15 noiembrie 2026 (seara). Fișierul descrie doar starea de acum; se rescrie la fiecare etapă încheiată. Istoricul este în `journal.md`, ordinea de citire în `docs-guide.md`.
 
 ## Ce există
 
-- **V0 încheiat și prezentat coordonatorului** (proiect acceptat): motorul de alocare (`src/engine/`), cazurile 1–5 (`src/scenarios/`), generatorul și simulatorul (`src/sim/`), demo-ul static (`src/demo/`). Teste: 63 trec în mediul lui Claude (59 verificate și pe Mac; testul hărții, adăugat la 15.11, de rulat pe Mac). Rezultate: `results.md`.
-- **Documente de orientare:** `glossary.md` (termenii), `project-map.md` (rolul fișierelor, ordinea de citire a codului; verificată automat de `tests/docs/project-map.test.ts`).
-- **Analiza literaturii, versiunea 1:** `literature.md`.
-- **Decizii:** D01–D29, propunerile confirmate P01–P17; **nicio întrebare deschisă** (`decisions.md`).
-- **Nu există:** bază de date, API, dashboard sau panou reale, Docker, importul datelor reale.
+- **V0 încheiat și prezentat coordonatorului** (proiect acceptat): motorul de alocare (`src/engine/`), cazurile 1–5 (`src/scenarios/`), generatorul și simulatorul (`src/sim/`), demo-ul static (`src/demo/`). Teste: 63 trec, în mediul lui Claude și pe Mac. Rezultate: `results.md`.
+- **Documente de orientare:** `glossary.md` (termenii), `project-map.md` (rolul fișierelor, verificată automat de `tests/docs/project-map.test.ts`), `literature.md` (versiunea 1).
+- **Decizii:** D01–D32, propunerile confirmate P01–P17; deschise O21, O22 (`decisions.md`).
+- **Nu există:** date reale, bază de date, API, dashboard sau panou reale, Docker.
 
-## Direcția stabilită pentru versiunea următoare
+## Planul V1 (`plan.md` versiunea 2.0)
 
-- **D28 — date reale:** structura universității (săli, echipamente, grupe și mărimi, profesori și repartizarea lor) și orarul real ca rezervări existente; profesori cu nume fictive; cereri suplimentare sintetice; ITC 2019 pentru validare. Datele originale cu nume reale nu intră în Git.
-- **D29 — ferestrele studenților:** cererea cu interval de perechi (P11); motorul alege și perechea, reducând ferestrele subgrupelor; prioritate mai mică decât mutările și protejarea sălilor rare; varianta online întâi, planificarea semestrului mai târziu.
+Ordinea aprobată (D30): **Lotul 3** datele reale → **Lotul 4** cererea cu interval și ferestrele studenților (ordinea de alegere D31) → **Lotul 5** back-end (PostgreSQL, Docker, concurență) → **Lotul 6** interfețe. **Niciun lot nu este autorizat**; autorul autorizează când consideră că proiectul e pregătit.
 
 ## Pasul următor
 
-1. **Propunerea planului V1** (`plan.md` versiunea 2): ordinea etapelor (importul datelor reale, indicatorul ferestrelor, cererea cu interval, back-end-ul cu bază de date și concurență, interfețele), criteriile de acceptare ale primului lot. Necesită aprobarea autorului.
-2. Fără autorizare, nu se începe implementarea.
+1. **Autorul obține datele reale** de la administrație și decanat, pentru o facultate (D32): săli și echipamente, grupe și mărimi, profesori și repartizarea lor, orarul real. Lista câmpurilor utile: `plan.md` §3, Lotul 3.
+2. Autorul revine cu răspunsurile la **O21** (structura pseudonimizată în repository?) și **O22** (locul datelor originale), plus întrebări de concretizare.
+3. Autorizarea Lotului 3 (sau a Lotului 4 pe date sintetice, dacă datele întârzie).
 
 ## Puncte deschise (neblocante)
 
 - Alegerile generatorului de date (fără conflicte de persoane, ponderile tipurilor, toate rezervările mutabile) — propuneri neconfirmate; de revăzut odată cu datele reale.
 - Concept §4.2 (H7 face problema dificilă) trebuie reformulat prudent (`literature.md` §2).
-- Locul ferestrelor față de excedent și fragmentare în scor (D29) — de fixat la planificarea V1.
-- Formatul în care vor veni datele reale și permisiunea de folosire — de confirmat la import.
+- Codul folosește încă „ferestre izolate” pentru fragmentarea sălilor; termenul se aliniază cu `glossary.md` în Lotul 4.

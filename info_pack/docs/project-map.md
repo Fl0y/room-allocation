@@ -20,7 +20,8 @@ Actualizat: 15.11.2026.
 | `info_pack/docs/` | Documentația proiectului (vezi §5) |
 | `info_pack/references/` | Loc pentru materiale de referință (gol) |
 | `out/` | Rezultatele generate de comenzi (rapoarte, demo); nu intră în Git |
-| `Claude outputs/` | Copii ale materialelor livrate (`descriere-tema.md`, rapoartele HTML); nu se actualizează automat |
+| `Claude outputs/` | Copii ale rapoartelor HTML livrate; nu se actualizează automat |
+| `Claude outputs/personal/` | Documente de uz personal (descrierea temei, materialele pentru decanat și coordonator); în `.gitignore`, nu intră în Git |
 
 ## 2. Codul aplicației — `src/`
 

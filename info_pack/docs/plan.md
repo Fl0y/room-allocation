@@ -1,6 +1,6 @@
 # Planul proiectului — RoomAllocation
 
-**Versiune:** 1.2 (14.11.2026). **Statut:** propunere de plan, bazată pe deciziile D01–D27 și P01–P15 din `decisions.md`. Singura copie activă a planului.
+**Versiune:** 2.0 (15.11.2026). **Statut:** V0 încheiat; V1 cu ordinea aprobată, neautorizat pentru implementare. Bazat pe deciziile D01–D32 și P01–P17 din `decisions.md`. Singura copie activă a planului.
 Se bifează doar sarcinile efectiv finalizate și verificate. Structura feliilor se poate ajusta pe parcurs (P10).
 
 ---
@@ -26,7 +26,7 @@ Se bifează doar sarcinile efectiv finalizate și verificate. Structura feliilor
 | Rezervare | Cererea + sala + stare: mutabilă / fixată (doar evenimente și examene, D19) / în orizontul înghețat |
 | Constrângeri | H1–H7 în motor; H8 conform D19; H3 prin unități atomice (D21) |
 | Decizie | Ierarhia D18: valid → cele mai puține mutări (M ≤ 2) → scor → departajare deterministă; altfel refuz cu motiv + alternative propuse |
-| Scor V0 | **Lexicografic** (D25, fără calibrare): raritate, apoi excedent, apoi fragmentare simplă (ferestre izolate de 1 pereche). Varianta ponderată și fragmentarea ponderată de cerere (P03) se studiază în V1 |
+| Scor V0 | **Lexicografic** (D25, fără calibrare): raritate, apoi excedent, apoi fragmentare simplă (goluri izolate de 1 pereche în programul sălii). Varianta ponderată și fragmentarea ponderată de cerere (P03) se studiază în V1 |
 
 ## 3. Etape
 
@@ -53,14 +53,34 @@ Se bifează doar sarcinile efectiv finalizate și verificate. Structura feliilor
 
 **Sfârșitul V0:** ✅ prezentat coordonatorului de autor, proiect acceptat (14.11.2026); ideile noi: P16, P17. Conținutul prezentării: (cazurile 1–5, exemplul din `coordinator-feedback.md`, primele simulări); decizia despre forma V1.
 
-### V1 — versiunea matură (ordine propusă inițial; se revizuiește în versiunea 2 a planului, ținând cont de D28 și D29)
+### V1 — versiunea matură
 
-1. **Back-end:** PostgreSQL cu constrângeri (sală, profesor, unitate atomică pe slot), tranzacții cu lacăt, mutări atomice, idempotență; teste de integrare pe BD reală, teste de concurență, teste de mutație (moștenire TableFlow)
-2. **API + dashboard de rezervare** pentru profesori, refolosind grila din V0
-3. **Panou/orar** pentru studenți; **export .ics** (P12); **import CSV** (P15)
-4. **Extensii ale algoritmului:** recurența (D16); modul lot cu criteriul D22; solverul exact CP-SAT (P08); intervalele libere ale profesorilor (P11); fragmentarea ponderată de cerere (P03)
-5. **Experimente** Î1–Î4 (P06), protocol pereche pe seed-uri, intervale de încredere; **validare pe ITC 2019** (D24)
-6. **Lucrarea:** scenariul de integrare în ASEM (P15), rezultatele, limitele
+**Statut (15.11.2026):** ordinea loturilor și ordinea de alegere din Lotul 4 sunt **aprobate de autor** (D30, D31). **Niciun lot nu este autorizat pentru implementare**; autorul îl autorizează când consideră că proiectul este pregătit. Lotul 3 așteaptă datele reale (autorul le solicită administrației și decanatului).
+
+**Ordinea:** datele reale → algoritmul extins → back-end-ul → interfețele. Fiecare lot are 2–3 sub-pași mici, fiecare încheiat cu verificare (D17). Dacă datele reale întârzie, Lotul 4 poate începe înaintea Lotului 3, pe date sintetice (cu autorizare).
+
+**Lotul 3 — Datele reale (D28, D32)** — model recomandat: Sonnet pentru import, Opus pentru formatul intern și validare
+- [ ] 3a. Formatul intern documentat (săli, flux/grupă/subgrupă, profesori, repartizarea profesor–disciplină–grupă, orar); importul din fișierele autorului (Excel/CSV); **pseudonimizarea automată** a profesorilor (`P-001`…), cu tabelul de corespondență în afara Git
+- [ ] 3b. Raportul de validare: capacități, tipuri, echipamente, mărimile grupelor, conflictele din orarul real (sală, profesor, grupă la aceeași oră)
+- [ ] 3c. „Săptămâna reală” în simulator și în demo: orarul real ca rezervări existente + cereri suplimentare sintetice (recuperări, consultații, evenimente) generate după repartizarea reală; măsurătorile de bază: utilizarea sălilor (frecvență, ocupare), săli rare folosite inutil, **ferestrele studenților în orarul real**
+- Domeniul: întâi o singură facultate, apoi extindere treptată (D32). Recurența nu e încă modelată: o „săptămână-tip” (sau două, pentru săptămâni pare/impare), ca date concrete.
+
+**Lotul 4 — Cererea cu interval și ferestrele studenților (D29, varianta a)** — model recomandat: Opus
+- [ ] 4a. Motorul: cererea cu interval opțional de perechi; motorul încearcă fiecare început posibil; calculul variației ferestrelor pe subgrupă și zi; ordinea de alegere **mutări → săli rare → ferestrele studenților → locuri goale → fragmentarea programului sălii** (D31); explicația include ferestrele; alinierea termenilor din cod cu `glossary.md` („goluri izolate” pentru săli, „ferestre” pentru studenți)
+- [ ] 4b. Verificarea: oracolul exhaustiv extins la intervale, cazuri noi (grupă cu perechile 1–2 și interval 3–5 → perechea 3; conflict sală rară vs. fereastră; subgrupe cu laboratoare la ore diferite), determinism
+- [ ] 4c. Simularea: oră fixă vs. interval fără criteriul ferestrelor vs. interval cu criteriul ferestrelor, pe date sintetice și pe săptămâna reală; M = 3 ca reper (`results.md` §3.5)
+
+**Lotul 5 — Back-end-ul** — model recomandat: Opus
+- [ ] 5a. Docker (PostgreSQL 18, Node 24, imagini fixate); schema și migrațiile SQL; constrângeri de excludere în baza de date pentru sală, profesor și unitate atomică la aceeași pereche
+- [ ] 5b. Serviciul tranzacțional: blocare per zi → citirea stării → decizia motorului (neschimbat) → scrierea rezervării și a mutărilor într-o singură tranzacție; idempotența cererilor
+- [ ] 5c. Teste de integrare pe baza de date reală: cereri simultane pentru ultima sală, mutări atomice, teste de mutație (scoaterea unei constrângeri trebuie detectată)
+
+**Lotul 6 — Interfețele** — model recomandat: Sonnet
+- [ ] 6a. API (cereri cu sau fără interval, lista rezervărilor, aplicarea alternativelor, închiderea sălilor)
+- [ ] 6b. Dashboard-ul profesorului, panoul studenților (orar pe flux/grupă/subgrupă), pagina de administrare (săli, închideri); roluri simplificate, fără autentificare reală (P15)
+- [ ] 6c. Export .ics pe grupă/profesor (P12); import CSV, refolosind importul din Lotul 3 (P15)
+
+**După V1 (versiuni ulterioare):** recurența (D16); planificarea semestrului — varianta (b) — cu un solver existent (CP-SAT; tehnologia de integrare se alege atunci), comparată cu varianta online (Î3); reoptimizarea periodică vs. mutările la fiecare cerere; validarea pe ITC 2019 (D24); experimentele finale (seed-uri separate pentru calibrare, intervale de încredere); aprofundarea literaturii (`literature.md` §9).
 
 ## 4. Criterii de acceptare — Lotul 1
 
@@ -81,9 +101,33 @@ Se bifează doar sarcinile efectiv finalizate și verificate. Structura feliilor
 4. **Demo** `out/demo.html`: se deschide direct din fișier, fără rețea; permite rularea pas cu pas a cazurilor 1–5, trimiterea unei cereri noi cu decizia și explicația, aplicarea unei alternative, închiderea unei săli, compararea strategiilor pentru aceeași cerere, revenirea la starea inițială.
 5. Logica demo-ului este separată de DOM și testată; testele existente continuă să treacă.
 
+## 4ter. Criterii de acceptare propuse — loturile V1 (se definitivează la autorizarea fiecărui lot)
+
+**Lotul 3**
+1. Importul rulează pe fișierele autorului și pe un set mic de date fictive inclus în teste; același input dă același rezultat.
+2. Niciun nume real de profesor nu apare în datele rezultate, în rapoarte sau în Git (test automat pe lista de nume din corespondență, rulat local).
+3. Datele importate trec validarea unităților (D21) și verificatorul H1–H7, **sau** raportul de validare listează fiecare abatere, cu sursa ei din fișierul original.
+4. Săptămâna reală se poate rula în simulator și în demo; măsurătorile de bază (utilizare, săli rare, ferestrele studenților) apar în `results.md`, marcate ca rezultate pe date reale.
+
+**Lotul 4**
+1. Fără interval, motorul dă exact aceleași decizii ca în V0 (testele existente trec neschimbate).
+2. Cu interval: pe instanțe mici aleatoare, motorul găsește o variantă dacă și numai dacă oracolul găsește una, iar varianta aleasă este minimă după ordinea D31.
+3. Cazurile noi au rezultatul așteptat, scris înaintea implementării și aprobat de autor.
+4. Simularea compară cele trei variante pe aceleași cereri, cu diferențe pe perechi și intervale de încredere.
+
+**Lotul 5**
+1. Baza de date refuză singură orice suprapunere de sală, profesor sau unitate atomică (test direct pe SQL, fără motor).
+2. La cereri simultane pentru ultima sală liberă: exact una reușește, celelalte primesc refuz motivat; nicio stare intermediară nu e vizibilă.
+3. Mutările unei cereri se aplică toate sau niciuna.
+4. Scoaterea oricărei constrângeri face cel puțin un test să pice.
+
+**Lotul 6**
+1. Fiecare funcție din interfață este verificată printr-un test sau o verificare în browser documentată; o pagină existentă nu înseamnă funcție verificată (`CLAUDE.md`).
+2. Fișierul .ics generat se importă corect în Google Calendar (verificat de autor).
+
 ## 5. Indicatori (V0, preliminari)
 
-Cereri acceptate; perechi acceptate (D22); mutări per cerere acceptată; locuri neutilizate; perechi de săli rare consumate de activități care nu au nevoie de ele; ferestre izolate; conflicte rămase (trebuie să fie 0); timpul per cerere (mediană, p95). Rezultatele V0 sunt **preliminare**: nu se formulează concluzii generale înainte de protocolul din V1.
+Cereri acceptate; perechi acceptate (D22); mutări per cerere acceptată; locuri neutilizate; perechi de săli rare consumate de activități care nu au nevoie de ele; goluri izolate (în programul sălii); conflicte rămase (trebuie să fie 0); timpul per cerere (mediană, p95). Rezultatele V0 sunt **preliminare**: nu se formulează concluzii generale înainte de protocolul din V1.
 
 ## 6. Strategia de test
 

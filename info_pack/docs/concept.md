@@ -175,7 +175,7 @@ scor(c) = λ1·excedent(c) + λ2·raritate(c) + λ3·fragmentare(c)
 |---|---|---|
 | Excedent | Locuri goale: (capacitate − studenți) / capacitate maximă | 25 de studenți în sala de 30 e mai bine decât în cea de 120 |
 | **Raritate** (nou față de TableFlow) | Costul de oportunitate al sălii: cât de cerută este, ca tip și echipamente, de alte activități care chiar au nevoie de ea | Un seminar fără calculatoare nu ocupă laboratorul dacă există o sală de seminar liberă |
-| **Fragmentare** | Câte „ferestre” inutilizabile lasă rezervarea în programul zilnic al sălii | Rezervarea perechii 3 într-un laborator liber 2–5 lasă o fereastră izolată de o pereche (2), inutilă pentru laboratoarele de 2 perechi |
+| **Fragmentare** | Câte goluri inutilizabile lasă rezervarea în programul zilnic al sălii (nu „ferestre”: acestea sunt golurile din orarul studenților, D29) | Rezervarea perechii 3 într-un laborator liber 2–5 lasă o fereastră izolată de o pereche (2), inutilă pentru laboratoarele de 2 perechi |
 
 Componentele „deplasare” și „preferințe” din versiunea 1.1 au fost eliminate (D11, D12).
 

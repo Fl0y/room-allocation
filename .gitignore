@@ -5,3 +5,6 @@ out/
 .env*
 Claude\ outputs/descriere-tema.md
 CLAUDE.md
+
+# Documente de uz personal (discuții reale cu decanatul, coordonatorul)
+Claude outputs/personal/

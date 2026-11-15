@@ -80,7 +80,7 @@ Reguli comune:
 - Discuțiile care doar pun întrebări nu modifică fișiere.
 - La un moment dat, o singură discuție sau un singur agent modifică același fișier.
 - O discuție tematică modifică doar fișierele din tema ei; o decizie din afara temei se semnalează.
-- Folderul `Claude outputs` (rădăcină) se păstrează: copii ale materialelor livrate (`descriere-tema.md`, rapoartele HTML); nu face parte din documentația activă și nu se actualizează automat.
+- Folderul `Claude outputs` (rădăcină) se păstrează: copii ale rapoartelor HTML livrate; subfolderul `Claude outputs/personal/` conține documentele de uz personal ale autorului (`descriere-tema.md`, materialele pentru decanat și coordonator) și **nu intră în Git**. Nu fac parte din documentația activă și nu se actualizează automat.
 
 ## 4. Lista de verificare la încheierea unei etape
 

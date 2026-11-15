@@ -1,6 +1,6 @@
 # Registrul deciziilor — RoomAllocation
 
-Actualizat: 14 noiembrie 2026. Registrul arată statutul afirmațiilor; nu conține rezultate de implementare (vezi `results.md`) și nici istoric (vezi `journal.md`).
+Actualizat: 15 noiembrie 2026. Registrul arată statutul afirmațiilor; nu conține rezultate de implementare (vezi `results.md`) și nici istoric (vezi `journal.md`).
 
 ## Confirmate de autor
 
@@ -30,11 +30,14 @@ Actualizat: 14 noiembrie 2026. Registrul arată statutul afirmațiilor; nu conț
 | D22 | **Criteriul modului lot:** se maximizează întâi numărul de **perechi** satisfăcute, iar la egalitate numărul de **cereri** satisfăcute; urmează ordinea din D18 (blocuri rupte, mutări, scor). Numărul de cereri și perechi × studenți se raportează ca indicatori în experimente | 08.11.2026; închide O10. Motiv: numărul de cereri dezavantajează blocurile, iar perechi × studenți dezavantajează grupele mici (S7) |
 | D23 | **Întâi o versiune simplă (V0) cu algoritmul funcțional** (cel puțin partea principală), ca funcționarea și rezultatele să fie vizibile devreme; apoi se decide forma versiunii mature | 08.11.2026; după feedback-ul coordonatorului (`coordinator-feedback.md`). Conținutul exact al V0 se fixează în `plan.md` |
 | D24 | **Datele:** V0 folosește date sintetice (generator cu seed, calibrat pe structura unei facultăți); instanțele reale anonimizate ITC 2019, adaptate la alocarea sălilor cu orele fixate, servesc ca validare ulterioară | 08.11.2026; închide O13; completează D08. Completat de D28 (14.11.2026) |
-| D25 | **Scorul în V0 este lexicografic:** raritate, apoi excedent, apoi fragmentare simplă (ferestre izolate de o pereche); fără ponderi de calibrat. Varianta ponderată și fragmentarea ponderată de cerere (P03) se compară în V1 | 08.11.2026 |
+| D25 | **Scorul în V0 este lexicografic:** raritate, apoi excedent, apoi fragmentare simplă (goluri izolate (în programul sălii) de o pereche); fără ponderi de calibrat. Varianta ponderată și fragmentarea ponderată de cerere (P03) se compară în V1 | 08.11.2026 |
 | D26 | **Demo-ul V0 este static, fără framework** (pagină HTML + motorul împachetat); Next.js intră abia în V1 (P07) | 08.11.2026 |
 | D27 | Mediul pe Mac (verificat de autor, 08.11.2026): Node 24.22.1, Docker 29.9.2, Git 2.51.0. V0 rulează local cu Node, fără containere; Docker și PostgreSQL intră în V1 | 08.11.2026 |
 | D28 | **Date reale despre structura universității** (închide O14–O16; confirmă P16): versiunea următoare folosește săli (denumire, capacitate, tip, echipamente), grupe și mărimile lor, profesorii (număr, ce discipline predau și la ce grupe) și orarul real ca rezervări existente; **profesorii au nume fictive**; cererile suplimentare pentru experimente rămân sintetice (seed); ITC 2019 rămâne validarea externă (D24). Datele originale care conțin nume reale nu intră în Git și nici în documente; importul le înlocuiește cu nume fictive | 14.11.2026. Modifică D08 și regula „date fictive” din `CLAUDE.md`. Disponibile, după autor: săli, capacități, echipamente, grupe și mărimi, orarul existent, profesori și repartizarea lor; orarul real e util și pentru planificarea semestrului (varianta b) |
 | D29 | **Reducerea ferestrelor din orarul studenților** (închide O17–O20; confirmă P17): fereastra = pentru fiecare **subgrupă** (unitate atomică, D21) și zi, perechile libere dintre prima și ultima activitate; **fără excepție pentru pauza de masă**; ferestrele profesorilor se **ignoră**. În ierarhia D18, ferestrele contează **mai puțin decât mutările și decât protejarea sălilor rare** (prioritate: cât mai multe cereri acceptate). Varianta **(a) online, per cerere cu interval (P11), este principală**; varianta **(b) planificarea semestrului** rămâne pentru o versiune ulterioară, separat sau împreună cu (a), cu comparație a eficienței | 14.11.2026. Ordinea exactă față de excedent și fragmentare: de stabilit la planificarea V1 (propunere: mutări → raritate → ferestre → excedent → fragmentare) |
+| D30 | **Ordinea V1:** Lotul 3 (datele reale) → Lotul 4 (cererea cu interval și ferestrele) → Lotul 5 (back-end) → Lotul 6 (interfețe); detaliile în `plan.md` §3. Aprobarea ordinii **nu** autorizează implementarea; fiecare lot se autorizează separat, când autorul consideră proiectul pregătit | 15.11.2026 |
+| D31 | **Ordinea de alegere cu interval (Lotul 4):** valid → mutări → săli rare → ferestrele studenților → locuri goale (excedent) → fragmentarea programului sălii → departajare deterministă | 15.11.2026; precizează D18 și D29 |
+| D32 | **Datele reale — domeniul și permisiunea:** întâi o singură facultate, apoi extindere treptată; autorul are permisiunea de a folosi datele în proiect (fără limitări). Datele încă nu sunt obținute: autorul le solicită administrației și decanatului | 15.11.2026; precizează D28 |
 
 ## Propuneri confirmate (08.11.2026)
 
@@ -76,7 +79,8 @@ Analiza: `coordinator-feedback.md` §4 și `literature.md` §6, §8. Precizăril
 
 | ID | Întrebare |
 |---|---|
-| — | Nicio întrebare deschisă la 14.11.2026 (O14–O20 închise prin D28, D29) |
+| O21 | Structura pseudonimizată (săli, grupe, orar fără nume reale) poate intra în repository-ul privat, sau toate datele reale rămân în afara Git? (autorul se gândește) |
+| O22 | Unde se păstrează datele originale primite de la universitate (folderul din afara repository-ului)? (autorul se gândește; propunere: `academic_project/room-allocation-data/`) |
 
 ## Istoric
 
