@@ -23,6 +23,18 @@ Reguli (detalii în `docs-guide.md`):
 
 ---
 
+## 2026-11-18 — Lotul 3A: formatul intern, setul sintetic, săptămâna în simulator
+
+- Context / autorizare: autorul a autorizat partea 3A și a creat `room-allocation-data/`.
+- Decizii: D35 (demo-ul static pe GitHub Pages; sistemul V1 local, prin Docker; găzduirea online abia pentru produsul final).
+- Implementat: `src/data/` (CSV, formatul intern cu validare pe fișier și linie, folderul datelor `RA_DATA_DIR`, rezumatul); `src/sim/faculty.ts` (setul sintetic), `src/sim/week.ts` (cereri suplimentare peste orar), `src/sim/metrics.ts` (ocupare, săli rare, ferestrele studenților); `simulate.ts` poate porni de la rezervări existente și măsoară ferestrele; indicatorul „locuri neocupate” se raportează la perechile ocupate final (identic cu V0 când nu există rezervări inițiale). Scripturile `data:synthetic`, `data:check`, `week`. Exemplul mic `tests/fixtures/mini/`. Documentele: `data-format.md` (nou), `results.md` §4, `project-map.md`, `glossary.md`, `docs-guide.md`, `README.md`, `plan.md` (statut), `handoff.md`.
+- Verificat (mediul lui Claude, Node 22): 90 de teste trec; `tsc` fără erori; simularea V0 rulată înainte și după modificări dă aceleași valori; setul sintetic (seed 1–10) fără erori de validare; săptămâna: 0 încălcări în 360 de rulări.
+- Limite: setul și cererile suplimentare sunt inventate (propuneri de parametri); un singur set în `results.md` §4; neverificat încă pe Mac.
+- Commit: — (de făcut de autor după verificarea pe Mac).
+- Pasul următor: verificarea pe Mac; apoi datele reale (3B) sau, cu autorizare, Lotul 4 pe setul sintetic.
+
+---
+
 ## 2026-11-18 — Locul datelor și vizibilitatea repository-ului
 
 - Context / autorizare: discuție cu autorul; documentele actualizate la cererea lui.

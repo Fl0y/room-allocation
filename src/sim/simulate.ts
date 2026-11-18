@@ -7,6 +7,7 @@ import { buildOccupancy, isolatedWindows } from '../engine/occupancy.ts';
 import { rarityOf, type Strategy } from '../engine/score.ts';
 import type { ActivityType, State } from '../engine/types.ts';
 import { generateWorkload, type FacultyProfile, DEFAULT_PROFILE, type Workload } from './generator.ts';
+import { studentWindows } from './metrics.ts';
 
 export interface StrategyConfig {
   id: string;
@@ -43,10 +44,14 @@ export interface RunMetrics {
   movedBookings: number;
   /** Locuri neocupate × perechi, în starea finală. */
   emptySeatPeriods: number;
+  /** Perechi-sală ocupate în starea finală (cu rezervările inițiale, dacă există). */
+  finalPeriods: number;
   /** Perechi de săli rare consumate de activități care nu au nevoie de ele (starea finală). */
   rareMisusePeriods: number;
   /** Ferestre izolate de o pereche, în toate sălile și zilele (starea finală). */
   isolatedWindows: number;
+  /** Ferestrele studenților (D29), pe toate unitățile atomice și zilele (starea finală). */
+  studentWindows: number;
   timeMedianMs: number;
   timeP95Ms: number;
   /** Încălcări găsite de verificator în starea finală (trebuie să fie 0). */
@@ -66,7 +71,7 @@ export interface RunOptions {
 
 export function runOnce(workload: Workload, config: StrategyConfig, options: RunOptions = {}): RunMetrics {
   const { instance, requests } = workload;
-  let state: State = { bookings: [], closures: [] };
+  let state: State = workload.initialState ? structuredClone(workload.initialState) : { bookings: [], closures: [] };
   const times: number[] = [];
   const moved = new Set<string>();
   const m: RunMetrics = {
@@ -85,8 +90,10 @@ export function runOnce(workload: Workload, config: StrategyConfig, options: Run
     moves: 0,
     movedBookings: 0,
     emptySeatPeriods: 0,
+    finalPeriods: 0,
     rareMisusePeriods: 0,
     isolatedWindows: 0,
+    studentWindows: 0,
     timeMedianMs: 0,
     timeP95Ms: 0,
     violations: 0,
@@ -127,11 +134,13 @@ export function runOnce(workload: Workload, config: StrategyConfig, options: Run
   for (const b of state.bookings) {
     const room = rooms.get(b.roomId)!;
     m.emptySeatPeriods += (room.capacity - b.students) * b.length;
+    m.finalPeriods += b.length;
     if (rarityOf(room, b.needs).value > 0) m.rareMisusePeriods += b.length;
   }
   const P = instance.grid.periods.length;
   const occ = buildOccupancy(state.bookings, P);
   for (const r of instance.rooms) for (const d of instance.dates) m.isolatedWindows += isolatedWindows(occ, r.id, d, P);
+  m.studentWindows = studentWindows(instance, state.bookings).total;
   times.sort((a, b) => a - b);
   m.timeMedianMs = quantile(times, 0.5);
   m.timeP95Ms = quantile(times, 0.95);
@@ -180,9 +189,10 @@ export const INDICATORS = {
   },
   movesPerAccepted: { label: 'Mutări / cerere acceptată', higherIsBetter: false, f: (m: RunMetrics) => (m.accepted ? m.moves / m.accepted : 0) },
   movedPct: { label: 'Rezervări mutate cel puțin o dată (%)', higherIsBetter: false, f: (m: RunMetrics) => (m.accepted ? (100 * m.movedBookings) / m.accepted : 0) },
-  emptySeats: { label: 'Locuri neocupate / pereche acceptată', higherIsBetter: false, f: (m: RunMetrics) => (m.periodsAccepted ? m.emptySeatPeriods / m.periodsAccepted : 0) },
+  emptySeats: { label: 'Locuri neocupate / pereche ocupată (final)', higherIsBetter: false, f: (m: RunMetrics) => (m.finalPeriods ? m.emptySeatPeriods / m.finalPeriods : 0) },
   rareMisuse: { label: 'Perechi de săli rare folosite inutil', higherIsBetter: false, f: (m: RunMetrics) => m.rareMisusePeriods },
   isolated: { label: 'Ferestre izolate (final)', higherIsBetter: false, f: (m: RunMetrics) => m.isolatedWindows },
+  studentWindows: { label: 'Ferestrele studenților (final)', higherIsBetter: false, f: (m: RunMetrics) => m.studentWindows },
   timeMedian: { label: 'Timp / cerere, mediană (ms)', higherIsBetter: false, f: (m: RunMetrics) => m.timeMedianMs },
   timeP95: { label: 'Timp / cerere, p95 (ms)', higherIsBetter: false, f: (m: RunMetrics) => m.timeP95Ms },
 } as const;

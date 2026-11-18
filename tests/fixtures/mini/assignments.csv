@@ -1,0 +1,7 @@
+id,course,teacher,activity,units,room_types,min_computers,projector,length,per_week
+R-0001,D-001,P-001,lecture,A1,auditorium,,1,2,1
+R-0002,D-001,P-002,lab,A1-1/1,lab,students,0,1,1
+R-0003,D-001,P-002,lab,A1-1/2,lab,students,0,1,1
+R-0004,D-001,P-002,lab,A1-2,lab,students,0,1,1
+R-0005,D-002,P-003,lecture,A1,auditorium,,1,1,1
+R-0006,D-002,P-003,seminar,A1-1;A1-2,seminar;auditorium,,0,1,1

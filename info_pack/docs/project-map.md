@@ -4,7 +4,7 @@ Ce conține fiecare folder și fișier, pe scurt. Pentru documentele din `info_p
 
 Reguli: harta descrie **rolul** fișierelor, nu detalii de implementare (fără numere de linie, fără liste de funcții), ca să nu se învechească. Când apar, se mută sau dispar fișiere, harta se actualizează în aceeași etapă (`docs-guide.md` §4). Testul `tests/docs/project-map.test.ts` (rulat cu `npm test`) pică dacă harta nu mai corespunde fișierelor; descrierile le verifică omul. Format cerut de test: fișierele din `src/`, `tests/` și `scripts/` apar în prima coloană a tabelelor, sub un titlu care conține folderul între backtick-uri; documentele, în rândul „Lista:” din §5.
 
-Actualizat: 15.11.2026.
+Actualizat: 18.11.2026.
 
 ## 1. Rădăcina
 
@@ -17,6 +17,7 @@ Actualizat: 15.11.2026.
 | `vitest.config.ts` | Configurația testelor |
 | `.node-version` | Versiunea Node pentru Mac (24.22.1) |
 | `.gitignore` | Ce nu intră în Git (`node_modules/`, `out/`, `.env*`) |
+| `.env` (opțional, local) | Calea folderului de date, `RA_DATA_DIR=…`; nu intră în Git |
 | `info_pack/docs/` | Documentația proiectului (vezi §5) |
 | `info_pack/references/` | Loc pentru materiale de referință (gol) |
 | `out/` | Rezultatele generate de comenzi (rapoarte, demo); nu intră în Git |
@@ -40,6 +41,15 @@ Actualizat: 15.11.2026.
 | `checker.ts` | Verificatorul independent al regulilor H1–H8 |
 | `index.ts` | Exportul comun al modulelor motorului |
 
+### `src/data/` — datele în formatul intern (Lotul 3, D33)
+
+| Fișier | Rol |
+|---|---|
+| `csv.ts` | Citirea și scrierea fișierelor CSV, cu numărul liniei pentru raport |
+| `format.ts` | **Formatul intern** (specificația: `info_pack/docs/data-format.md`): citirea și validarea fișierelor, construirea instanței motorului și a orarului ca rezervări existente, cu problemele raportate pe fișier și linie |
+| `io.ts` | Folderul datelor din afara repository-ului (`RA_DATA_DIR`, implicit `../room-allocation-data`); citirea și scrierea unui set |
+| `summary.ts` | Rezumatul unui set de date pentru raportul de validare |
+
 ### `src/scenarios/` — scenariile demonstrative
 
 | Fișier | Rol |
@@ -54,7 +64,10 @@ Actualizat: 15.11.2026.
 |---|---|
 | `rng.ts` | Generatorul pseudo-aleator cu seed |
 | `generator.ts` | Facultatea sintetică și șirul de cereri până la o încărcare țintă |
-| `simulate.ts` | Rularea strategiilor, indicatorii, mediile și intervalele de încredere |
+| `simulate.ts` | Rularea strategiilor, indicatorii, mediile și intervalele de încredere; poate porni de la rezervări existente |
+| `faculty.ts` | Setul sintetic al facultății în formatul intern: săli, fluxuri/grupe/subgrupe, profesori pseudonimizați, repartizări și un orar fără conflicte, făcut „ca de om” |
+| `metrics.ts` | Măsurătorile unei săptămâni: ocuparea sălilor, săli rare folosite inutil, ferestrele studenților, golurile din programul sălilor |
+| `week.ts` | Săptămâna în simulator: orarul ca rezervări existente + cereri suplimentare (recuperări, consultații, evenimente) |
 
 ### `src/demo/` — demo-ul static
 
@@ -74,6 +87,14 @@ Actualizat: 15.11.2026.
 | `engine/determinism.test.ts` | Același rezultat cu sălile și rezervările în altă ordine |
 | `sim/generator.test.ts` | Generatorul: reproductibil, fără suprapuneri de persoane, încărcarea corectă |
 | `sim/simulate.test.ts` | Simulatorul: stări valide, comparație pe perechi, statistica |
+| `sim/faculty.test.ts` | Setul sintetic: același seed dă aceleași fișiere, orarul trece validarea, doar pseudonime |
+| `sim/metrics.test.ts` | Ferestrele studenților pe subgrupe și ocuparea sălilor |
+| `sim/week.test.ts` | Cererile suplimentare (fără conflicte de persoane) și rularea săptămânii fără încălcări |
+| `data/csv.test.ts` | Citirea CSV: ghilimele, virgule, rânduri noi, numerele liniilor |
+| `data/format.test.ts` | Formatul intern pe exemplul mic; fiecare tip de greșeală raportat cu fișierul și linia |
+| `data/io.test.ts` | Calea folderului de date, scrierea și recitirea unui set |
+| `fixtures/mini/dataset.json`, `fixtures/mini/rooms.csv`, `fixtures/mini/units.csv`, `fixtures/mini/teachers.csv`, `fixtures/mini/courses.csv`, `fixtures/mini/assignments.csv`, `fixtures/mini/timetable.csv` | **Exemplul mic fictiv** în formatul intern: datele pe care rulează testele fără folderul extern; servește și ca model al formatului |
+| `support/mini.ts` | Citirea exemplului mic pentru teste |
 | `demo/controller.test.ts` | Logica demo-ului |
 | `docs/project-map.test.ts` | Că această hartă este la zi: fiecare fișier din `src/`, `tests/`, `scripts/` și din `info_pack/docs/` apare aici, iar fiecare fișier numit aici există |
 | `oracle/bruteforce.ts` | Oracolul (căutarea exhaustivă), folosit de teste |
@@ -86,12 +107,16 @@ Actualizat: 15.11.2026.
 | `render-cases.ts` | `npm run report` | `out/cases.html`: cazurile 1–5, înainte și după |
 | `simulate.ts` | `npm run simulate` | `out/simulation.html` și `out/simulation.json` |
 | `build-demo.ts` | `npm run demo` | `out/demo.html`: demo-ul într-o singură pagină |
+| `data-synthetic.ts` | `npm run data:synthetic` | Setul sintetic în `room-allocation-data/synthetic/canonical/` (în afara repository-ului) |
+| `data-check.ts` | `npm run data:check -- synthetic` (sau `real`) | Raportul de validare în `room-allocation-data/<secțiune>/reports/` |
+| `week.ts` | `npm run week -- synthetic` (sau `real`) | Măsurătorile de bază și comparația strategiilor, în `room-allocation-data/<secțiune>/reports/` |
+| `report-html.ts` | — | Elemente comune pentru rapoartele de date |
 
 ## 5. Documentația — `info_pack/docs/`
 
 Rolul fiecărui document și regulile de modificare: `docs-guide.md`.
 
-Lista: `docs-guide.md`, `handoff.md`, `decisions.md`, `journal.md`, `plan.md`, `results.md`, `literature.md`, `glossary.md`, `project-map.md`, `agent-rules.md`, `concept.md`, `coordinator-feedback.md`, `topic-discussions.md`, `tableflow-legacy.md`.
+Lista: `docs-guide.md`, `handoff.md`, `decisions.md`, `journal.md`, `plan.md`, `results.md`, `literature.md`, `glossary.md`, `project-map.md`, `agent-rules.md`, `concept.md`, `coordinator-feedback.md`, `topic-discussions.md`, `tableflow-legacy.md`, `data-format.md`.
 
 ## 6. Ordinea de citire a codului pentru code review
 

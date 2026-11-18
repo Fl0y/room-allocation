@@ -1,8 +1,12 @@
-# RoomAllocation — V0
+# RoomAllocation
 
 Algoritmul de alocare a sălilor universitare (proiect academic). Documentația și deciziile sunt în `info_pack/docs/`; planul activ este `info_pack/docs/plan.md`. Ordinea de citire și regulile de modificare a documentelor: `info_pack/docs/docs-guide.md`; rolul fiecărui fișier: `project-map.md`; termenii: `glossary.md`; starea curentă: `handoff.md`; istoricul: `journal.md`; rezultatele: `results.md`.
 
-## Stadiul: V0, Loturile 1–2 — motorul de alocare, simularea și demo-ul
+## Stadiul
+
+V0 încheiat (Loturile 1–2: motorul, simularea, demo-ul). V1: partea 3A (formatul intern al datelor, setul sintetic al facultății, săptămâna în simulator) — `info_pack/docs/data-format.md`.
+
+## V0 — motorul de alocare, simularea și demo-ul
 
 Motorul este pur (fără interfață, HTTP sau bază de date):
 
@@ -25,6 +29,11 @@ npm run typecheck   # verificarea tipurilor TypeScript
 npm run report      # generează out/cases.html (cazurile 1–5, înainte/după)
 npm run simulate    # simularea (≈1 min): out/simulation.html + out/simulation.json
 npm run demo        # construiește out/demo.html (deschide-l direct în browser)
+
+# datele (în afara repository-ului, implicit ../room-allocation-data; vezi info_pack/docs/data-format.md)
+npm run data:synthetic          # generează setul sintetic (seed 1) în synthetic/canonical/
+npm run data:check -- synthetic # raportul de validare (sau: real)
+npm run week -- synthetic       # orarul + cereri suplimentare, comparația strategiilor (sau: real)
 ```
 
 ## Structura
@@ -32,12 +41,15 @@ npm run demo        # construiește out/demo.html (deschide-l direct în browser
 ```
 src/engine/      motorul de alocare (independent de interfață și BD)
 src/scenarios/   scenariile demonstrative (date sintetice) și rularea lor
-src/sim/         generatorul de date sintetice și simulatorul
+src/data/        formatul intern al datelor: citire, validare, construirea săptămânii (Lotul 3)
+src/sim/         generatoarele de date sintetice, simulatorul, săptămâna și măsurătorile ei
 src/demo/        demo-ul: logica (controller.ts) și interfața (main.ts)
 tests/engine/    testele motorului
 tests/oracle/    oracolul exhaustiv (independent de căutarea motorului)
 tests/support/   generatorul de instanțe mici aleatoare, cu seed
-tests/sim/       generatorul și simulatorul
+tests/sim/       generatoarele, simulatorul, săptămâna
+tests/data/      formatul intern
+tests/fixtures/  exemplul mic fictiv în formatul intern (testele nu depind de folderul extern)
 tests/demo/      logica demo-ului
-scripts/         raportul cazurilor, simularea, construirea demo-ului
+scripts/         raportul cazurilor, simularea, demo-ul, datele (generare, validare, săptămâna)
 ```

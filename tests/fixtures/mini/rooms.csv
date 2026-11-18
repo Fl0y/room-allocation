@@ -1,0 +1,5 @@
+id,name,type,capacity,computers,projector,board
+AUD-1,Aula 1,auditorium,60,0,1,1
+SEM-01,Sala 201,seminar,30,0,1,1
+SEM-02,"Sala 202, etajul 2",seminar,24,0,0,1
+LAB-01,Laborator 301,lab,20,20,1,1

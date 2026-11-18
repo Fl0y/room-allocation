@@ -28,6 +28,7 @@ Pentru agenții AI și pentru autor: în ce ordine se citesc documentele ca să 
 | Pornești o discuție tematică | `topic-discussions.md` |
 | Rulezi comenzi sau cauți în cod | `README.md` (rădăcină): comenzile; `project-map.md`: rolul fiecărui fișier și ordinea de citire a codului |
 | Întâlnești un termen neclar sau introduci unul nou | `glossary.md` |
+| Lucrezi cu datele (formatul intern, setul sintetic, importul datelor reale) | `data-format.md` |
 
 ### Cum se citește
 
@@ -74,6 +75,7 @@ Tipuri: **viu** — se actualizează odată cu proiectul; **regulă** — se sch
 | `glossary.md` | viu | Când se introduce un termen nou sau se schimbă sensul unuia | Editare punctuală; definiții scurte, cu trimitere la decizii, fără copierea regulilor |
 | `project-map.md` | viu | Când apar, se mută sau dispar fișiere | Editare punctuală; rolul fișierelor, fără numere de linie |
 | `literature.md` | viu | La fiecare aprofundare a literaturii (P14) | Pe teme; bibliografia numerotată la final; lucrările necitite integral marcate ◐ |
+| `data-format.md` | viu | Când se schimbă formatul intern, locul datelor sau alegerile generatorului | Editare punctuală; versiunea formatului notată în antet |
 | `README.md` (rădăcină) | viu | Când apar comenzi, foldere sau dependențe noi | Editare punctuală |
 
 Reguli comune:

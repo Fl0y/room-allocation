@@ -70,6 +70,12 @@ Reguli: cine introduce un termen nou îl adaugă aici în aceeași etapă (`docs
 - **Comparație pe perechi** (*paired comparison*) — strategiile primesc exact aceleași cereri (același seed), iar diferența se calculează seed cu seed.
 - **Interval de încredere 95%** (*95% confidence interval*) — intervalul în care se află, cu încredere de 95%, media reală; dacă intervalul unei diferențe nu conține zero, diferența este considerată semnificativă.
 - **p95** — valoarea sub care se află 95% dintre măsurători (de exemplu timpul per cerere).
+- **Format intern** (*canonical format*) — forma comună a datelor (sintetice și reale) pe care o citește codul: 7 fișiere (săli, unități, profesori, discipline, repartizări, orar, descrierea setului). *Unde:* `data-format.md`, D33.
+- **Set sintetic** — date inventate în formatul intern, produse de un script cu seed, care imită aproximativ o facultate. *Unde:* `src/sim/faculty.ts`, `data-format.md` §4.
+- **Repartizare** — cine predă ce disciplină, la ce unități, cu ce cerințe de sală și de câte ori pe săptămână. *Unde:* `assignments.csv`.
+- **Săptămâna-tip** — o săptămână concretă (luni–vineri) în care se pune orarul; recurența nu este încă modelată. *Unde:* `dataset.json`.
+- **Cerere suplimentară** — o cerere generată peste orar în simulare: recuperare, consultație sau eveniment. *Unde:* `src/sim/week.ts`.
+- **Pseudonim** — identificatorul fictiv al unui profesor (`P-001`); numele reale nu intră în formatul intern (D28). Corespondența stă doar în `room-allocation-data/real/`.
 - **Rezultat preliminar / verificat / final** — statutul unui rezultat în `results.md`: preliminar = simulare pe date sintetice; verificat = test automat; final = protocolul complet din V1.
 
 ## 5. Procesul de lucru

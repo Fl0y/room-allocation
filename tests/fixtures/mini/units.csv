@@ -1,0 +1,6 @@
+id,kind,parent,size,name
+A1,flux,,,"Programul A, anul 1"
+A1-1,group,A1,,Grupa A1-1
+A1-1/1,subgroup,A1-1,12,Subgrupa A1-1/1
+A1-1/2,subgroup,A1-1,11,Subgrupa A1-1/2
+A1-2,group,A1,18,Grupa A1-2

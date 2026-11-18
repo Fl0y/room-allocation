@@ -1,6 +1,6 @@
 # Planul proiectului — RoomAllocation
 
-**Versiune:** 2.1 (18.11.2026; Lotul 3 împărțit după D33). **Statut:** V0 încheiat; V1 cu ordinea aprobată, neautorizat pentru implementare. Bazat pe deciziile D01–D34 și P01–P17 din `decisions.md`. Singura copie activă a planului.
+**Versiune:** 2.1 (18.11.2026; Lotul 3 împărțit după D33). **Statut:** V0 încheiat; V1 cu ordinea aprobată; autorizată doar partea 3A (18.11.2026). Bazat pe deciziile D01–D35 și P01–P17 din `decisions.md`. Singura copie activă a planului.
 Se bifează doar sarcinile efectiv finalizate și verificate. Structura feliilor se poate ajusta pe parcurs (P10).
 
 ---
@@ -55,13 +55,13 @@ Se bifează doar sarcinile efectiv finalizate și verificate. Structura feliilor
 
 ### V1 — versiunea matură
 
-**Statut (15.11.2026):** ordinea loturilor și ordinea de alegere din Lotul 4 sunt **aprobate de autor** (D30, D31). **Niciun lot nu este autorizat pentru implementare**; autorul îl autorizează când consideră că proiectul este pregătit. Partea 3A (date sintetice) poate începe fără datele reale; partea 3B așteaptă datele (autorul le solicită administrației și decanatului).
+**Statut (18.11.2026):** ordinea loturilor și ordinea de alegere din Lotul 4 sunt **aprobate de autor** (D30, D31); fiecare lot se autorizează separat. **Partea 3A este autorizată (18.11.2026)**; partea 3B așteaptă datele reale (autorul le solicită administrației și decanatului). Loturile 4–6 nu sunt autorizate.
 
 **Ordinea:** datele reale → algoritmul extins → back-end-ul → interfețele. Fiecare lot are 2–3 sub-pași mici, fiecare încheiat cu verificare (D17). Dacă datele reale întârzie, Lotul 4 poate începe înaintea Lotului 3, pe date sintetice (cu autorizare).
 
 **Lotul 3 — Datele (D28, D32, D33)** — model recomandat: Opus pentru formatul intern și validare, Sonnet pentru import și convertor
 
-*3A — pe date sintetice (nu depinde de decanat)*
+*3A — pe date sintetice (nu depinde de decanat). Implementată și verificată în mediul lui Claude la 18.11.2026; se bifează după verificarea pe Mac.*
 - [ ] 3a.1. Formatul intern (`canonical`) documentat: săli, flux/grupă/subgrupă, profesori, repartizarea profesor–disciplină–grupă, orar; încărcarea lui în instanța motorului; calea din `RA_DATA_DIR`; un exemplu mic fictiv în Git, pe care rulează testele
 - [ ] 3a.2. Setul sintetic al facultății: script cu seed în repository, care scrie în `room-allocation-data/synthetic/canonical/` (structură aproximativă a facultății); raportul de validare: capacități, tipuri, echipamente, mărimile grupelor, conflictele din orar (sală, profesor, grupă la aceeași oră)
 - [ ] 3a.3. „Săptămâna sintetică” în simulator: orarul ca rezervări existente + cereri suplimentare (recuperări, consultații, evenimente) generate după repartizare; măsurătorile de bază: utilizarea sălilor, săli rare folosite inutil, ferestrele studenților

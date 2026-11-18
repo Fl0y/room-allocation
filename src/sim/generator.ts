@@ -8,7 +8,7 @@
 
 import { roomMismatch } from '../engine/compat.ts';
 import { DEFAULT_GRID, overlaps } from '../engine/grid.ts';
-import type { ActivityType, Instance, Needs, Request, Room, Unit } from '../engine/types.ts';
+import type { ActivityType, Instance, Needs, Request, Room, State, Unit } from '../engine/types.ts';
 import { atomsOf, buildUnitIndex, intersects, sizeOf } from '../engine/units.ts';
 import { mulberry32, pick, randInt, weighted } from './rng.ts';
 
@@ -64,6 +64,8 @@ export interface Workload {
   instance: Instance;
   /** Cererile, în ordinea sosirii. */
   requests: Request[];
+  /** Rezervările existente la început (de exemplu orarul săptămânii, Lotul 3a.3); implicit nicio rezervare. */
+  initialState?: State;
   capacityPeriods: number;
   requestedPeriods: number;
   achievedLoad: number;

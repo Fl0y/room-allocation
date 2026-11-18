@@ -19,7 +19,8 @@ Reguli:
 | Î2. Valoarea mutărilor | **Preliminar** — §3; câte mutări merită (M = 0–4): §3.5 |
 | Î3. Decizia online față de optimul global | Nestudiat (V1, solver exact P08) |
 | Î4. Costul în timp | **Preliminar** (timpi pe o singură mașină) — §3 |
-| Validarea pe date reale (ITC 2019, D24) | Nestudiat (V1) |
+| Săptămâna sintetică: orarul + cereri suplimentare (Lotul 3A) | **Preliminar**, set inventat — §4 |
+| Validarea pe date reale (ITC 2019, D24; facultatea, 3B) | Nestudiat (V1) |
 
 ## 2. Verificarea motorului pe cazurile conflictuale (verificat)
 
@@ -128,3 +129,41 @@ for (const load of [0.85, 0.95])
 - Timpul crește de aproximativ 7 ori cu fiecare mutare permisă în plus (creștere exponențială a numărului de variante).
 - Pe acest generator, M = 2 este un compromis bun; M ≥ 3 nu se justifică pentru modul online. Concordă cu limita de două activități afectate din UniTime (`literature.md` §3) și cu rezultatul teoretic despre numărul mic de înlocuiri necesare în medie (`literature.md` §2).
 - Limita principală a modului online este necunoașterea cererilor viitoare, nu adâncimea căutării; câștiguri mai mari se așteaptă de la prevenire (scorul) și de la reoptimizarea periodică (de testat în V1).
+
+## 4. Săptămâna sintetică (Lotul 3A, preliminar)
+
+**Statut:** preliminar, pe un set **inventat** (`data-format.md` §4). Cifrele descriu setul generat, nu o facultate reală; servesc la verificarea metodei și, după 3B, la comparația cu datele reale. Ferestrele studenților sunt doar măsurate: motorul V0 nu le folosește la alegere.
+
+**Sursa:** 18.11.2026, mediul lui Claude (Node 22), codul de după commit-ul `4348da1` (Lotul 3A, încă necomis la data rulării). Comenzi: `npm run data:synthetic` (seed 1), `npm run week -- synthetic` (seed-urile cererilor suplimentare 1–20; încărcări 0,25 / 0,5 / 0,75 din perechile-sală libere după orar; strategiile din `src/sim/simulate.ts`). Raportul complet, cu intervalele de încredere: `room-allocation-data/synthetic/reports/week.html` (în afara repository-ului; se regenerează identic).
+
+### 4.1 Orarul, fără cereri suplimentare
+
+Setul: 19 săli (4 auditorii, 7 seminar, 8 laboratoare), 12 fluxuri, 72 de unități, 56 de profesori, 246 de repartizări, 299 de ședințe (307 perechi-sală). Validarea: 0 erori, 0 avertismente.
+
+| Măsură | Valoare |
+|---|---|
+| Ocuparea totală | 46% (307 / 665) |
+| Pe tipuri: auditorii / seminar / laboratoare | 54% / 29% / 57% |
+| Pe perechi 1…7 (toate sălile, toate zilele) | 64%, 85%, 78%, 62%, 28%, 5%, 0% |
+| Locuri ocupate din locurile sălilor folosite | 58% |
+| Perechi de săli rare folosite inutil | 1 |
+| Ferestrele studenților | 9 perechi; 8 din 210 zile-unitate cu activitate (4%) |
+
+### 4.2 Cereri suplimentare peste orar (medii pe 20 de seed-uri)
+
+| Strategia | Acceptate, 0,25 | Acceptate, 0,5 | Acceptate, 0,75 | Săli rare folosite inutil (final), 0,5 | Ferestrele studenților (final), 0,5 |
+|---|---|---|---|---|---|
+| A · prima sală liberă | 86,5% | 80,3% | 76,8% | 39,0 | 244,8 |
+| B · best-fit | 89,5% | 86,3% | 82,5% | 17,9 | 262,1 |
+| C · scor V0 | 89,5% | 86,7% | 83,5% | 6,7 | 262,2 |
+| C + M = 2 | 89,8% | 86,8% | 83,8% | 6,7 | 261,9 |
+
+Diferențele față de A pentru B, C și C + M = 2 au intervalele de încredere de 95% (comparație pe perechi) peste zero la toate cele trei încărcări (de exemplu C la 0,75: +6,7 p.p. [6,0; 7,4]). Mutări: sub 0,02 pe cerere acceptată. Timp per cerere, p95: sub 1 ms. Încălcări în stările finale: 0.
+
+**Observații (preliminare):**
+- Refuzurile sunt concentrate pe auditorii: la 0,75, strategia A acceptă 43% din cursurile recuperate și 40% din evenimente, strategia C 69% și 71%; seminarele și consultațiile trec aproape toate. Auditoriul este resursa rară a acestui set.
+- Scorul (C) face diferența mai ales prin protejarea sălilor rare (39 → 6,7 perechi folosite inutil la 0,5), în concordanță cu §3.
+- Mutările aduc puțin aici (+0,1–0,3 p.p.), mai puțin decât în §3: orarul lasă destule săli libere, iar conflictele sunt mai ales pe auditorii, unde nu există săli de rezervă.
+- Ferestrele studenților cresc de la 9 la ≈ 245–265 după cererile suplimentare, pentru că acestea se pun la ore alese uniform. Este punctul de plecare pentru Lotul 4 (cererea cu interval, D29, D31). Best-fit și scorul au ceva mai multe ferestre decât A doar pentru că acceptă mai multe cereri.
+- Limite: un singur set (seed 1), structură inventată, cereri suplimentare fără conflicte de persoane și uniforme în timp; orarul generat este foarte compact (4% zile cu ferestre), probabil mai compact decât unul real.
+

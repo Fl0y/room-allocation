@@ -1,0 +1,8 @@
+{
+  "format": "room-allocation/canonical",
+  "version": 1,
+  "source": "synthetic",
+  "name": "Exemplu mic (fictiv, pentru teste)",
+  "week": ["2026-11-16", "2026-11-17", "2026-11-18", "2026-11-19", "2026-11-20"],
+  "notes": "Date inventate, scrise de mână; folosite de teste și ca model al formatului (info_pack/docs/data-format.md)."
+}
