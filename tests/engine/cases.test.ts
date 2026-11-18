@@ -1,11 +1,12 @@
-// Criteriile de acceptare 2–4 din plan.md §4: cazurile 1–5 din concept §6 și exemplul pentru coordonator.
+// Criteriile de acceptare 2–4 din plan.md §4: cazurile 1–5 din concept §6 și exemplul pentru coordonator;
+// criteriul 3 al Lotului 4 (plan.md §4ter): cazurile 6–10, cu interval.
 
 import { describe, expect, it } from 'vitest';
 import { allocate, type Accepted, type Decision, type Rejected } from '../../src/engine/allocate.ts';
 import { checkState, checkTransition } from '../../src/engine/checker.ts';
 import type { State } from '../../src/engine/types.ts';
 import { request } from '../../src/scenarios/build.ts';
-import { case1, case2, case3, case4, case5, coordinatorExample } from '../../src/scenarios/cases.ts';
+import { case1, case10, case2, case3, case4, case5, case6, case7, case8, case9, coordinatorExample } from '../../src/scenarios/cases.ts';
 import { runScenario, type Scenario } from '../../src/scenarios/run.ts';
 
 function accepted(d: Decision | undefined): Accepted {
@@ -179,5 +180,68 @@ describe('Exemplul pentru coordonator (calculat de mână în coordinator-feedba
     const res = runScenario(coordinatorExample, { strategy: 'best-fit', maxMoves: 1 });
     expect(res.map((s) => s.decision!.kind)).toEqual(Array(5).fill('accepted'));
     expect(accepted(res[1]!.decision).moves).toEqual([{ bookingId: 'r1', from: 'L-201', to: 'S-14' }]);
+  });
+});
+
+// ── Cazurile 6–10 (Lotul 4, cererea cu interval; rezultatele aprobate de autor la 18.11.2026) ──
+
+describe('Cazul 6 — intervalul după activitățile grupei', () => {
+  it('perechea 3, S-1, fără fereastră', () => {
+    const [r] = runScenario(case6);
+    const d = accepted(r!.decision);
+    expect([d.booking.start, d.booking.roomId, d.evaluation.windows]).toEqual([3, 'S-1', 0]);
+    expect(d.explanation.join('\n')).toContain('Intervalul cerut: perechile 3–5');
+    expectValid(case6, r!.before, r!.after);
+  });
+});
+
+describe('Cazul 7 — fereastra înaintea locurilor goale', () => {
+  it('cu criteriul ferestrelor: perechea 2, S-1 (0 ferestre, 15 locuri goale)', () => {
+    const [r] = runScenario(case7);
+    const d = accepted(r!.decision);
+    expect([d.booking.start, d.booking.roomId, d.evaluation.windows, d.evaluation.excess]).toEqual([2, 'S-1', 0, 15]);
+    expectValid(case7, r!.before, r!.after);
+  });
+  it('fără criteriul ferestrelor: perechea 4, S-2 (1 loc gol, 2 ferestre)', () => {
+    const [r] = runScenario(case7, { windows: false });
+    const d = accepted(r!.decision);
+    expect([d.booking.start, d.booking.roomId, d.evaluation.windows, d.evaluation.excess]).toEqual([4, 'S-2', 2, 1]);
+  });
+});
+
+describe('Cazul 8 — sala rară înaintea ferestrei', () => {
+  it('perechea 3, S-1, cu o fereastră; laboratorul nu este folosit', () => {
+    const [r] = runScenario(case8);
+    const d = accepted(r!.decision);
+    expect([d.booking.start, d.booking.roomId, d.evaluation.rarity, d.evaluation.windows]).toEqual([3, 'S-1', 0, 1]);
+    expectValid(case8, r!.before, r!.after);
+  });
+});
+
+describe('Cazul 9 — subgrupe cu laboratoare la ore diferite', () => {
+  it('perechile 1 și 2 excluse; perechea 3, S-1, cu o fereastră (K/1)', () => {
+    const [r] = runScenario(case9);
+    const d = accepted(r!.decision);
+    expect([d.booking.start, d.booking.roomId, d.evaluation.windows]).toEqual([3, 'S-1', 1]);
+    expectValid(case9, r!.before, r!.after);
+  });
+});
+
+describe('Cazul 10 — refuz pe tot intervalul', () => {
+  it('TEACHER_BUSY pentru fiecare pereche; alternativele 2, 5, 1, 6, 7', () => {
+    const [r] = runScenario(case10);
+    const d = rejected(r!.decision);
+    expect(d.reasons.map((x) => [x.code, x.bookings])).toEqual([
+      ['TEACHER_BUSY', ['H-3']],
+      ['TEACHER_BUSY', ['H-4']],
+    ]);
+    expect(d.alternatives.map((a) => (a.kind === 'slot' ? [a.date, a.start, a.roomId] : a.kind))).toEqual([
+      ['2026-11-17', 2, 'S-1'],
+      ['2026-11-17', 5, 'S-1'],
+      ['2026-11-17', 1, 'S-1'],
+      ['2026-11-17', 6, 'S-1'],
+      ['2026-11-17', 7, 'S-1'],
+    ]);
+    expect(d.explanation[0]).toContain('oricând între perechile 3–4');
   });
 });

@@ -93,17 +93,17 @@ export function closeRoom(d: DemoState, closure: Closure): DemoState {
  */
 export function applyAlternative(d: DemoState, request: Request, alt: Alternative): DemoState {
   if (alt.kind === 'slot') {
-    const moved: Request = { ...request, date: alt.date, start: alt.start };
+    const moved: Request = { ...request, date: alt.date, start: alt.start, latest: undefined };
     return submitInternal(d, moved, `Alternativă confirmată pentru ${request.id}: ${alt.date}, perechea ${alt.start}`, d.stepIndex);
   }
   const [p1, p2] = alt.parts;
   if (!p1 || !p2) return d;
   const opts = allocOptions(d);
-  const first = allocate(d.scenario.instance, d.state, { ...request, id: `${request.id}#1`, start: p1.start, length: p1.length }, opts);
+  const first = allocate(d.scenario.instance, d.state, { ...request, id: `${request.id}#1`, start: p1.start, length: p1.length, latest: undefined }, opts);
   if (first.kind !== 'accepted') {
     return push(d, { kind: 'decision', title: `Ruperea blocului ${request.id} nu mai este posibilă`, request, decision: first, before: d.state, after: d.state }, d.state);
   }
-  const second = allocate(d.scenario.instance, first.state, { ...request, id: `${request.id}#2`, start: p2.start, length: p2.length }, opts);
+  const second = allocate(d.scenario.instance, first.state, { ...request, id: `${request.id}#2`, start: p2.start, length: p2.length, latest: undefined }, opts);
   if (second.kind !== 'accepted') {
     return push(d, { kind: 'decision', title: `Ruperea blocului ${request.id} nu mai este posibilă`, request, decision: second, before: d.state, after: d.state }, d.state);
   }

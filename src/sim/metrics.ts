@@ -2,37 +2,17 @@
 // inutil, ferestrele studenților (D29) și golurile izolate din programul sălilor.
 // Doar măsurare: motorul nu folosește încă ferestrele (asta vine în Lotul 4).
 
-import { buildOccupancy, isolatedWindows } from '../engine/occupancy.ts';
+import { buildOccupancy, isolatedGaps } from '../engine/occupancy.ts';
+import { buildAtomDays, windowsOf, type AtomDays } from '../engine/windows.ts';
 import { rarityOf } from '../engine/score.ts';
 import type { Booking, Instance, RoomType } from '../engine/types.ts';
 import { buildUnitIndex } from '../engine/units.ts';
 
-/**
- * Ferestrele unei unități atomice într-o zi (D29): perechile libere dintre prima și ultima activitate.
- * Fără excepție pentru pauza de masă.
- */
-export function windowsOf(busy: ReadonlySet<number>): number {
-  if (busy.size < 2) return 0;
-  const ps = [...busy];
-  const first = Math.min(...ps);
-  const last = Math.max(...ps);
-  return last - first + 1 - busy.size;
-}
+export { windowsOf } from '../engine/windows.ts';
 
 /** Perechile ocupate pe (unitate atomică, dată). Cheia: `unitate|dată`. */
-export function atomBusy(instance: Instance, bookings: readonly Booking[]): Map<string, Set<number>> {
-  const index = buildUnitIndex(instance.units);
-  const out = new Map<string, Set<number>>();
-  for (const b of bookings) {
-    const atoms = new Set(b.units.flatMap((u) => index.atoms.get(u) ?? []));
-    for (const a of atoms) {
-      const k = `${a}|${b.date}`;
-      let s = out.get(k);
-      if (!s) out.set(k, (s = new Set()));
-      for (let p = b.start; p < b.start + b.length; p++) s.add(p);
-    }
-  }
-  return out;
+export function atomBusy(instance: Instance, bookings: readonly Booking[]): AtomDays {
+  return buildAtomDays(buildUnitIndex(instance.units), bookings);
 }
 
 export interface WindowStats {
@@ -119,7 +99,7 @@ export function measureWeek(instance: Instance, bookings: readonly Booking[]): W
   }
   const occ = buildOccupancy(bookings, P);
   let gaps = 0;
-  for (const r of instance.rooms) for (const d of instance.dates) gaps += isolatedWindows(occ, r.id, d, P);
+  for (const r of instance.rooms) for (const d of instance.dates) gaps += isolatedGaps(occ, r.id, d, P);
   return {
     rooms: instance.rooms.length,
     roomPeriods: instance.rooms.length * P * D,

@@ -3,7 +3,7 @@
 
 import { allocate } from '../engine/allocate.ts';
 import { checkState, checkTransition } from '../engine/checker.ts';
-import { buildOccupancy, isolatedWindows } from '../engine/occupancy.ts';
+import { buildOccupancy, isolatedGaps } from '../engine/occupancy.ts';
 import { rarityOf, type Strategy } from '../engine/score.ts';
 import type { ActivityType, State } from '../engine/types.ts';
 import { generateWorkload, type FacultyProfile, DEFAULT_PROFILE, type Workload } from './generator.ts';
@@ -14,6 +14,8 @@ export interface StrategyConfig {
   label: string;
   strategy: Strategy;
   maxMoves: number;
+  /** Criteriul ferestrelor studenților la cererile cu interval (D31); implicit da. */
+  windows?: boolean;
 }
 
 export const CONFIGS: StrategyConfig[] = [
@@ -48,8 +50,8 @@ export interface RunMetrics {
   finalPeriods: number;
   /** Perechi de săli rare consumate de activități care nu au nevoie de ele (starea finală). */
   rareMisusePeriods: number;
-  /** Ferestre izolate de o pereche, în toate sălile și zilele (starea finală). */
-  isolatedWindows: number;
+  /** Goluri izolate de o pereche în programul sălilor, în toate sălile și zilele (starea finală). */
+  roomGaps: number;
   /** Ferestrele studenților (D29), pe toate unitățile atomice și zilele (starea finală). */
   studentWindows: number;
   timeMedianMs: number;
@@ -92,7 +94,7 @@ export function runOnce(workload: Workload, config: StrategyConfig, options: Run
     emptySeatPeriods: 0,
     finalPeriods: 0,
     rareMisusePeriods: 0,
-    isolatedWindows: 0,
+    roomGaps: 0,
     studentWindows: 0,
     timeMedianMs: 0,
     timeP95Ms: 0,
@@ -103,6 +105,7 @@ export function runOnce(workload: Workload, config: StrategyConfig, options: Run
     const d = allocate(instance, state, req, {
       strategy: config.strategy,
       maxMoves: config.maxMoves,
+      windows: config.windows ?? true,
       alternatives: 0,
       split: false,
       verify: false,
@@ -139,7 +142,7 @@ export function runOnce(workload: Workload, config: StrategyConfig, options: Run
   }
   const P = instance.grid.periods.length;
   const occ = buildOccupancy(state.bookings, P);
-  for (const r of instance.rooms) for (const d of instance.dates) m.isolatedWindows += isolatedWindows(occ, r.id, d, P);
+  for (const r of instance.rooms) for (const d of instance.dates) m.roomGaps += isolatedGaps(occ, r.id, d, P);
   m.studentWindows = studentWindows(instance, state.bookings).total;
   times.sort((a, b) => a - b);
   m.timeMedianMs = quantile(times, 0.5);
@@ -191,7 +194,7 @@ export const INDICATORS = {
   movedPct: { label: 'Rezervări mutate cel puțin o dată (%)', higherIsBetter: false, f: (m: RunMetrics) => (m.accepted ? (100 * m.movedBookings) / m.accepted : 0) },
   emptySeats: { label: 'Locuri neocupate / pereche ocupată (final)', higherIsBetter: false, f: (m: RunMetrics) => (m.finalPeriods ? m.emptySeatPeriods / m.finalPeriods : 0) },
   rareMisuse: { label: 'Perechi de săli rare folosite inutil', higherIsBetter: false, f: (m: RunMetrics) => m.rareMisusePeriods },
-  isolated: { label: 'Ferestre izolate (final)', higherIsBetter: false, f: (m: RunMetrics) => m.isolatedWindows },
+  isolated: { label: 'Goluri izolate în programul sălilor (final)', higherIsBetter: false, f: (m: RunMetrics) => m.roomGaps },
   studentWindows: { label: 'Ferestrele studenților (final)', higherIsBetter: false, f: (m: RunMetrics) => m.studentWindows },
   timeMedian: { label: 'Timp / cerere, mediană (ms)', higherIsBetter: false, f: (m: RunMetrics) => m.timeMedianMs },
   timeP95: { label: 'Timp / cerere, p95 (ms)', higherIsBetter: false, f: (m: RunMetrics) => m.timeP95Ms },

@@ -134,3 +134,5 @@ Generatorul (`src/sim/faculty.ts`) produce o facultate inventată, cu structură
 ## 5. Săptămâna în simulator (`npm run week -- <synthetic|real>`)
 
 Orarul devine rezervări existente; peste el se generează cereri suplimentare cu seed (recuperări, consultații, evenimente fixe) până la o fracțiune din perechile-sală libere. Fiecare strategie primește aceleași cereri, în aceeași ordine. Raportul (`reports/week.html` și `.json`) conține măsurătorile de bază ale orarului și comparația strategiilor. Alegerile generatorului de cereri (fără conflicte de persoane, zi și pereche uniforme, orarul mutabil) sunt propuneri, de revăzut cu datele reale.
+
+Lotul 4 (`npm run interval -- <secțiune>`): aceleași cereri, dar fiecare acceptă și 1–3 perechi după prima (40% / 40% / 20%, propunere; un generator separat, ca cererile să rămână aceleași). Persoanele sunt garantate libere doar la prima pereche.

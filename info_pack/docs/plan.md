@@ -1,6 +1,6 @@
 # Planul proiectului — RoomAllocation
 
-**Versiune:** 2.1 (18.11.2026; Lotul 3 împărțit după D33). **Statut:** V0 încheiat; V1 cu ordinea aprobată; autorizată doar partea 3A (18.11.2026). Bazat pe deciziile D01–D35 și P01–P17 din `decisions.md`. Singura copie activă a planului.
+**Versiune:** 2.1 (18.11.2026; Lotul 3 împărțit după D33). **Statut:** V0 încheiat; V1 cu ordinea aprobată; partea 3A încheiată; Lotul 4 autorizat (18.11.2026). Bazat pe deciziile D01–D35 și P01–P17 din `decisions.md`. Singura copie activă a planului.
 Se bifează doar sarcinile efectiv finalizate și verificate. Structura feliilor se poate ajusta pe parcurs (P10).
 
 ---
@@ -55,16 +55,16 @@ Se bifează doar sarcinile efectiv finalizate și verificate. Structura feliilor
 
 ### V1 — versiunea matură
 
-**Statut (18.11.2026):** ordinea loturilor și ordinea de alegere din Lotul 4 sunt **aprobate de autor** (D30, D31); fiecare lot se autorizează separat. **Partea 3A este autorizată (18.11.2026)**; partea 3B așteaptă datele reale (autorul le solicită administrației și decanatului). Loturile 4–6 nu sunt autorizate.
+**Statut (18.11.2026):** ordinea loturilor și ordinea de alegere din Lotul 4 sunt **aprobate de autor** (D30, D31); fiecare lot se autorizează separat. **Partea 3A este autorizată (18.11.2026)**; partea 3B așteaptă datele reale (autorul le solicită administrației și decanatului). **Lotul 4 este autorizat (18.11.2026)**, pe setul sintetic. Loturile 5–6 nu sunt autorizate.
 
 **Ordinea:** datele reale → algoritmul extins → back-end-ul → interfețele. Fiecare lot are 2–3 sub-pași mici, fiecare încheiat cu verificare (D17). Dacă datele reale întârzie, Lotul 4 poate începe înaintea Lotului 3, pe date sintetice (cu autorizare).
 
 **Lotul 3 — Datele (D28, D32, D33)** — model recomandat: Opus pentru formatul intern și validare, Sonnet pentru import și convertor
 
-*3A — pe date sintetice (nu depinde de decanat). Implementată și verificată în mediul lui Claude la 18.11.2026; se bifează după verificarea pe Mac.*
-- [ ] 3a.1. Formatul intern (`canonical`) documentat: săli, flux/grupă/subgrupă, profesori, repartizarea profesor–disciplină–grupă, orar; încărcarea lui în instanța motorului; calea din `RA_DATA_DIR`; un exemplu mic fictiv în Git, pe care rulează testele
-- [ ] 3a.2. Setul sintetic al facultății: script cu seed în repository, care scrie în `room-allocation-data/synthetic/canonical/` (structură aproximativă a facultății); raportul de validare: capacități, tipuri, echipamente, mărimile grupelor, conflictele din orar (sală, profesor, grupă la aceeași oră)
-- [ ] 3a.3. „Săptămâna sintetică” în simulator: orarul ca rezervări existente + cereri suplimentare (recuperări, consultații, evenimente) generate după repartizare; măsurătorile de bază: utilizarea sălilor, săli rare folosite inutil, ferestrele studenților
+*3A — pe date sintetice (nu depinde de decanat). Implementată și verificată în mediul lui Claude și pe Mac (autorul, 18.11.2026; commit `a813fcb`).*
+- [x] 3a.1. Formatul intern (`canonical`) documentat: săli, flux/grupă/subgrupă, profesori, repartizarea profesor–disciplină–grupă, orar; încărcarea lui în instanța motorului; calea din `RA_DATA_DIR`; un exemplu mic fictiv în Git, pe care rulează testele
+- [x] 3a.2. Setul sintetic al facultății: script cu seed în repository, care scrie în `room-allocation-data/synthetic/canonical/` (structură aproximativă a facultății); raportul de validare: capacități, tipuri, echipamente, mărimile grupelor, conflictele din orar (sală, profesor, grupă la aceeași oră)
+- [x] 3a.3. „Săptămâna sintetică” în simulator: orarul ca rezervări existente + cereri suplimentare (recuperări, consultații, evenimente) generate după repartizare; măsurătorile de bază: utilizarea sălilor, săli rare folosite inutil, ferestrele studenților
 
 *3B — pe date reale (după primirea lor)*
 - [ ] 3b.1. Convertorul `real/raw → real/canonical`, scris după formatul efectiv primit; **pseudonimizarea automată** a profesorilor (`P-001`…), cu corespondența doar în `real/`
@@ -72,9 +72,11 @@ Se bifează doar sarcinile efectiv finalizate și verificate. Structura feliilor
 - Domeniul: întâi o singură facultate, apoi extindere treptată (D32). Recurența nu e încă modelată: o „săptămână-tip” (sau două, pentru săptămâni pare/impare), ca date concrete. Demo-ul public folosește doar date sintetice.
 
 **Lotul 4 — Cererea cu interval și ferestrele studenților (D29, varianta a)** — model recomandat: Opus
-- [ ] 4a. Motorul: cererea cu interval opțional de perechi; motorul încearcă fiecare început posibil; calculul variației ferestrelor pe subgrupă și zi; ordinea de alegere **mutări → săli rare → ferestrele studenților → locuri goale → fragmentarea programului sălii** (D31); explicația include ferestrele; alinierea termenilor din cod cu `glossary.md` („goluri izolate” pentru săli, „ferestre” pentru studenți)
+
+*4a și 4c verificate pe Mac de autor (18.11.2026). 4b: cazurile 6–10 aprobate de autor și transformate în teste; se bifează după `npm test` pe Mac. Pe săptămâna reală, 4c se rulează după 3B.*
+- [x] 4a. Motorul: cererea cu interval opțional de perechi; motorul încearcă fiecare început posibil; calculul variației ferestrelor pe subgrupă și zi; ordinea de alegere **mutări → săli rare → ferestrele studenților → locuri goale → fragmentarea programului sălii** (D31); explicația include ferestrele; alinierea termenilor din cod cu `glossary.md` („goluri izolate” pentru săli, „ferestre” pentru studenți)
 - [ ] 4b. Verificarea: oracolul exhaustiv extins la intervale, cazuri noi (grupă cu perechile 1–2 și interval 3–5 → perechea 3; conflict sală rară vs. fereastră; subgrupe cu laboratoare la ore diferite), determinism
-- [ ] 4c. Simularea: oră fixă vs. interval fără criteriul ferestrelor vs. interval cu criteriul ferestrelor, pe date sintetice și pe săptămâna reală; M = 3 ca reper (`results.md` §3.5)
+- [x] 4c. Simularea: oră fixă vs. interval fără criteriul ferestrelor vs. interval cu criteriul ferestrelor, pe date sintetice și pe săptămâna reală; M = 3 ca reper (`results.md` §3.5)
 
 **Lotul 5 — Back-end-ul** — model recomandat: Opus
 - [ ] 5a. Docker (PostgreSQL 18, Node 24, imagini fixate); schema și migrațiile SQL; constrângeri de excludere în baza de date pentru sală, profesor și unitate atomică la aceeași pereche

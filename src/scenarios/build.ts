@@ -66,6 +66,8 @@ export interface RequestSpec {
   needs?: Needs;
   declaredStudents?: number;
   status?: BookingStatus;
+  /** Cererea cu interval (Lotul 4): ultima pereche acceptabilă. */
+  latest?: number;
 }
 
 export function request(s: RequestSpec): Request {
@@ -81,5 +83,6 @@ export function request(s: RequestSpec): Request {
   };
   if (s.declaredStudents !== undefined) r.declaredStudents = s.declaredStudents;
   if (s.status !== undefined) r.status = s.status;
+  if (s.latest !== undefined) r.latest = s.latest;
   return r;
 }

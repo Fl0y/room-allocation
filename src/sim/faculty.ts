@@ -15,7 +15,7 @@ import type { Room, RoomType } from '../engine/types.ts';
 import { buildUnitIndex, sizeOf } from '../engine/units.ts';
 import { FORMAT_ID, FORMAT_VERSION, needsOf, type CanonAssignment, type CanonCourse, type CanonRoom, type CanonSession, type CanonTeacher, type CanonUnit, type Dataset } from '../data/format.ts';
 import { mulberry32, randInt, weighted, type Rng } from './rng.ts';
-import { windowsOf } from './metrics.ts';
+import { windowsOf } from '../engine/windows.ts';
 
 export interface FacultyShape {
   name: string;

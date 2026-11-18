@@ -20,6 +20,8 @@ Reguli:
 | Î3. Decizia online față de optimul global | Nestudiat (V1, solver exact P08) |
 | Î4. Costul în timp | **Preliminar** (timpi pe o singură mașină) — §3 |
 | Săptămâna sintetică: orarul + cereri suplimentare (Lotul 3A) | **Preliminar**, set inventat — §4 |
+| Cererea cu interval: motorul alege și perechea după D31 (Lotul 4) | **Verificat** (oracol exhaustiv, 600 de instanțe × 4 configurații) — §5.1 |
+| Cererea cu interval: efectul asupra ferestrelor studenților (Lotul 4c) | **Preliminar**, set inventat — §5.2 |
 | Validarea pe date reale (ITC 2019, D24; facultatea, 3B) | Nestudiat (V1) |
 
 ## 2. Verificarea motorului pe cazurile conflictuale (verificat)
@@ -34,6 +36,8 @@ Sursa: `npm test` (`tests/engine/cases.test.ts`) și `npm run report` (`out/case
 | 4. Conflict de persoane | `GROUP_BUSY`, cu cele două laboratoare ale subgrupelor; 5 alternative valide în aceeași zi (perechile 1, 4–7) | Da |
 | 5. Sală închisă (date sintetice construite pentru caz) | 9 rezervări afectate: 7 la aceeași oră fără alte mutări, 1 (examenul, fixare anulată D19) cu o mutare, 1 (blocul b4) nerezolvată cu 5 alternative propuse; 0 încălcări | Da (rezultatul așteptat era calitativ) |
 | Exemplul pentru coordonator (`coordinator-feedback.md` §2.1) | A 4/5 (r4 refuzat), B 4/5 (r2 refuzat), C 5/5, B + M = 1 5/5 cu o mutare | Identic cu calculul de mână |
+
+| 6–10. Cererea cu interval (Lotul 4; rezultatele aprobate de autor la 18.11.2026) | 6: perechea 3, S-1. 7: perechea 2, S-1 (fără criteriul ferestrelor: perechea 4, S-2, 2 ferestre). 8: perechea 3, S-1, o fereastră (laboratorul ocolit). 9: perechea 3, S-1, o fereastră pentru K/1. 10: refuz, `TEACHER_BUSY` la ambele perechi, alternative 2, 5, 1, 6, 7 | Da |
 
 Proprietăți verificate: motorul ⇔ oracolul exhaustiv pe 2000 de instanțe aleatoare mici × M = 0, 1, 2 (existența planului și numărul minim de mutări); determinism la amestecarea sălilor, rezervărilor și datelor.
 
@@ -166,4 +170,28 @@ Diferențele față de A pentru B, C și C + M = 2 au intervalele de încredere 
 - Mutările aduc puțin aici (+0,1–0,3 p.p.), mai puțin decât în §3: orarul lasă destule săli libere, iar conflictele sunt mai ales pe auditorii, unde nu există săli de rezervă.
 - Ferestrele studenților cresc de la 9 la ≈ 245–265 după cererile suplimentare, pentru că acestea se pun la ore alese uniform. Este punctul de plecare pentru Lotul 4 (cererea cu interval, D29, D31). Best-fit și scorul au ceva mai multe ferestre decât A doar pentru că acceptă mai multe cereri.
 - Limite: un singur set (seed 1), structură inventată, cereri suplimentare fără conflicte de persoane și uniforme în timp; orarul generat este foarte compact (4% zile cu ferestre), probabil mai compact decât unul real.
+
+## 5. Cererea cu interval și ferestrele studenților (Lotul 4)
+
+### 5.1 Verificarea motorului (verificat)
+
+Sursa: `npm test` (`tests/engine/interval.test.ts`), 18.11.2026, mediul lui Claude. Pe 600 de instanțe mici aleatoare cu interval (o zi, perechile 1–4, 3–4 săli, 4–8 rezervări, 2–3 începuturi posibile), pentru M = 0, 1, 2 cu criteriul ferestrelor și M = 1 fără el: motorul acceptă dacă și numai dacă oracolul exhaustiv găsește o variantă; numărul de mutări este minim; varianta aleasă este minimă după D31 (raritate → ferestre → excedent → fragmentare; fără mutări, și perechea: cea mai devreme la egalitate); ferestrele raportate în explicație sunt egale cu cele calculate independent. Fără interval, decizia este identică cu V0: 300 de instanțe comparate direct, iar simularea V0 și săptămâna 3A dau aceleași valori înainte și după Lotul 4. Testele de mutație: dezactivarea criteriului ferestrelor și inversarea departajării după pereche sunt detectate.
+
+### 5.2 Simularea pe setul sintetic (preliminar)
+
+Sursa: 18.11.2026, mediul lui Claude, `npm run interval -- synthetic` (setul seed 1, seed-urile cererilor 1–20, încărcări 0,25 / 0,5 / 0,75, strategia scor, M = 2). Aceleași cereri suplimentare în cele trei variante; cu interval, 73% dintre cereri acceptă 1–3 perechi în plus după prima. Raportul complet, cu intervalele de încredere: `room-allocation-data/synthetic/reports/interval.html`.
+
+| Varianta | Acceptate 0,25 / 0,5 / 0,75 | Ferestrele studenților (final) 0,25 / 0,5 / 0,75 | Ferestre adăugate / cerere acceptată 0,25 / 0,5 / 0,75 |
+|---|---|---|---|
+| Ora fixă | 89,8% / 86,8% / 83,8% | 195,3 / 261,9 / 266,1 | 2,39 / 1,68 / 1,17 |
+| Interval, fără criteriul ferestrelor | 90,0% / 85,8% / 81,6% | 225,0 / 294,4 / 298,7 | 2,77 / 1,91 / 1,35 |
+| Interval, cu criteriul ferestrelor (D31) | 93,0% / 89,3% / 85,3% | 193,7 / 258,5 / 263,1 | 2,29 / 1,61 / 1,13 |
+
+Ferestrele în orarul inițial: 9. Diferențe pe perechi față de ora fixă (interval de încredere 95%): cu criteriul, acceptate +3,1 [2,3; 4,0], +2,5 [2,0; 3,0], +1,5 [0,9; 2,1] p.p.; fără criteriu, ferestrele finale +29,7 / +32,4 / +32,5. Cu M = 3 rezultatele sunt identice, doar mai lente (p95 ≈ 2–4 ms față de ≈ 1 ms).
+
+**Observații (preliminare):**
+- Libertatea de a alege perechea, **fără** criteriul ferestrelor, strică orarul studenților: cu aproximativ 12–15% mai multe ferestre. Motorul alege atunci perechea doar după sală (raritate, locuri goale, goluri), deci adesea una depărtată de celelalte activități ale grupei.
+- **Cu** criteriul ferestrelor, ferestrele sunt la nivelul orei fixe sau puțin sub el (−3,5 [−6,5; −0,4] la 0,5), deși se acceptă mai multe cereri; pe cerere acceptată, cu 3–4% mai puține decât la ora fixă. Câștigul este mic, pentru că ferestrele vin după mutări și sălile rare (D31) și pentru că cererile suplimentare au intervale scurte.
+- Acceptările nu se compară curat între variante: generatorul garantează că persoanele sunt libere doar la prima pereche a fiecărei cereri. Când o cerere se mută mai târziu, poate ocupa grupa sau profesorul unei cereri care vine după (refuzuri de tip „persoane ocupate”, inexistente la ora fixă). Varianta fără criteriu mută mai des și pierde mai mult din acest motiv. Câștigul de acceptare al variantei cu criteriu e deci o observație despre acest generator, nu un rezultat general.
+- Limite: un singur set inventat, cu un orar inițial foarte compact; distribuția intervalelor (1–3 perechi în plus) e o propunere.
 

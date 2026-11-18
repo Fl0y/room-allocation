@@ -4,7 +4,8 @@ import type { Needs, Room } from './types.ts';
  * Strategiile comparate (P06):
  * - first-fit: prima sală compatibilă în ordinea listei de săli;
  * - best-fit: cele mai puține locuri neocupate;
- * - score: scorul lexicografic V0 (D25): raritate, apoi excedent, apoi fragmentare.
+ * - score: scorul lexicografic (D25, D31): raritate, apoi ferestrele studenților (doar pentru cererile cu
+ *   interval; la ora fixă sunt aceleași pentru toate sălile), apoi excedent, apoi fragmentare.
  */
 export type Strategy = 'first-fit' | 'best-fit' | 'score';
 
@@ -13,8 +14,10 @@ export interface RoomEvaluation {
   rarity: number;
   /** Locuri neocupate: capacitate − studenți. */
   excess: number;
-  /** Variația numărului de ferestre izolate de o pereche în ziua sălii. */
+  /** Variația numărului de goluri izolate de o pereche în programul sălii, în ziua respectivă. */
   fragmentation: number;
+  /** Variația ferestrelor din orarul studenților (D29) la perechea aleasă; nu depinde de sală. */
+  windows: number;
   notes: string[];
 }
 
@@ -37,14 +40,18 @@ export function rarityOf(room: Room, needs: Needs): { value: number; notes: stri
   return { value, notes };
 }
 
-export function requestKey(strategy: Strategy, roomOrder: number, e: RoomEvaluation): number[] {
+/**
+ * Cheia cererii. `useWindows` = criteriul ferestrelor studenților (D31), folosit doar de strategia `score`;
+ * first-fit și best-fit rămân strategii de referință, fără criteriul ferestrelor.
+ */
+export function requestKey(strategy: Strategy, roomOrder: number, e: RoomEvaluation, useWindows = true): number[] {
   switch (strategy) {
     case 'first-fit':
       return [roomOrder];
     case 'best-fit':
       return [e.excess];
     case 'score':
-      return [e.rarity, e.excess, e.fragmentation];
+      return [e.rarity, useWindows ? e.windows : 0, e.excess, e.fragmentation];
   }
 }
 

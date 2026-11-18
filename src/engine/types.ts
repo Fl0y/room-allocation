@@ -53,10 +53,15 @@ export interface Request {
   needs: Needs;
   /** Data, ISO `YYYY-MM-DD`. Rezervări pe o singură dată (D16). */
   date: string;
-  /** Prima pereche (1..7). */
+  /** Prima pereche (1..7). Cu interval: prima pereche acceptabilă. */
   start: number;
   /** Numărul de perechi consecutive (blocul, D06). */
   length: number;
+  /**
+   * Cererea cu interval (P11, D29, Lotul 4): ultima pereche acceptabilă. Blocul poate începe la orice pereche
+   * între `start` și `latest − length + 1`; motorul alege și perechea (ordinea D31). Fără `latest`: ora este fixă.
+   */
+  latest?: number;
   /** Doar pentru excepții (recuperare parțială, activitate fără grupă); ≤ mărimea unităților (D21). */
   declaredStudents?: number;
   /** Implicit `movable`; `fixed` doar pentru evenimente și examene (D19). */

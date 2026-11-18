@@ -41,10 +41,11 @@ export function occupantsAt(occ: Occupancy, roomId: string, date: string, start:
 }
 
 /**
- * Numărul de ferestre izolate (o singură pereche liberă între ocupări sau la marginea zilei).
+ * Numărul de goluri izolate în programul sălii (o singură pereche liberă între ocupări sau la marginea zilei).
+ * Nu se confundă cu ferestrele studenților (windows.ts, D29).
  * Celulele din `asFree` sunt tratate ca libere (pentru starea „înainte”).
  */
-export function isolatedWindows(
+export function isolatedGaps(
   occ: Occupancy,
   roomId: string,
   date: string,

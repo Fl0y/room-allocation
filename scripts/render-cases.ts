@@ -118,7 +118,7 @@ function scenarioSection(sc: Scenario): string {
   const steps = results.map((res, i) => {
     const title =
       res.step.kind === 'request'
-        ? `Pasul ${i + 1}: cererea ${esc(res.step.request.id)} (${esc(res.step.request.teacher)}, ${esc(ACT[res.step.request.activity] ?? '')}, ${esc(res.step.request.units.join('+'))}, ${periodLabel(res.step.request.start, res.step.request.length)})`
+        ? `Pasul ${i + 1}: cererea ${esc(res.step.request.id)} (${esc(res.step.request.teacher)}, ${esc(ACT[res.step.request.activity] ?? '')}, ${esc(res.step.request.units.join('+'))}, ${res.step.request.latest !== undefined ? `oricând între perechile ${res.step.request.start}–${res.step.request.latest}` : periodLabel(res.step.request.start, res.step.request.length)})`
         : `Pasul ${i + 1}: închiderea sălii ${esc(res.step.closure.roomId)} (${res.step.closure.from} – ${res.step.closure.to})`;
     const dates = stepDates(res);
     const marks = marksFor(res.before, res.after);
@@ -131,7 +131,7 @@ function scenarioSection(sc: Scenario): string {
     return `<div class="step"><h3>${title}</h3>${grids}${body}</div>`;
   });
   return `<section id="${sc.id}"><h2>${esc(sc.title)}</h2><p>${esc(sc.summary)}</p>
-  <p class="expected"><b>Rezultat așteptat în concept (scris de mână):</b> ${esc(sc.expected)}</p>${steps.join('')}</section>`;
+  <p class="expected"><b>Rezultat așteptat (scris de mână, înaintea testelor):</b> ${esc(sc.expected)}</p>${steps.join('')}</section>`;
 }
 
 function coordinatorSection(): string {

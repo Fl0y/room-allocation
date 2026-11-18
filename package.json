@@ -15,7 +15,8 @@
     "demo": "node scripts/build-demo.ts",
     "data:synthetic": "node scripts/data-synthetic.ts",
     "data:check": "node scripts/data-check.ts",
-    "week": "node scripts/week.ts"
+    "week": "node scripts/week.ts",
+    "interval": "node scripts/interval.ts"
   },
   "devDependencies": {
     "@types/node": "24.19.2",

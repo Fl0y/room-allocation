@@ -20,6 +20,8 @@ export type ExtraKind = 'makeup' | 'consultation' | 'event';
 export interface ExtraShape {
   mix: readonly (readonly [ExtraKind, number])[];
   eventLength: readonly (readonly [number, number])[];
+  /** Lotul 4: câte perechi în plus acceptă intervalul unei cereri (0 = ora fixă). */
+  intervalSpan: readonly (readonly [number, number])[];
 }
 
 export const DEFAULT_EXTRAS: ExtraShape = {
@@ -32,10 +34,17 @@ export const DEFAULT_EXTRAS: ExtraShape = {
     [1, 0.6],
     [2, 0.4],
   ],
+  intervalSpan: [
+    [1, 0.4],
+    [2, 0.4],
+    [3, 0.2],
+  ],
 };
 
 export interface ExtraRequest extends Request {
   kind: ExtraKind;
+  /** Ultima pereche acceptabilă dacă cererea ar avea interval (Lotul 4); se folosește doar în modul `interval`. */
+  intervalLatest: number;
 }
 
 /**
@@ -43,6 +52,8 @@ export interface ExtraRequest extends Request {
  */
 export function generateExtras(dataset: Dataset, week: Week, seed: number, extraLoad: number, shape: ExtraShape = DEFAULT_EXTRAS): { requests: ExtraRequest[]; freePeriods: number; requestedPeriods: number } {
   const rnd = mulberry32(seed);
+  // generator separat pentru intervale, ca cererile (și rezultatele Lotului 3A) să rămână aceleași
+  const rndSpan = mulberry32((seed ^ 0x9e3779b9) >>> 0);
   const { instance, state } = week;
   const index = buildUnitIndex(instance.units);
   const P = instance.grid.periods.length;
@@ -105,7 +116,8 @@ export function generateExtras(dataset: Dataset, week: Week, seed: number, extra
     const busy = taken.filter((t) => overlaps(t, span));
     if (busy.some((t) => t.teacher === teacher || intersects(t.atoms, atoms))) continue;
     const id = `x${String(requests.length + 1).padStart(4, '0')}`;
-    const req: ExtraRequest = { id, kind, teacher, units, activity, needs, date, start, length };
+    const intervalLatest = Math.min(P, start + length - 1 + weighted(rndSpan, shape.intervalSpan));
+    const req: ExtraRequest = { id, kind, teacher, units, activity, needs, date, start, length, intervalLatest };
     if (status) req.status = status;
     requests.push(req);
     taken.push({ teacher, atoms, date, start, length });
@@ -114,9 +126,15 @@ export function generateExtras(dataset: Dataset, week: Week, seed: number, extra
   return { requests, freePeriods, requestedPeriods: requested };
 }
 
-/** Pachetul pentru simulator: aceleași cereri, aceeași stare inițială, pentru fiecare strategie. */
-export function weekWorkload(dataset: Dataset, week: Week, seed: number, extraLoad: number): Workload {
-  const { requests, freePeriods, requestedPeriods } = generateExtras(dataset, week, seed, extraLoad);
+/**
+ * Pachetul pentru simulator: aceleași cereri, aceeași stare inițială, pentru fiecare strategie.
+ * `mode = 'interval'`: aceleași cereri, dar fiecare acceptă și perechile următoare până la `intervalLatest`
+ * (prima pereche acceptabilă rămâne cea din modul fix), Lotul 4c.
+ */
+export function weekWorkload(dataset: Dataset, week: Week, seed: number, extraLoad: number, mode: 'fixed' | 'interval' = 'fixed'): Workload {
+  const extras = generateExtras(dataset, week, seed, extraLoad);
+  const { freePeriods, requestedPeriods } = extras;
+  const requests: Request[] = extras.requests.map(({ intervalLatest, ...r }) => (mode === 'interval' && intervalLatest > r.start + r.length - 1 ? { ...r, latest: intervalLatest } : r));
   const initialState: State = { bookings: week.state.bookings.map((b) => ({ ...b, units: [...b.units], needs: { ...b.needs, roomTypes: [...b.needs.roomTypes] } })), closures: [] };
   return {
     seed,

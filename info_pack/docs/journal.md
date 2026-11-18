@@ -23,6 +23,41 @@ Reguli (detalii în `docs-guide.md`):
 
 ---
 
+## 2026-11-18 — Lotul 4: cazurile 6–10 aprobate, verificarea pe Mac
+
+- Context: autorul a aprobat cazurile 6–10 (intrarea de mai jos) și a verificat pe Mac: `npm test` (97 de teste) și raportul `npm run interval -- synthetic`.
+- Implementat: cazurile 6–10 ca scenarii (`src/scenarios/cases.ts`, `request` acceptă `latest` în `build.ts`) și teste (`tests/engine/cases.test.ts`); raportul cazurilor afișează intervalul. Bifele 4a, 4c în `plan.md`; `results.md` §2 completat.
+- Verificat (mediul lui Claude): 103 teste trec; rezultatele motorului pe cazurile 6–10 sunt exact cele aprobate; raportul cazurilor și demo-ul se construiesc.
+- Pasul următor: `npm test` pe Mac, bifa 4b, commit-ul.
+
+---
+
+## 2026-11-18 — Lotul 4: cererea cu interval și ferestrele studenților
+
+- Context / autorizare: autorul a autorizat Lotul 4; datele reale încă lipsesc, deci totul pe setul sintetic.
+- Implementat: `src/engine/types.ts` (`latest`), `src/engine/windows.ts` (nou), `src/engine/score.ts` (ferestrele în cheia scorului, D31), `src/engine/allocate.ts` (căutarea pe toate începuturile intervalului, motivele de refuz pe pereche, alternativele în afara intervalului, explicația), `src/engine/occupancy.ts` (`isolatedGaps`), `src/demo/controller.ts` (alternativele aplicate fără interval), `src/sim/simulate.ts` (opțiunea ferestrelor, `roomGaps`), `src/sim/week.ts` (intervalele cererilor suplimentare, generator separat), `scripts/interval.ts` (nou), `tests/engine/interval.test.ts` (nou), oracolul și generatorul de instanțe extinse. Documentele: `results.md` §5, `glossary.md`, `project-map.md`, `README.md`, `data-format.md`, `plan.md` (statut), `handoff.md`.
+- Verificat (mediul lui Claude): 97 de teste trec; motorul ⇔ oracolul pe 600 de instanțe cu interval × 4 configurații; fără interval, decizii identice (300 de instanțe direct; simularea V0 și săptămâna 3A cu aceleași valori înainte și după); mutanții „fără criteriul ferestrelor” și „departajare inversă după pereche” sunt detectați.
+- Cazuri noi propuse (4b), **în așteptarea aprobării autorului**. Toate: 17.11.2026, grila obișnuită, cereri de seminar de o pereche, profesor nou T9 (liber), cu excepția cazului 10.
+  - **Caz 6 — interval după activitățile grupei.** Grupa G (25) are seminare la perechile 1 și 2 în S-1. Săli: S-1 (30), S-2 (40). Cerere pentru G, interval 3–5. Așteptat: **perechea 3, S-1** (fără fereastră; S-1 are mai puține locuri goale).
+  - **Caz 7 — fereastra contează mai mult decât locurile goale.** G are o activitate la perechea 1 în S-1. Săli: S-1 (40), S-2 (26), S-2 ocupată la perechile 2 și 3 de grupa H (înghețat). Cerere pentru G, interval 2–4. Așteptat: **perechea 2, S-1** (0 ferestre, 15 locuri goale). Fără criteriul ferestrelor: perechea 4, S-2 (1 loc gol, dar 2 ferestre).
+  - **Caz 8 — sala rară contează mai mult decât fereastra.** G are o activitate la perechea 1 în S-1; S-1 (30) e ocupată la perechea 2 de H (înghețat); laboratorul L-1 (30 de calculatoare) e liber. Cerere de seminar pentru G, interval 2–3. Așteptat: **perechea 3, S-1, cu o fereastră** (la perechea 2 ar fi fost liber doar laboratorul).
+  - **Caz 9 — subgrupe cu laboratoare la ore diferite.** Grupa K are subgrupele K/1 (12) și K/2 (12); K/1 are laborator la perechea 1, K/2 la perechea 2. Cerere de seminar pentru toată grupa K, interval 1–3. Așteptat: perechile 1 și 2 sunt excluse (grupă ocupată); **perechea 3, S-1, cu o fereastră** (pentru K/1, la perechea 2).
+  - **Caz 10 — refuz pe tot intervalul.** Profesorul T9 are seminare la perechile 3 și 4. Cerere a lui T9 pentru G, interval 3–4. Așteptat: **refuz**, cu motivul `TEACHER_BUSY` pentru fiecare pereche; alternative în aceeași zi, cele mai apropiate de interval: perechile 2, 5, 1, 6, 7.
+  - Notă: rezultatele au fost scrise înaintea testelor, dar după implementarea motorului; o rulare de control dă exact rezultatele de mai sus.
+- Limite: neverificat pe Mac; rezultatele 4c sunt preliminare, pe un set inventat; săptămâna reală după 3B.
+- Pasul următor: aprobarea cazurilor 6–10 și verificarea pe Mac.
+
+---
+
+## 2026-11-18 — Lotul 3A verificat pe Mac
+
+- Verificat (autorul, Mac): `npm test`, `data:synthetic`, `data:check -- synthetic`, `week -- synthetic` — toate au funcționat. Bifele 3a.1–3a.3 în `plan.md`.
+- Commit: `a813fcb`.
+- Decizii: datele reale încă lipsesc; lucrul continuă pe setul sintetic.
+- Pasul următor: autorizarea Lotului 4.
+
+---
+
 ## 2026-11-18 — Lotul 3A: formatul intern, setul sintetic, săptămâna în simulator
 
 - Context / autorizare: autorul a autorizat partea 3A și a creat `room-allocation-data/`.

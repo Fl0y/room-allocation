@@ -39,6 +39,7 @@ Reguli: cine introduce un termen nou îl adaugă aici în aceeași etapă (`docs
 - **Scor lexicografic** (*lexicographic objective*) — variantele se compară criteriu cu criteriu, în ordine; al doilea criteriu contează doar la egalitate pe primul. *Unde:* D18, D25, `compareKeys` în `score.ts`.
 - **Raritate** (*scarcity cost*) — criteriul care penalizează folosirea unei săli rare de către o activitate care nu are nevoie de ea. *Unde:* `rarityOf` în `score.ts`.
 - **Excedent** (*excess capacity*) — locurile goale: capacitatea sălii minus numărul de studenți.
+- **Cerere cu interval** — cerere care acceptă mai multe perechi de început (de la `start` până la `latest`); motorul alege și perechea, după ordinea D31. *Unde:* P11, D29, `src/engine/types.ts` (`latest`), Lotul 4.
 - **Fragmentare** (*room fragmentation*) — golurile izolate de o pereche lăsate în programul unei **săli**. *Nu confunda cu:* fereastră (golurile din orarul unei subgrupe).
 - **Plan** — o variantă completă de acceptare a cererii: sala aleasă plus mutările necesare. *Unde:* `allocate.ts`.
 - **Mutare** (*move, reassignment*) — schimbarea **sălii** unei rezervări existente, la **aceeași oră**; ora nu se schimbă niciodată automat. *Unde:* P04, D18. M = numărul maxim de mutări pentru o cerere.

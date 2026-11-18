@@ -4,7 +4,7 @@ Algoritmul de alocare a sălilor universitare (proiect academic). Documentația 
 
 ## Stadiul
 
-V0 încheiat (Loturile 1–2: motorul, simularea, demo-ul). V1: partea 3A (formatul intern al datelor, setul sintetic al facultății, săptămâna în simulator) — `info_pack/docs/data-format.md`.
+V0 încheiat (Loturile 1–2: motorul, simularea, demo-ul). V1: partea 3A (formatul intern al datelor, setul sintetic al facultății, săptămâna în simulator) — `info_pack/docs/data-format.md`; Lotul 4 (cererea cu interval: motorul alege și perechea, ținând cont de ferestrele studenților, D29, D31).
 
 ## V0 — motorul de alocare, simularea și demo-ul
 
@@ -34,6 +34,7 @@ npm run demo        # construiește out/demo.html (deschide-l direct în browser
 npm run data:synthetic          # generează setul sintetic (seed 1) în synthetic/canonical/
 npm run data:check -- synthetic # raportul de validare (sau: real)
 npm run week -- synthetic       # orarul + cereri suplimentare, comparația strategiilor (sau: real)
+npm run interval -- synthetic   # Lotul 4: ora fixă vs. interval fără / cu criteriul ferestrelor (sau: real)
 ```
 
 ## Structura

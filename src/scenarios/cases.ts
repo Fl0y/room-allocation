@@ -226,4 +226,96 @@ export const coordinatorExample: Scenario = {
   options: { alternatives: 0 },
 };
 
-export const allCases: Scenario[] = [case1, case2, case3, case4, case5];
+// ── Cazurile 6–10: cererea cu interval și ferestrele studenților (Lotul 4, D29, D31) ──
+// Rezultatele așteptate au fost aprobate de autor la 18.11.2026 (journal.md, intrarea Lotului 4).
+
+const G25 = leaf('G', 25);
+const H20 = leaf('H', 20);
+
+export const case6: Scenario = {
+  id: 'case6',
+  title: 'Cazul 6 — Intervalul după activitățile grupei',
+  summary: 'Marți. Grupa G (25) are seminare la perechile 1 și 2 în S-1. Prof. T9 cere un seminar pentru G oricând între perechile 3 și 5. Săli: S-1 (30), S-2 (40).',
+  expected: 'Perechea 3, S-1: fără fereastră pentru G; S-1 are mai puține locuri goale decât S-2.',
+  instance: instance([seminarRoom('S-1', 30), seminarRoom('S-2', 40)], [G25], [TUE]),
+  initial: {
+    bookings: [
+      booking({ id: 'G-1', teacher: 'Prof. T1', units: ['G'], activity: 'seminar', date: TUE, start: 1, students: 25, roomId: 'S-1' }),
+      booking({ id: 'G-2', teacher: 'Prof. T2', units: ['G'], activity: 'seminar', date: TUE, start: 2, students: 25, roomId: 'S-1' }),
+    ],
+    closures: [],
+  },
+  steps: [{ kind: 'request', request: request({ id: 'r6', teacher: 'Prof. T9', units: ['G'], activity: 'seminar', date: TUE, start: 3, latest: 5, students: 25 }) }],
+};
+
+export const case7: Scenario = {
+  id: 'case7',
+  title: 'Cazul 7 — Fereastra contează mai mult decât locurile goale',
+  summary:
+    'Marți. G (25) are o activitate la perechea 1 în S-1. S-2 (26) este ocupată la perechile 2 și 3 de grupa H (înghețat). Prof. T9 cere un seminar pentru G oricând între perechile 2 și 4. Săli: S-1 (40), S-2 (26).',
+  expected: 'Perechea 2, S-1 (0 ferestre, 15 locuri goale). Fără criteriul ferestrelor: perechea 4, S-2 (1 loc gol, dar 2 ferestre).',
+  instance: instance([seminarRoom('S-1', 40), seminarRoom('S-2', 26)], [G25, H20], [TUE]),
+  initial: {
+    bookings: [
+      booking({ id: 'G-1', teacher: 'Prof. T1', units: ['G'], activity: 'seminar', date: TUE, start: 1, students: 25, roomId: 'S-1' }),
+      booking({ id: 'H-2', teacher: 'Prof. T2', units: ['H'], activity: 'seminar', date: TUE, start: 2, students: 20, roomId: 'S-2', status: 'frozen' }),
+      booking({ id: 'H-3', teacher: 'Prof. T3', units: ['H'], activity: 'seminar', date: TUE, start: 3, students: 20, roomId: 'S-2', status: 'frozen' }),
+    ],
+    closures: [],
+  },
+  steps: [{ kind: 'request', request: request({ id: 'r7', teacher: 'Prof. T9', units: ['G'], activity: 'seminar', date: TUE, start: 2, latest: 4, students: 25 }) }],
+};
+
+export const case8: Scenario = {
+  id: 'case8',
+  title: 'Cazul 8 — Sala rară contează mai mult decât fereastra',
+  summary:
+    'Marți. G (25) are o activitate la perechea 1 în S-1. S-1 (30) este ocupată la perechea 2 de H (înghețat); laboratorul L-1 (30 de calculatoare) e liber. Prof. T9 cere un seminar pentru G oricând între perechile 2 și 3.',
+  expected: 'Perechea 3, S-1, cu o fereastră: la perechea 2 ar fi fost liber doar laboratorul, iar sălile rare vin înaintea ferestrelor (D31).',
+  instance: instance([seminarRoom('S-1', 30), lab('L-1', 30)], [G25, H20], [TUE]),
+  initial: {
+    bookings: [
+      booking({ id: 'G-1', teacher: 'Prof. T1', units: ['G'], activity: 'seminar', date: TUE, start: 1, students: 25, roomId: 'S-1' }),
+      booking({ id: 'H-2', teacher: 'Prof. T2', units: ['H'], activity: 'seminar', date: TUE, start: 2, students: 20, roomId: 'S-1', status: 'frozen' }),
+    ],
+    closures: [],
+  },
+  steps: [{ kind: 'request', request: request({ id: 'r8', teacher: 'Prof. T9', units: ['G'], activity: 'seminar', date: TUE, start: 2, latest: 3, students: 25 }) }],
+};
+
+export const case9: Scenario = {
+  id: 'case9',
+  title: 'Cazul 9 — Subgrupe cu laboratoare la ore diferite',
+  summary:
+    'Marți. Grupa K are subgrupele K/1 (12) și K/2 (12); K/1 are laborator la perechea 1 (L-1), K/2 la perechea 2 (L-2). Prof. T9 cere un seminar pentru toată grupa K oricând între perechile 1 și 3. Săli: S-1 (30), L-1 și L-2 (14 calculatoare).',
+  expected: 'Perechile 1 și 2 sunt excluse (grupa e ocupată); perechea 3, S-1, cu o fereastră pentru K/1 (la perechea 2).',
+  instance: instance([seminarRoom('S-1', 30), lab('L-1', 14), lab('L-2', 14)], [group('K'), leaf('K/1', 12, 'K'), leaf('K/2', 12, 'K')], [TUE]),
+  initial: {
+    bookings: [
+      booking({ id: 'K1-lab', teacher: 'Prof. T1', units: ['K/1'], activity: 'lab', date: TUE, start: 1, students: 12, roomId: 'L-1' }),
+      booking({ id: 'K2-lab', teacher: 'Prof. T2', units: ['K/2'], activity: 'lab', date: TUE, start: 2, students: 12, roomId: 'L-2' }),
+    ],
+    closures: [],
+  },
+  steps: [{ kind: 'request', request: request({ id: 'r9', teacher: 'Prof. T9', units: ['K'], activity: 'seminar', date: TUE, start: 1, latest: 3, students: 24 }) }],
+};
+
+export const case10: Scenario = {
+  id: 'case10',
+  title: 'Cazul 10 — Refuz pe tot intervalul',
+  summary: 'Marți. Prof. T9 are seminare cu grupa H la perechile 3 și 4 în S-1. Tot el cere un seminar pentru G oricând între perechile 3 și 4. Sală: S-1 (30).',
+  expected: 'Refuz, cu motivul TEACHER_BUSY pentru fiecare pereche; alternative în aceeași zi, cele mai apropiate de interval: perechile 2, 5, 1, 6, 7.',
+  instance: instance([seminarRoom('S-1', 30)], [G25, H20], [TUE]),
+  initial: {
+    bookings: [
+      booking({ id: 'H-3', teacher: 'Prof. T9', units: ['H'], activity: 'seminar', date: TUE, start: 3, students: 20, roomId: 'S-1' }),
+      booking({ id: 'H-4', teacher: 'Prof. T9', units: ['H'], activity: 'seminar', date: TUE, start: 4, students: 20, roomId: 'S-1' }),
+    ],
+    closures: [],
+  },
+  steps: [{ kind: 'request', request: request({ id: 'r10', teacher: 'Prof. T9', units: ['G'], activity: 'seminar', date: TUE, start: 3, latest: 4, students: 25 }) }],
+};
+
+export const intervalCases: Scenario[] = [case6, case7, case8, case9, case10];
+
+export const allCases: Scenario[] = [case1, case2, case3, case4, case5, ...intervalCases];

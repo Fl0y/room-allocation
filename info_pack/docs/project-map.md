@@ -34,11 +34,12 @@ Actualizat: 18.11.2026.
 | `grid.ts` | Grila celor 7 perechi; verificarea suprapunerii a două intervale |
 | `units.ts` | Ierarhia flux → grupă → subgrupă: unitățile atomice, numărul de studenți, validarea |
 | `compat.ts` | Dacă o sală corespunde unei cereri (tip, capacitate, echipamente) și dacă e închisă |
-| `occupancy.ts` | Harta ocupării (sală, zi, pereche → cine o ocupă); numărarea golurilor izolate |
+| `occupancy.ts` | Harta ocupării (sală, zi, pereche → cine o ocupă); numărarea golurilor izolate din programul sălii |
 | `score.ts` | Strategiile (first-fit, best-fit, scor), raritatea, compararea lexicografică |
 | `allocate.ts` | **Algoritmul principal**: validarea cererii, verificarea persoanelor, căutarea planurilor cu mutări, alegerea, refuzul cu alternative, explicațiile |
 | `repair.ts` | Repararea după închiderea unei săli |
 | `checker.ts` | Verificatorul independent al regulilor H1–H8 |
+| `windows.ts` | Ferestrele din orarul studenților (D29): calculul pe subgrupă și zi și variația lor pentru o pereche propusă |
 | `index.ts` | Exportul comun al modulelor motorului |
 
 ### `src/data/` — datele în formatul intern (Lotul 3, D33)
@@ -55,7 +56,7 @@ Actualizat: 18.11.2026.
 | Fișier | Rol |
 |---|---|
 | `build.ts` | Funcții ajutătoare pentru construirea sălilor, cererilor și rezervărilor sintetice |
-| `cases.ts` | Cazurile 1–5 din concept și exemplul pentru coordonator |
+| `cases.ts` | Cazurile 1–5 din concept, cazurile 6–10 cu interval (Lotul 4) și exemplul pentru coordonator |
 | `run.ts` | Rularea unui scenariu pas cu pas |
 
 ### `src/sim/` — simularea
@@ -82,9 +83,10 @@ Actualizat: 18.11.2026.
 |---|---|
 | `engine/checker.test.ts` | Fiecare regulă H1–H8, cu exemple care o încalcă |
 | `engine/units.test.ts` | Ierarhia grupelor și validarea ei |
-| `engine/cases.test.ts` | Cazurile 1–5 și exemplul pentru coordonator |
+| `engine/cases.test.ts` | Cazurile 1–10 și exemplul pentru coordonator |
 | `engine/oracle.test.ts` | Motorul față de oracolul exhaustiv, pe 2000 de instanțe aleatoare |
 | `engine/determinism.test.ts` | Același rezultat cu sălile și rezervările în altă ordine |
+| `engine/interval.test.ts` | Cererile cu interval (Lotul 4): motorul față de oracol după ordinea D31, compatibilitatea cu ora fixă, validarea, determinismul |
 | `sim/generator.test.ts` | Generatorul: reproductibil, fără suprapuneri de persoane, încărcarea corectă |
 | `sim/simulate.test.ts` | Simulatorul: stări valide, comparație pe perechi, statistica |
 | `sim/faculty.test.ts` | Setul sintetic: același seed dă aceleași fișiere, orarul trece validarea, doar pseudonime |
@@ -97,8 +99,8 @@ Actualizat: 18.11.2026.
 | `support/mini.ts` | Citirea exemplului mic pentru teste |
 | `demo/controller.test.ts` | Logica demo-ului |
 | `docs/project-map.test.ts` | Că această hartă este la zi: fiecare fișier din `src/`, `tests/`, `scripts/` și din `info_pack/docs/` apare aici, iar fiecare fișier numit aici există |
-| `oracle/bruteforce.ts` | Oracolul (căutarea exhaustivă), folosit de teste |
-| `support/random.ts` | Generatorul de instanțe mici aleatoare pentru oracol |
+| `oracle/bruteforce.ts` | Oracolul (căutarea exhaustivă), folosit de teste; și pentru cererile cu interval, cu ferestrele calculate independent |
+| `support/random.ts` | Generatorul de instanțe mici aleatoare pentru oracol (cu oră fixă și cu interval) |
 
 ## 4. Scripturile — `scripts/`
 
@@ -110,6 +112,7 @@ Actualizat: 18.11.2026.
 | `data-synthetic.ts` | `npm run data:synthetic` | Setul sintetic în `room-allocation-data/synthetic/canonical/` (în afara repository-ului) |
 | `data-check.ts` | `npm run data:check -- synthetic` (sau `real`) | Raportul de validare în `room-allocation-data/<secțiune>/reports/` |
 | `week.ts` | `npm run week -- synthetic` (sau `real`) | Măsurătorile de bază și comparația strategiilor, în `room-allocation-data/<secțiune>/reports/` |
+| `interval.ts` | `npm run interval -- synthetic` (sau `real`) | Lotul 4c: ora fixă vs. interval fără / cu criteriul ferestrelor, în `room-allocation-data/<secțiune>/reports/` |
 | `report-html.ts` | — | Elemente comune pentru rapoartele de date |
 
 ## 5. Documentația — `info_pack/docs/`
