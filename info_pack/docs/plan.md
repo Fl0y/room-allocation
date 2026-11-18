@@ -1,6 +1,6 @@
 # Planul proiectului — RoomAllocation
 
-**Versiune:** 2.0 (15.11.2026). **Statut:** V0 încheiat; V1 cu ordinea aprobată, neautorizat pentru implementare. Bazat pe deciziile D01–D32 și P01–P17 din `decisions.md`. Singura copie activă a planului.
+**Versiune:** 2.1 (18.11.2026; Lotul 3 împărțit după D33). **Statut:** V0 încheiat; V1 cu ordinea aprobată, neautorizat pentru implementare. Bazat pe deciziile D01–D34 și P01–P17 din `decisions.md`. Singura copie activă a planului.
 Se bifează doar sarcinile efectiv finalizate și verificate. Structura feliilor se poate ajusta pe parcurs (P10).
 
 ---
@@ -55,15 +55,21 @@ Se bifează doar sarcinile efectiv finalizate și verificate. Structura feliilor
 
 ### V1 — versiunea matură
 
-**Statut (15.11.2026):** ordinea loturilor și ordinea de alegere din Lotul 4 sunt **aprobate de autor** (D30, D31). **Niciun lot nu este autorizat pentru implementare**; autorul îl autorizează când consideră că proiectul este pregătit. Lotul 3 așteaptă datele reale (autorul le solicită administrației și decanatului).
+**Statut (15.11.2026):** ordinea loturilor și ordinea de alegere din Lotul 4 sunt **aprobate de autor** (D30, D31). **Niciun lot nu este autorizat pentru implementare**; autorul îl autorizează când consideră că proiectul este pregătit. Partea 3A (date sintetice) poate începe fără datele reale; partea 3B așteaptă datele (autorul le solicită administrației și decanatului).
 
 **Ordinea:** datele reale → algoritmul extins → back-end-ul → interfețele. Fiecare lot are 2–3 sub-pași mici, fiecare încheiat cu verificare (D17). Dacă datele reale întârzie, Lotul 4 poate începe înaintea Lotului 3, pe date sintetice (cu autorizare).
 
-**Lotul 3 — Datele reale (D28, D32)** — model recomandat: Sonnet pentru import, Opus pentru formatul intern și validare
-- [ ] 3a. Formatul intern documentat (săli, flux/grupă/subgrupă, profesori, repartizarea profesor–disciplină–grupă, orar); importul din fișierele autorului (Excel/CSV); **pseudonimizarea automată** a profesorilor (`P-001`…), cu tabelul de corespondență în afara Git
-- [ ] 3b. Raportul de validare: capacități, tipuri, echipamente, mărimile grupelor, conflictele din orarul real (sală, profesor, grupă la aceeași oră)
-- [ ] 3c. „Săptămâna reală” în simulator și în demo: orarul real ca rezervări existente + cereri suplimentare sintetice (recuperări, consultații, evenimente) generate după repartizarea reală; măsurătorile de bază: utilizarea sălilor (frecvență, ocupare), săli rare folosite inutil, **ferestrele studenților în orarul real**
-- Domeniul: întâi o singură facultate, apoi extindere treptată (D32). Recurența nu e încă modelată: o „săptămână-tip” (sau două, pentru săptămâni pare/impare), ca date concrete.
+**Lotul 3 — Datele (D28, D32, D33)** — model recomandat: Opus pentru formatul intern și validare, Sonnet pentru import și convertor
+
+*3A — pe date sintetice (nu depinde de decanat)*
+- [ ] 3a.1. Formatul intern (`canonical`) documentat: săli, flux/grupă/subgrupă, profesori, repartizarea profesor–disciplină–grupă, orar; încărcarea lui în instanța motorului; calea din `RA_DATA_DIR`; un exemplu mic fictiv în Git, pe care rulează testele
+- [ ] 3a.2. Setul sintetic al facultății: script cu seed în repository, care scrie în `room-allocation-data/synthetic/canonical/` (structură aproximativă a facultății); raportul de validare: capacități, tipuri, echipamente, mărimile grupelor, conflictele din orar (sală, profesor, grupă la aceeași oră)
+- [ ] 3a.3. „Săptămâna sintetică” în simulator: orarul ca rezervări existente + cereri suplimentare (recuperări, consultații, evenimente) generate după repartizare; măsurătorile de bază: utilizarea sălilor, săli rare folosite inutil, ferestrele studenților
+
+*3B — pe date reale (după primirea lor)*
+- [ ] 3b.1. Convertorul `real/raw → real/canonical`, scris după formatul efectiv primit; **pseudonimizarea automată** a profesorilor (`P-001`…), cu corespondența doar în `real/`
+- [ ] 3b.2. Raportul de validare și „săptămâna reală” în simulator, rulate local; comparația set sintetic ↔ date reale (cât de bine a anticipat setul sintetic structura reală)
+- Domeniul: întâi o singură facultate, apoi extindere treptată (D32). Recurența nu e încă modelată: o „săptămână-tip” (sau două, pentru săptămâni pare/impare), ca date concrete. Demo-ul public folosește doar date sintetice.
 
 **Lotul 4 — Cererea cu interval și ferestrele studenților (D29, varianta a)** — model recomandat: Opus
 - [ ] 4a. Motorul: cererea cu interval opțional de perechi; motorul încearcă fiecare început posibil; calculul variației ferestrelor pe subgrupă și zi; ordinea de alegere **mutări → săli rare → ferestrele studenților → locuri goale → fragmentarea programului sălii** (D31); explicația include ferestrele; alinierea termenilor din cod cu `glossary.md` („goluri izolate” pentru săli, „ferestre” pentru studenți)
@@ -104,10 +110,10 @@ Se bifează doar sarcinile efectiv finalizate și verificate. Structura feliilor
 ## 4ter. Criterii de acceptare propuse — loturile V1 (se definitivează la autorizarea fiecărui lot)
 
 **Lotul 3**
-1. Importul rulează pe fișierele autorului și pe un set mic de date fictive inclus în teste; același input dă același rezultat.
+1. Încărcarea rulează pe exemplul mic din Git, pe setul sintetic și (3B) pe datele reale; același input dă același rezultat; testele din repository trec fără folderul extern.
 2. Niciun nume real de profesor nu apare în datele rezultate, în rapoarte sau în Git (test automat pe lista de nume din corespondență, rulat local).
 3. Datele importate trec validarea unităților (D21) și verificatorul H1–H7, **sau** raportul de validare listează fiecare abatere, cu sursa ei din fișierul original.
-4. Săptămâna reală se poate rula în simulator și în demo; măsurătorile de bază (utilizare, săli rare, ferestrele studenților) apar în `results.md`, marcate ca rezultate pe date reale.
+4. Săptămâna sintetică (3A) și cea reală (3B) se pot rula în simulator; măsurătorile de bază (utilizare, săli rare, ferestrele studenților) apar în `results.md`, marcate ca rezultate pe date reale.
 
 **Lotul 4**
 1. Fără interval, motorul dă exact aceleași decizii ca în V0 (testele existente trec neschimbate).

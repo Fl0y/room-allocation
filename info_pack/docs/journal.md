@@ -23,6 +23,16 @@ Reguli (detalii în `docs-guide.md`):
 
 ---
 
+## 2026-11-18 — Locul datelor și vizibilitatea repository-ului
+
+- Context / autorizare: discuție cu autorul; documentele actualizate la cererea lui.
+- Decizii: D33 (datele în `room-allocation-data/`, secțiunile `real/` și `synthetic/` cu același format intern; în Git doar codul, exemplul mic și scriptul cu seed; închide O21, O22); D34 (repository-ul e public; înlocuiește regula „repository privat”).
+- Implementat: `decisions.md`, `CLAUDE.md`, `plan.md` (versiunea 2.1: Lotul 3 împărțit în 3A sintetic și 3B real), `handoff.md`.
+- Verificat: istoricul Git (ambele branch-uri) nu conține documentele personale sau fișiere `.env`.
+- Pasul următor: autorizarea părții 3A; obținerea datelor reale.
+
+---
+
 ## 2026-11-15 — Folderul pentru documente personale
 
 - Context / autorizare: cerut de autor.

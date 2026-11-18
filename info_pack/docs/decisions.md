@@ -38,6 +38,8 @@ Actualizat: 15 noiembrie 2026. Registrul arată statutul afirmațiilor; nu conț
 | D30 | **Ordinea V1:** Lotul 3 (datele reale) → Lotul 4 (cererea cu interval și ferestrele) → Lotul 5 (back-end) → Lotul 6 (interfețe); detaliile în `plan.md` §3. Aprobarea ordinii **nu** autorizează implementarea; fiecare lot se autorizează separat, când autorul consideră proiectul pregătit | 15.11.2026 |
 | D31 | **Ordinea de alegere cu interval (Lotul 4):** valid → mutări → săli rare → ferestrele studenților → locuri goale (excedent) → fragmentarea programului sălii → departajare deterministă | 15.11.2026; precizează D18 și D29 |
 | D32 | **Datele reale — domeniul și permisiunea:** întâi o singură facultate, apoi extindere treptată; autorul are permisiunea de a folosi datele în proiect (fără limitări). Datele încă nu sunt obținute: autorul le solicită administrației și decanatului | 15.11.2026; precizează D28 |
+| D33 | **Datele în afara Git, în folderul `room-allocation-data/`** (închide O21, O22): folderul stă lângă repository (`~/Desktop/academic_project/room-allocation-data/`), cu două secții de aceeași structură: `real/` (`raw/` fișierele originale neatinse, `canonical/` datele în formatul intern cu profesori pseudonimizați, corespondența nume real → pseudonim) și `synthetic/` (`canonical/` date inventate care imită structura facultății). Codul citește doar `canonical/`; calea se configurează (`RA_DATA_DIR` în `.env`), nu se scrie în cod. **În Git rămân:** codul, generatorul V0, cazurile 1–5, specificația formatului intern, un exemplu mic fictiv pentru teste și scriptul cu seed care produce setul sintetic mare (setul se poate regenera identic). Testele și demo-ul public nu depind de folderul extern. Formatul datelor reale nu se ghicește: la primirea lor se scrie un convertor `raw → canonical` | 18.11.2026; idee a autorului, cu precizările lui Claude (format intern comun, exemplul mic și scriptul în Git) confirmate de autor. Precizează D28. Copia de rezervă a folderului: responsabilitatea autorului (fără istoric Git) |
+| D34 | **Repository-ul `Fl0y/room-allocation` este public** (inițial privat; făcut public de autor, inclusiv pentru demo-ul de pe GitHub Pages). Consecință: în Git nu intră date reale, date personale sau corespondența pseudonimelor (D33); verificat la 18.11.2026 că istoricul nu conține documentele personale | 18.11.2026; înlocuiește regula „repository privat” din `CLAUDE.md` |
 
 ## Propuneri confirmate (08.11.2026)
 
@@ -79,8 +81,7 @@ Analiza: `coordinator-feedback.md` §4 și `literature.md` §6, §8. Precizăril
 
 | ID | Întrebare |
 |---|---|
-| O21 | Structura pseudonimizată (săli, grupe, orar fără nume reale) poate intra în repository-ul privat, sau toate datele reale rămân în afara Git? (autorul se gândește) |
-| O22 | Unde se păstrează datele originale primite de la universitate (folderul din afara repository-ului)? (autorul se gândește; propunere: `academic_project/room-allocation-data/`) |
+| — | Niciuna în acest moment (O21, O22 închise de D33 la 18.11.2026) |
 
 ## Istoric
 

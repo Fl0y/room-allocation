@@ -1,23 +1,22 @@
 # Starea curentă — RoomAllocation
 
-**Actualizat:** 15 noiembrie 2026 (seara). Fișierul descrie doar starea de acum; se rescrie la fiecare etapă încheiată. Istoricul este în `journal.md`, ordinea de citire în `docs-guide.md`.
+**Actualizat:** 18 noiembrie 2026. Fișierul descrie doar starea de acum; se rescrie la fiecare etapă încheiată. Istoricul este în `journal.md`, ordinea de citire în `docs-guide.md`.
 
 ## Ce există
 
 - **V0 încheiat și prezentat coordonatorului** (proiect acceptat): motorul de alocare (`src/engine/`), cazurile 1–5 (`src/scenarios/`), generatorul și simulatorul (`src/sim/`), demo-ul static (`src/demo/`). Teste: 63 trec, în mediul lui Claude și pe Mac. Rezultate: `results.md`.
 - **Documente de orientare:** `glossary.md` (termenii), `project-map.md` (rolul fișierelor, verificată automat de `tests/docs/project-map.test.ts`), `literature.md` (versiunea 1).
-- **Decizii:** D01–D32, propunerile confirmate P01–P17; deschise O21, O22 (`decisions.md`).
+- **Decizii:** D01–D34, propunerile confirmate P01–P17; nicio întrebare deschisă (`decisions.md`). Datele (reale și setul sintetic mare) stau în afara Git, în `room-allocation-data/` (D33); repository-ul e public (D34).
 - **Nu există:** date reale, bază de date, API, dashboard sau panou reale, Docker.
 
-## Planul V1 (`plan.md` versiunea 2.0)
+## Planul V1 (`plan.md` versiunea 2.1)
 
 Ordinea aprobată (D30): **Lotul 3** datele reale → **Lotul 4** cererea cu interval și ferestrele studenților (ordinea de alegere D31) → **Lotul 5** back-end (PostgreSQL, Docker, concurență) → **Lotul 6** interfețe. **Niciun lot nu este autorizat**; autorul autorizează când consideră că proiectul e pregătit.
 
 ## Pasul următor
 
-1. **Autorul obține datele reale** de la administrație și decanat, pentru o facultate (D32): săli și echipamente, grupe și mărimi, profesori și repartizarea lor, orarul real. Lista câmpurilor utile: `plan.md` §3, Lotul 3.
-2. Autorul revine cu răspunsurile la **O21** (structura pseudonimizată în repository?) și **O22** (locul datelor originale), plus întrebări de concretizare.
-3. Autorizarea Lotului 3 (sau a Lotului 4 pe date sintetice, dacă datele întârzie).
+1. **Autorizarea părții 3A** (format intern, set sintetic, săptămâna sintetică), care nu depinde de datele reale. La pornire, autorul creează `~/Desktop/academic_project/room-allocation-data/` și îi dă lui Claude acces la el (Claude lucrează doar pe `synthetic/` și `real/canonical/`).
+2. **Autorul obține datele reale** pentru o facultate (D32); la primire urmează partea 3B (convertorul după formatul primit).
 
 ## Puncte deschise (neblocante)
 
