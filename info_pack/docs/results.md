@@ -24,6 +24,7 @@ Reguli:
 | Cererea cu interval: efectul asupra ferestrelor studenților (Lotul 4c) | **Preliminar**, set inventat — §5.2 |
 | Integritatea și concurența pe baza de date (Lotul 5) | **Verificat** (teste pe PostgreSQL real) — §6 |
 | API-ul și operațiile tranzacționale (Lotul 6a) | **Verificat** (teste pe PostgreSQL real, verificare HTTP) — §7 |
+| Paginile (Lotul 6b) | **Verificat** (Playwright, Chromium) — §8 |
 | Validarea pe date reale (ITC 2019, D24; facultatea, 3B) | Nestudiat (V1) |
 
 ## 2. Verificarea motorului pe cazurile conflictuale (verificat)
@@ -223,4 +224,17 @@ Sursa: `npm run test:db` (`tests/db/api.dbtest.ts`, 11 teste noi; 45 în total),
 | Alternativele | Altă pereche: aplicată o dată, repetarea nu mai scrie nimic. Ruperea blocului: două rezervări cu același bloc și acordul marcat, în aceeași tranzacție; dacă între timp nu mai e posibilă: refuz motivat, nimic scris |
 | Anularea | Doar profesorul rezervării (altfel 403) sau administratorul; inexistentă → 404; repetarea nu mai șterge nimic; sala devine liberă |
 | Închiderea cu repararea | Cazul 5 prin API: același raport și aceeași stare finală ca motorul în memorie; examenul fixat e mutat și își păstrează statutul (D19); sala închisă nu mai are rezervări; o cerere simultană pentru o zi din închidere așteaptă și nu primește sala închisă |
+
+## 8. Paginile (Lotul 6b, verificat)
+
+Sursa: `npm run test:e2e` (`tests/e2e/flows.e2e.ts`, 4 teste, Chromium 153), 21.11.2026, mediul lui Claude, PostgreSQL 16.15 local, pe datele cazului 5; plus `npm run test:db` (48, cu 3 teste noi: istoricul mutărilor, mesajele în română). Pe Mac, testele de interfață nu se rulează deocamdată (D43).
+
+| Fluxul (D40) | Ce s-a verificat în browser |
+|---|---|
+| Cerere acceptată | Formularul (zi, pereche, grupă) → decizia „Acceptată” cu explicația; rezervarea apare în lista profesorului; o a doua trimitere identică întoarce aceeași decizie, fără a doua rezervare (D42); anularea cu confirmare golește lista |
+| Cerere refuzată, alternativă aplicată | Grupa ocupată → „Refuzată” cu `GROUP_BUSY` și alternativele; „Aplică” → rezervarea la perechea propusă apare în listă |
+| Orarul studenților | Subgrupa G2/1: laboratorul ei, sala și profesorul în tabelul săptămânii |
+| Închiderea sălii | L-201 închisă 16–24.11: raportul (9 rezervări afectate, fixarea examenului anulată, b4-bloc nerezolvată); în grilă sala apare „închisă”, fără rezervări; alternativa pentru nerezolvată aplicată „în numele profesorului” |
+
+Verificare vizuală (capturi de ecran în Chromium, fără erori în consolă) pe setul sintetic: paginile la 1300 px și orarul studenților la 390 px (listă pe zile).
 

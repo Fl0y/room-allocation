@@ -1,6 +1,6 @@
 # Starea curentă — RoomAllocation
 
-**Actualizat:** 21 noiembrie 2026 (Lotul 6a). Fișierul descrie doar starea de acum; se rescrie la fiecare etapă încheiată. Istoricul este în `journal.md`, ordinea de citire în `docs-guide.md`.
+**Actualizat:** 21 noiembrie 2026 (Lotul 6b). Fișierul descrie doar starea de acum; se rescrie la fiecare etapă încheiată. Istoricul este în `journal.md`, ordinea de citire în `docs-guide.md`.
 
 ## Ce există
 
@@ -23,16 +23,31 @@
 - Verificat în mediul lui Claude (`npm test` 103, `npm run test:db` 45, `next build`, HTTP) și pe Mac de autor (inclusiv tot sistemul în Docker). Rezultatele: `results.md` §7.
 - Atenție: `npm run dev` și containerul `web` folosesc același port 3000 (`README.md`).
 
+## Lotul 6b — autorizat și implementat (21.11.2026), neverificat încă pe Mac
+
+- Paginile: `/` (alegerea rolului), `/profesor`, `/studenti`, `/admin` (`app/`, detaliile în `project-map.md` §2bis), după D37, D38, D42. Istoricul mutărilor în API (`GET /api/bookings` → `history`); mesajele de validare în română.
+- Testele de interfață: `tests/e2e/flows.e2e.ts` (Playwright 1.63.0, `npm run test:e2e`), rulate în mediul lui Claude (D43).
+- Verificat în mediul lui Claude: `npm test` 103, `npm run test:db` 48, `npm run test:e2e` 4, `next build`, capturi de ecran. Rezultatele: `results.md` §8.
+
+### De verificat pe Mac
+
+```bash
+npm ci                            # dependența nouă: @playwright/test (fără browsere)
+npm test                          # 103
+npm run db:up && npm run db:migrate && npm run db:load -- synthetic
+npm run test:db                   # 48
+npm run dev                       # apoi http://localhost:3000: Profesor, Studenți, Administrator (Ctrl+C la final)
+npm run app:up                    # varianta în Docker (după ce serverul de dezvoltare e oprit)
+```
+
+În browser: o cerere ca profesor, orarul unei grupe ca student, închiderea unei săli ca administrator. După verificare: bifa 6b și commit-ul.
+
 ## Pasul următor
 
-- **6b** (paginile: profesor, studenți, administrator; Playwright) — necesită autorizare.
+- **6c** (export .ics, D39) — necesită autorizare.
 
 ## Puncte deschise (neblocante)
 
-- Propuneri neconfirmate ale Lotului 6a: rezervările pe care repararea nu le poate realoca ies din orar și rămân în raportul închiderii, cu alternativele propuse (ca în motor); aplicarea unei alternative realocă sălile la momentul aplicării (sala propusă poate diferi dacă starea s-a schimbat); mesajele de validare Zod sunt în engleză.
-
-- Propuneri neconfirmate ale Lotului 5: blocarea pe zi (nu pe sală); cheia de idempotență implicită = identificatorul cererii; și refuzurile sunt păstrate (retrimiterea aceleiași chei întoarce același refuz; o încercare nouă cere o cheie nouă); starea se citește integral la fiecare cerere (suficient pentru o facultate; de revăzut la scară mai mare).
 - H4–H7 (capacitate, tip, echipamente, săli închise, blocuri) sunt verificate de motor și de verificatorul independent, nu de baza de date.
 - PostgreSQL 19 a apărut la 19.11.2026; proiectul rămâne pe 18 (P07, D27), versiunea curentă 18.7.
-- Propuneri ale Lotului 4 și ale setului sintetic: vezi `data-format.md` §4–5 și `journal.md`.
 - Concept §4.2 (H7 face problema dificilă) trebuie reformulat prudent (`literature.md` §2).

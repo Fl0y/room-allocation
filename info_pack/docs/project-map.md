@@ -19,7 +19,9 @@ Actualizat: 21.11.2026.
 | `docker-compose.yml` | Sistemul local (D35): baza de date PostgreSQL 18.7 (127.0.0.1:54320) și aplicația web (127.0.0.1:3000) |
 | `Dockerfile`, `.dockerignore` | Imaginea aplicației web (Node 24.22.1, Next.js); migrațiile se aplică la pornire |
 | `next.config.ts` | Configurația Next.js |
-| `app/` | Aplicația Next.js (D36): paginile (Lotul 6b) și rutele API din `app/api/` (Lotul 6a), care doar apelează `src/api/handlers.ts`; `app/env.d.ts` aduce tipurile Next.js |
+| `app/` | Aplicația Next.js (D36); detaliile în §2bis |
+| `playwright.config.ts` | Testele de interfață (`npm run test:e2e`, D40, D43) |
+| `test-results/`, `playwright-report/` | Generate de Playwright; nu intră în Git |
 | `next-env.d.ts`, `.next/` | Generate de Next.js; nu intră în Git |
 | `db/migrations/` | Schema bazei de date, ca migrații SQL numerotate; `001_schema.sql`: tabelele și constrângerile H1–H3, H8; `002_operations.sql`: anularea și închiderea, raportul reparării |
 | `.node-version` | Versiunea Node pentru Mac (24.22.1) |
@@ -102,6 +104,20 @@ Actualizat: 21.11.2026.
 | `controller.ts` | Logica demo-ului (pași, cereri, alternative, închideri, înapoi), testabilă fără browser |
 | `main.ts` | Interfața din pagină (afișare și evenimente) |
 
+## 2bis. Aplicația web — `app/` (Lotul 6, D36–D38, D42)
+
+| Fișier / folder | Rol |
+|---|---|
+| `layout.tsx`, `globals.css`, `ui.module.css` | Antetul cu rolurile, aspectul comun (temă deschisă și întunecată) |
+| `page.tsx` | Alegerea rolului (fără autentificare, D37) |
+| `profesor/` | Dashboard-ul profesorului: cererea (pereche sau interval), decizia cu explicația și alternativele, rezervările proprii cu istoricul mutărilor și anularea |
+| `studenti/` | Orarul săptămânii pentru un flux, o grupă sau o subgrupă (tabel; listă pe ecrane mici) |
+| `admin/` | Grila săli × perechi pe zi, închiderea sălilor cu raportul reparării și alternativele aplicabile în numele profesorului |
+| `components/DecisionView.tsx` | Decizia motorului: rezultatul, explicația, alternativele cu butonul de aplicare (ruperea blocului doar cu acordul bifat, D20) |
+| `lib/client.ts` | Apelurile API din pagini și etichetele în română |
+| `api/` | Rutele API (Lotul 6a); doar apelează `src/api/handlers.ts` |
+| `env.d.ts` | Tipurile Next.js (inclusiv modulele CSS) |
+
 ## 3. Testele — `tests/`
 
 | Fișier | Ce verifică |
@@ -125,6 +141,7 @@ Actualizat: 21.11.2026.
 | `db/support.ts` | Baza de date de test (creată și ștearsă la fiecare test), o lume mică, inserări SQL directe |
 | `db/constraints.dbtest.ts` | Baza de date refuză singură suprapunerile (SQL direct, fără motor) și testele de mutație ale constrângerilor (`npm run test:db`) |
 | `db/api.dbtest.ts` | API-ul (Lotul 6a): citirea și filtrele, validarea, cererile, alternativele (inclusiv ruperea blocului), anularea, închiderea cu repararea (cazul 5) și blocarea zilelor închiderii (`npm run test:db`) |
+| `e2e/flows.e2e.ts` | Fluxurile interfeței în Chromium (Lotul 6b): cererea acceptată și anularea, cererea refuzată cu alternativă aplicată, orarul unei subgrupe, închiderea unei săli (`npm run test:e2e`) |
 | `db/service.dbtest.ts` | Serviciul: aceleași decizii ca motorul în memorie, cereri simultane pentru ultima sală, nicio stare intermediară vizibilă, atomicitatea, idempotența, blocarea pe zi (`npm run test:db`) |
 | `demo/controller.test.ts` | Logica demo-ului |
 | `docs/project-map.test.ts` | Că această hartă este la zi: fiecare fișier din `src/`, `tests/`, `scripts/` și din `info_pack/docs/` apare aici, iar fiecare fișier numit aici există |
@@ -144,6 +161,7 @@ Actualizat: 21.11.2026.
 | `interval.ts` | `npm run interval -- synthetic` (sau `real`) | Lotul 4c: ora fixă vs. interval fără / cu criteriul ferestrelor, în `room-allocation-data/<secțiune>/reports/` |
 | `db-migrate.ts` | `npm run db:migrate` | Aplică migrațiile pe baza de date |
 | `db-load.ts` | `npm run db:load -- synthetic` (sau `real`) | Încarcă o secțiune de date în baza de date (șterge datele existente, nu și schema) |
+| `e2e-server.ts` | — (pornit de `playwright.config.ts`) | Baza de date de test cu datele cazului 5 și `next start` pentru testele de interfață |
 | `report-html.ts` | — | Elemente comune pentru rapoartele de date |
 
 ## 5. Documentația — `info_pack/docs/`

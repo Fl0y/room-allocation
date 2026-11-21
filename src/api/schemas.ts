@@ -3,6 +3,9 @@
 
 import { z } from 'zod';
 
+// mesajele implicite ale validării, în română (D42)
+z.config(z.locales.ro());
+
 const isoDate = z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'dată ISO (AAAA-LL-ZZ)');
 const id = z.string().min(1).max(80).regex(/^[\p{L}\p{N} ._:#/@+-]+$/u, 'identificator cu caractere nepermise');
 const period = z.int().min(1).max(7);

@@ -208,3 +208,33 @@ describe('închiderea sălii cu repararea automată (D19, D38)', () => {
     expect(r.decision.booking?.roomId).toBe('S2');
   });
 });
+
+describe('istoricul mutărilor (D42)', () => {
+  it('rezervările mutate de o cerere și de o închidere își arată istoricul', async () => {
+    const db = await open({ instance: case5.instance, state: case5.initial });
+    const closure = case5.steps[0]!.kind === 'closure' ? case5.steps[0]!.closure : (undefined as never);
+    const report = ((await close(db.pool, closure)).body as Body).report;
+    const list = ((await listBookings(db.pool, {})).body as Body).bookings as Body[];
+    const direct = report.sameTimeDirect[0];
+    const moved = list.find((b) => b.id === direct.bookingId)!;
+    expect(moved.history).toEqual([{ from: 'L-201', to: direct.to, cause: 'închidere', at: expect.any(String) }]);
+    const untouched = list.find((b) => b.id === 'h4')!;
+    expect(untouched.history).toEqual([]);
+  });
+
+  it('o mutare făcută pentru altă cerere apare la rezervarea mutată', async () => {
+    const { case1 } = await import('../../src/scenarios/cases.ts');
+    const db = await open({ instance: case1.instance, state: case1.initial }, ['Prof. A', 'Prof. B', 'Prof. C']);
+    for (const s of case1.steps) if (s.kind === 'request') await submit(db.pool, { request: s.request });
+    const list = ((await listBookings(db.pool, {})).body as Body).bookings as Body[];
+    expect(list.find((b) => b.id === 'C-seminar')!.history).toEqual([{ from: 'L-105', to: 'S-12', cause: 'cerere', at: expect.any(String) }]);
+    expect(list.find((b) => b.id === 'A-lab')!.history).toEqual([]);
+  });
+
+  it('mesajele de validare sunt în română', async () => {
+    const { pool } = await open();
+    const r = (await submit(pool, { request: { id: 'x' } })).body as Body;
+    const text = r.error.issues.map((i: Body) => i.message).join(' ');
+    expect(text).not.toMatch(/Invalid input|expected/);
+  });
+});

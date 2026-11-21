@@ -46,7 +46,10 @@ npm run db:down                 # oprește containerele (datele rămân în volu
 # aplicația web (Lotul 6; Next.js)
 npm run dev                     # serverul de dezvoltare, http://localhost:3000 (baza de date pornită cu db:up)
 npm run app:up                  # tot sistemul în Docker: baza de date + aplicația, http://localhost:3000
+npm run test:e2e                # testele de interfață (Playwright, Chromium; baza de date pornită)
 ```
+
+Paginile: `/profesor` (cereri, decizii, alternative, rezervările proprii), `/studenti` (orarul unui flux / grupe / subgrupe), `/admin` (ocuparea sălilor pe zi, închiderile cu repararea). Rolul și profesorul se aleg pe pagină, fără autentificare (D37).
 
 Portul 3000 e folosit atât de `npm run dev`, cât și de containerul `web`: rulează doar unul odată. Serverul de dezvoltare se oprește cu Ctrl+C (Ctrl+Z doar îl suspendă și ține portul ocupat; atunci `http://localhost:3000` nu mai răspunde).
 
@@ -72,7 +75,8 @@ src/scenarios/   scenariile demonstrative (date sintetice) și rularea lor
 src/data/        formatul intern al datelor: citire, validare, construirea săptămânii (Lotul 3)
 src/db/          baza de date: conexiunea, migrațiile, citirea/scrierea, serviciul și operațiile tranzacționale (Loturile 5–6)
 src/api/         API-ul: validarea și logica rutelor, independentă de Next.js (Lotul 6a)
-app/             aplicația Next.js: paginile și rutele API (Lotul 6)
+app/             aplicația Next.js: paginile (profesor, studenți, administrator) și rutele API (Lotul 6)
+tests/e2e/       testele de interfață (Playwright)
 db/migrations/   schema SQL (constrângerile de excludere, triggerele)
 src/sim/         generatoarele de date sintetice, simulatorul, săptămâna și măsurătorile ei
 src/demo/        demo-ul: logica (controller.ts) și interfața (main.ts)

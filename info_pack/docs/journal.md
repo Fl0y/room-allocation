@@ -23,6 +23,25 @@ Reguli (detalii în `docs-guide.md`):
 
 ---
 
+## 2026-11-21 — Lotul 6b: paginile
+
+- Context / autorizare: autorul a autorizat 6b (D41–D43).
+- Implementat: `app/` (layout cu rolurile, `page.tsx`, `profesor/`, `studenti/`, `admin/`, `components/DecisionView.tsx`, `lib/client.ts`, `globals.css`, `ui.module.css`); istoricul mutărilor în `src/api/handlers.ts` (`movesHistory`); mesajele Zod în română (`src/api/schemas.ts`); `playwright.config.ts`, `scripts/e2e-server.ts`, `tests/e2e/flows.e2e.ts`; dependența `@playwright/test` 1.63.0 (aceeași versiune de Chromium ca mediul lui Claude); comanda `test:e2e`; `.gitignore` (`test-results/`, `playwright-report/`). Linkurile din antet sunt simple (`<a>`), pentru că `next/link` nu se tipizează cu `moduleResolution: nodenext`. Documentele: `README.md`, `project-map.md` (§2bis), `results.md` §8, `plan.md`, `handoff.md`.
+- Verificat (mediul lui Claude): `npm test` 103; `npm run test:db` 48; `npm run test:e2e` 4; capturi de ecran fără erori în consolă.
+- Limite: neverificat pe Mac; testele de interfață doar în mediul lui Claude (D43); fără .ics (6c).
+- Pasul următor: verificarea pe Mac, apoi 6c.
+
+---
+
+## 2026-11-21 — Deciziile pentru 6b
+
+- Context: Lotul 6a comis de autor (`5b6e4bd`). Înaintea lui 6b, Claude a listat propunerile rămase neconfirmate și întrebările noi.
+- Decizii: D41 (propunerile din 3A–6a confirmate), D42 (detaliile paginilor), D43 (Playwright doar în mediul lui Claude deocamdată).
+- Implementat: `decisions.md`, `plan.md`, `handoff.md`.
+- Pasul următor: autorizarea 6b.
+
+---
+
 ## 2026-11-21 — Lotul 6a încheiat
 
 - Verificat (autorul, Mac): comenzile din `handoff.md`, inclusiv `npm run app:up` (containerele `db` și `web` sănătoase). O problemă întâlnită: `npm run dev` suspendat cu Ctrl+Z ținea portul 3000, iar `localhost` nu mai răspundea; rezolvată prin oprirea procesului; nota e în `README.md`.

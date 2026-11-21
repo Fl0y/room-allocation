@@ -25,9 +25,11 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "app:up": "docker compose up -d --build --wait"
+    "app:up": "docker compose up -d --build --wait",
+    "test:e2e": "next build && playwright test"
   },
   "devDependencies": {
+    "@playwright/test": "1.63.0",
     "@types/node": "24.19.2",
     "@types/pg": "8.23.1",
     "@types/react": "19.3.0",

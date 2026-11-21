@@ -77,12 +77,55 @@ export async function listBookings(pool: pg.Pool, query: Record<string, string |
       args,
     )
   ).rows;
+  const history = await movesHistory(pool, rows.map((r) => r.id as string));
   return ok({
     bookings: rows.map((r) => {
       const b = bookingFromRow(r);
-      return { ...b, roomName: r.room_name as string, teacherName: (r.teacher_name as string | null) ?? '', time: timeLabel(DEFAULT_GRID, b.start, b.length) };
+      return { ...b, roomName: r.room_name as string, teacherName: (r.teacher_name as string | null) ?? '', time: timeLabel(DEFAULT_GRID, b.start, b.length), history: history.get(b.id) ?? [] };
     }),
   });
+}
+
+export interface MoveRecord {
+  from: string;
+  to: string;
+  /** `cerere`: mutată ca să facă loc altei cereri; `închidere`: sala ei s-a închis. */
+  cause: 'cerere' | 'închidere';
+  at: string;
+}
+
+/**
+ * Istoricul mutărilor fiecărei rezervări (D42), din deciziile păstrate în tabelul `requests`: mutările cererilor
+ * acceptate (inclusiv ruperile de bloc) și realocările din rapoartele închiderilor.
+ */
+export async function movesHistory(pool: pg.Pool, ids: string[]): Promise<Map<string, MoveRecord[]>> {
+  const out = new Map<string, MoveRecord[]>();
+  if (!ids.length) return out;
+  const rows = (
+    await pool.query<{ id: string; from: string; to: string; cause: MoveRecord['cause']; at: string }>(
+      `WITH moves AS (
+         SELECT m->>'bookingId' AS id, m->>'from' AS "from", m->>'to' AS "to", 'cerere' AS cause, r.created_at AS at
+           FROM requests r, jsonb_array_elements(r.decision->'moves') m
+          WHERE r.outcome = 'accepted'
+         UNION ALL
+         SELECT x->>'bookingId', x->>'from', x->>'to', 'închidere', r.created_at
+           FROM requests r, jsonb_array_elements(COALESCE(r.decision->'sameTimeDirect', '[]'::jsonb) || COALESCE(r.decision->'sameTimeWithMoves', '[]'::jsonb)) x
+          WHERE r.outcome = 'closure'
+         UNION ALL
+         SELECT m->>'bookingId', m->>'from', m->>'to', 'cerere', r.created_at
+           FROM requests r, jsonb_array_elements(COALESCE(r.decision->'sameTimeWithMoves', '[]'::jsonb)) x, jsonb_array_elements(x->'moves') m
+          WHERE r.outcome = 'closure'
+       )
+       SELECT id, "from", "to", cause, to_char(at, 'YYYY-MM-DD"T"HH24:MI:SS') AS at FROM moves WHERE id = ANY($1) ORDER BY at, id`,
+      [ids],
+    )
+  ).rows;
+  for (const r of rows) {
+    const list = out.get(r.id) ?? [];
+    list.push({ from: r.from, to: r.to, cause: r.cause, at: r.at });
+    out.set(r.id, list);
+  }
+  return out;
 }
 
 export function submit(pool: pg.Pool, input: unknown): Promise<ApiResult> {
