@@ -70,7 +70,12 @@ export function StudentView() {
           </button>
         </div>
       </div>
-      <p className="muted">Orarul unei unități include activitățile fluxului și ale grupei din care face parte, precum și ale subgrupelor ei.</p>
+      <p className="muted">
+        Orarul unei unități include activitățile fluxului și ale grupei din care face parte, precum și ale subgrupelor ei.{' '}
+        <a href={`/api/calendar?unit=${encodeURIComponent(unit)}`} download data-testid="ics-unit">
+          Descarcă orarul ({unit}) pentru calendar (.ics)
+        </a>
+      </p>
       {error && <p className={s.error}>{error}</p>}
 
       <div className={`${s.scroll} ${s.desktopOnly}`}>

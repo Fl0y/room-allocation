@@ -49,7 +49,7 @@ npm run app:up                  # tot sistemul în Docker: baza de date + aplica
 npm run test:e2e                # testele de interfață (Playwright, Chromium; baza de date pornită)
 ```
 
-Paginile: `/profesor` (cereri, decizii, alternative, rezervările proprii), `/studenti` (orarul unui flux / grupe / subgrupe), `/admin` (ocuparea sălilor pe zi, închiderile cu repararea). Rolul și profesorul se aleg pe pagină, fără autentificare (D37).
+Paginile: `/profesor` (cereri, decizii, alternative, rezervările proprii, exportul .ics), `/studenti` (orarul unui flux / grupe / subgrupe, exportul .ics), `/admin` (ocuparea sălilor pe zi, închiderile cu repararea). Rolul și profesorul se aleg pe pagină, fără autentificare (D37).
 
 Portul 3000 e folosit atât de `npm run dev`, cât și de containerul `web`: rulează doar unul odată. Serverul de dezvoltare se oprește cu Ctrl+C (Ctrl+Z doar îl suspendă și ține portul ocupat; atunci `http://localhost:3000` nu mai răspunde).
 
@@ -65,6 +65,7 @@ Fără autentificare (D37); răspunsuri JSON; erorile au forma `{ "error": { "co
 | `POST /api/requests` | O cerere nouă, cu sau fără interval: `{ "request": {…}, "key"?: "…" }` → decizia motorului (201; 200 la repetare; 409 dacă aceeași cheie are alt conținut) |
 | `POST /api/alternatives` | Aplicarea unei alternative propuse (altă pereche/zi sau ruperea blocului, D20): `{ "request", "alternative" }` |
 | `DELETE /api/bookings/{id}` | Anularea: `{ "teacher": "P-001" }` (doar rezervările proprii) sau `{ "admin": true }` |
+| `GET /api/calendar?unit=…` sau `?teacher=…` | Exportul iCalendar (.ics, D39) al unei unități (cu activitățile părinților și ale subgrupelor) sau al unui profesor; opțional `&from=&to=` |
 | `GET /api/closures`, `POST /api/closures` | Închiderile de săli; închiderea nouă `{ "roomId", "from", "to", "reason" }` repară automat orarul (D19) și întoarce raportul |
 
 ## Structura

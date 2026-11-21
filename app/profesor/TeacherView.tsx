@@ -275,6 +275,11 @@ export function TeacherView() {
 
         <section>
           <h2>Rezervările mele</h2>
+          <p>
+            <a href={`/api/calendar?teacher=${encodeURIComponent(teacher)}`} download data-testid="ics-teacher">
+              Descarcă rezervările mele pentru calendar (.ics)
+            </a>
+          </p>
           {!bookings.length ? (
             <p className="muted">Nicio rezervare.</p>
           ) : (

@@ -23,6 +23,32 @@ Reguli (detalii în `docs-guide.md`):
 
 ---
 
+## 2026-11-21 — Lotul 6c încheiat; V1 încheiat (fără 3B)
+
+- Verificat (autorul): testele pe Mac și importul fișierelor .ics în Google Calendar — evenimentele apar corect. Bifa 6c în `plan.md`.
+- Stare: Loturile 3A, 4, 5, 6 încheiate; 3B așteaptă datele reale.
+- Commit: de făcut de autor.
+- Pasul următor: 3B sau etapele de după V1, cu discuție și autorizare separată.
+
+---
+
+## 2026-11-21 — Lotul 6c: exportul .ics
+
+- Context / autorizare: autorul a autorizat 6c (D39).
+- Implementat: `src/api/ics.ts` (RFC 5545, Europe/Chisinau, rânduri împărțite la 75 de octeți), `calendar` în `src/api/handlers.ts`, ruta `app/api/calendar/route.ts`, linkurile de descărcare în `app/studenti/` și `app/profesor/`; testele `tests/api/ics.test.ts`, un test în `tests/db/api.dbtest.ts`, unul în `tests/e2e/flows.e2e.ts`. Documentele: `README.md`, `project-map.md`, `results.md` §9, `plan.md`, `handoff.md`.
+- Verificat (mediul lui Claude): `npm test` 108; `npm run test:db` 49; `npm run test:e2e` 5; fișierul citit corect de biblioteca Python `icalendar` (inclusiv ora de vară).
+- Limite: importul în Google Calendar, de verificat de autor; neverificat pe Mac.
+- Pasul următor: verificarea pe Mac și în Google Calendar.
+
+---
+
+## 2026-11-21 — Lotul 6b încheiat
+
+- Verificat (autorul, Mac): testele și paginile în browser; commit făcut de autor. Bifa 6b în `plan.md`.
+- Pasul următor: autorizarea 6c (export .ics).
+
+---
+
 ## 2026-11-21 — Lotul 6b: paginile
 
 - Context / autorizare: autorul a autorizat 6b (D41–D43).

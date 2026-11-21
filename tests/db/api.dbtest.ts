@@ -2,7 +2,7 @@
 // Next.js din app/api/; aici se apelează direct, cu o bază de date de test.
 
 import { afterAll, describe, expect, it } from 'vitest';
-import { applyAlt, cancel, close, getMeta, health, listBookings, listClosures, submit } from '../../src/api/handlers.ts';
+import { applyAlt, calendar, cancel, close, getMeta, health, listBookings, listClosures, submit } from '../../src/api/handlers.ts';
 import { readState } from '../../src/db/store.ts';
 import { repairClosure } from '../../src/engine/repair.ts';
 import type { Alternative } from '../../src/engine/allocate.ts';
@@ -238,3 +238,28 @@ describe('istoricul mutărilor (D42)', () => {
     expect(text).not.toMatch(/Invalid input|expected/);
   });
 });
+
+describe('exportul .ics (D39)', () => {
+  it('pe unitate (cu activitățile fluxului) și pe profesor; antetele fișierului; erorile', async () => {
+    const { pool } = await open();
+    await rawInsert(pool, { id: 'flux', teacher: 'T1', units: ['F'], room: 'S1', start: 1 });
+    await rawInsert(pool, { id: 'sub1', teacher: 'T2', units: ['G/1'], room: 'L1', start: 2 });
+    await rawInsert(pool, { id: 'h', teacher: 'T2', units: ['H'], room: 'S2', start: 3 });
+    const now = new Date('2026-11-21T14:00:00Z');
+    const unit = (await calendar(pool, { unit: 'G/1' }, now)) as { status: number; body: string; headers: Record<string, string> };
+    expect(unit.status).toBe(200);
+    expect(unit.headers['content-type']).toBe('text/calendar; charset=utf-8');
+    expect(unit.headers['content-disposition']).toBe('attachment; filename="orar-G_1.ics"');
+    expect(unit.body.match(/BEGIN:VEVENT/g)).toHaveLength(2);
+    expect(unit.body).toContain('UID:flux@room-allocation');
+    expect(unit.body).toContain('UID:sub1@room-allocation');
+    const teacher = (await calendar(pool, { teacher: 'T2' }, now)) as { body: string };
+    expect(teacher.body.match(/BEGIN:VEVENT/g)).toHaveLength(2);
+    expect(teacher.body).toContain('Profesor: T2 (Profesor T2)');
+    expect((await calendar(pool, {})).status).toBe(400);
+    expect((await calendar(pool, { unit: 'G', teacher: 'T1' })).status).toBe(400);
+    expect((await calendar(pool, { unit: 'NU' })).status).toBe(404);
+    expect((await calendar(pool, { teacher: 'T2', from: 'ieri' })).status).toBe(400);
+  });
+});
+

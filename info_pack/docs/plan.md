@@ -55,7 +55,7 @@ Se bifează doar sarcinile efectiv finalizate și verificate. Structura feliilor
 
 ### V1 — versiunea matură
 
-**Statut (18.11.2026):** ordinea loturilor și ordinea de alegere din Lotul 4 sunt **aprobate de autor** (D30, D31); fiecare lot se autorizează separat. **Partea 3A este autorizată (18.11.2026)**; partea 3B așteaptă datele reale (autorul le solicită administrației și decanatului). **Lotul 4 este încheiat (18.11.2026)**, pe setul sintetic. **Lotul 5 este încheiat (21.11.2026)**, fără API HTTP (acesta intră în Lotul 6, cu Next.js). **6a este încheiată (21.11.2026)**; **6b este autorizată (21.11.2026)**; 6c nu este autorizată.
+**Statut (18.11.2026):** ordinea loturilor și ordinea de alegere din Lotul 4 sunt **aprobate de autor** (D30, D31); fiecare lot se autorizează separat. **Partea 3A este autorizată (18.11.2026)**; partea 3B așteaptă datele reale (autorul le solicită administrației și decanatului). **Lotul 4 este încheiat (18.11.2026)**, pe setul sintetic. **Lotul 5 este încheiat (21.11.2026)**, fără API HTTP (acesta intră în Lotul 6, cu Next.js). **6a este încheiată (21.11.2026)**; **6b este încheiată (21.11.2026)**; **6c este încheiată (21.11.2026)**; **Lotul 6 este încheiat**.
 
 **Ordinea:** datele reale → algoritmul extins → back-end-ul → interfețele. Fiecare lot are 2–3 sub-pași mici, fiecare încheiat cu verificare (D17). Dacă datele reale întârzie, Lotul 4 poate începe înaintea Lotului 3, pe date sintetice (cu autorizare).
 
@@ -87,8 +87,8 @@ Se bifează doar sarcinile efectiv finalizate și verificate. Structura feliilor
 
 **Lotul 6 — Interfețele** — model recomandat: Sonnet
 - [x] 6a. *(verificată în mediul lui Claude și pe Mac de autor, inclusiv `npm run app:up`, 21.11.2026)* Aplicația Next.js (D36) și API-ul: cereri cu sau fără interval, lista rezervărilor, aplicarea alternativelor, anularea, închiderea sălilor cu repararea automată într-o tranzacție (D38); serviciul `web` în Docker; teste API pe baza de date reală (D40)
-- [ ] 6b. *(implementată și verificată în mediul lui Claude la 21.11.2026; se bifează după verificarea pe Mac)* Dashboard-ul profesorului, panoul studenților (orar pe flux/grupă/subgrupă), pagina de administrare (grila săli × perechi, închideri); roluri fără autentificare, fără aprobare (D37); detaliile în D42; teste Playwright în mediul lui Claude (D40, D43)
-- [ ] 6c. Export .ics pe grupă / subgrupă / profesor (D39); importul rămâne `npm run db:load`
+- [x] 6b. *(verificată în mediul lui Claude și pe Mac de autor, 21.11.2026)* Dashboard-ul profesorului, panoul studenților (orar pe flux/grupă/subgrupă), pagina de administrare (grila săli × perechi, închideri); roluri fără autentificare, fără aprobare (D37); detaliile în D42; teste Playwright în mediul lui Claude (D40, D43)
+- [x] 6c. *(verificată în mediul lui Claude, pe Mac și prin importul în Google Calendar de autor, 21.11.2026)* Export .ics pe grupă / subgrupă / profesor (D39); importul rămâne `npm run db:load`
 
 **După V1 (versiuni ulterioare):** recurența (D16); planificarea semestrului — varianta (b) — cu un solver existent (CP-SAT; tehnologia de integrare se alege atunci), comparată cu varianta online (Î3); reoptimizarea periodică vs. mutările la fiecare cerere; validarea pe ITC 2019 (D24); experimentele finale (seed-uri separate pentru calibrare, intervale de încredere); aprofundarea literaturii (`literature.md` §9).
 

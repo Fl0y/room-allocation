@@ -8,7 +8,8 @@ import { applyAlternative, cancelBooking, closeRoom, OperationError } from '../d
 import { IdempotencyConflictError, submitRequest } from '../db/service.ts';
 import { bookingFromRow } from '../db/store.ts';
 import { alternativeSchema, bookingsQuerySchema, cancelSchema, closureSchema, submitSchema } from './schemas.ts';
-import type { Request } from '../engine/types.ts';
+import type { Booking, Request } from '../engine/types.ts';
+import { buildIcs, icsFilename } from './ics.ts';
 
 export interface ApiResult {
   status: number;
@@ -178,3 +179,39 @@ export async function health(pool: pg.Pool): Promise<ApiResult> {
     return fail(503, 'DATABASE_UNAVAILABLE', `baza de date nu răspunde: ${(e as Error).message}`);
   }
 }
+
+export interface FileResult {
+  status: number;
+  body: string;
+  headers: Record<string, string>;
+}
+
+/**
+ * Exportul .ics (D39): `?unit=` (flux, grupă, subgrupă — cu activitățile părinților și ale subgrupelor) sau
+ * `?teacher=`, exact unul; opțional `from`, `to`.
+ */
+export async function calendar(pool: pg.Pool, query: Record<string, string | undefined>, now?: Date): Promise<ApiResult | FileResult> {
+  const { unit, teacher } = query;
+  if (!!unit === !!teacher) return fail(400, 'VALIDATION', 'alegeți exact unul: „unit” (flux, grupă, subgrupă) sau „teacher”');
+  const listed = await listBookings(pool, { unit, teacher, from: query.from, to: query.to });
+  if (listed.status !== 200) return listed;
+  const bookings = (listed.body as { bookings: (Booking & { roomName: string; teacherName: string })[] }).bookings;
+  const exists = unit
+    ? (await pool.query('SELECT 1 FROM units WHERE id = $1', [unit])).rowCount
+    : (await pool.query('SELECT 1 FROM teachers WHERE id = $1', [teacher])).rowCount;
+  if (!exists) return fail(404, 'NOT_FOUND', unit ? `unitatea ${unit} nu există` : `profesorul ${teacher} nu există`);
+  const label = unit ? unit : teacher!;
+  const text = buildIcs(bookings, {
+    name: unit ? `Orar — ${unit}` : `Orar — profesor ${teacher}`,
+    grid: DEFAULT_GRID,
+    now,
+    rooms: new Map(bookings.map((b) => [b.roomId, b.roomName] as const)),
+    teachers: new Map(bookings.map((b) => [b.teacher, b.teacherName] as const)),
+  });
+  return {
+    status: 200,
+    body: text,
+    headers: { 'content-type': 'text/calendar; charset=utf-8', 'content-disposition': `attachment; filename="${icsFilename(label)}"` },
+  };
+}
+

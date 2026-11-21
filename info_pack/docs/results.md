@@ -25,6 +25,7 @@ Reguli:
 | Integritatea și concurența pe baza de date (Lotul 5) | **Verificat** (teste pe PostgreSQL real) — §6 |
 | API-ul și operațiile tranzacționale (Lotul 6a) | **Verificat** (teste pe PostgreSQL real, verificare HTTP) — §7 |
 | Paginile (Lotul 6b) | **Verificat** (Playwright, Chromium) — §8 |
+| Exportul .ics (Lotul 6c) | **Verificat** în mediul lui Claude, pe Mac și în Google Calendar (de autor) — §9 |
 | Validarea pe date reale (ITC 2019, D24; facultatea, 3B) | Nestudiat (V1) |
 
 ## 2. Verificarea motorului pe cazurile conflictuale (verificat)
@@ -227,7 +228,7 @@ Sursa: `npm run test:db` (`tests/db/api.dbtest.ts`, 11 teste noi; 45 în total),
 
 ## 8. Paginile (Lotul 6b, verificat)
 
-Sursa: `npm run test:e2e` (`tests/e2e/flows.e2e.ts`, 4 teste, Chromium 153), 21.11.2026, mediul lui Claude, PostgreSQL 16.15 local, pe datele cazului 5; plus `npm run test:db` (48, cu 3 teste noi: istoricul mutărilor, mesajele în română). Pe Mac, testele de interfață nu se rulează deocamdată (D43).
+Sursa: `npm run test:e2e` (`tests/e2e/flows.e2e.ts`, 4 teste, Chromium 153), 21.11.2026, mediul lui Claude, PostgreSQL 16.15 local, pe datele cazului 5; plus `npm run test:db` (48, cu 3 teste noi: istoricul mutărilor, mesajele în română). Pe Mac, autorul a verificat paginile manual în browser (21.11.2026); testele Playwright nu se rulează acolo deocamdată (D43).
 
 | Fluxul (D40) | Ce s-a verificat în browser |
 |---|---|
@@ -237,4 +238,16 @@ Sursa: `npm run test:e2e` (`tests/e2e/flows.e2e.ts`, 4 teste, Chromium 153), 21.
 | Închiderea sălii | L-201 închisă 16–24.11: raportul (9 rezervări afectate, fixarea examenului anulată, b4-bloc nerezolvată); în grilă sala apare „închisă”, fără rezervări; alternativa pentru nerezolvată aplicată „în numele profesorului” |
 
 Verificare vizuală (capturi de ecran în Chromium, fără erori în consolă) pe setul sintetic: paginile la 1300 px și orarul studenților la 390 px (listă pe zile).
+
+## 9. Exportul .ics (Lotul 6c)
+
+Sursa: 21.11.2026, mediul lui Claude: `npm test` (`tests/api/ics.test.ts`, 5 teste), `npm run test:db` (1 test nou, 49 în total), `npm run test:e2e` (1 test nou, 5 în total); plus o verificare independentă cu biblioteca Python `icalendar` 7.3.2 (citește fișierul fără erori; orele ies corect în fusul Europe/Chisinau, inclusiv după trecerea la ora de vară din 29.03.2026: 08:00 → +03:00, iar în noiembrie +02:00).
+
+| Ce s-a verificat | Rezultat |
+|---|---|
+| Formatul (RFC 5545) | rânduri CRLF de cel mult 75 de octeți, fără ruperea caracterelor românești; virgula, punctul și virgula, backslash-ul și rândurile noi protejate; un `VTIMEZONE` pentru Europe/Chisinau |
+| Conținutul | un eveniment pe rezervare, cu UID stabil (`<id>@room-allocation`), orele din grila perechilor, titlul „Tipul · grupele”, sala, profesorul, numărul de studenți |
+| API-ul | `?unit=` include activitățile fluxului și ale grupei; `?teacher=`; antetele de fișier; 400 fără parametru sau cu amândoi, 404 pentru o unitate inexistentă |
+| Interfața | descărcarea din pagina studenților (`orar-G2_1.ics`) și din pagina profesorului (`orar-T9.ics`) |
+| Importul în Google Calendar (criteriul 2 al Lotului 6) | confirmat de autor la 21.11.2026: evenimentele apar corect, la orele perechilor |
 

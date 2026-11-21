@@ -77,6 +77,7 @@ Actualizat: 21.11.2026.
 | `schemas.ts` | Validarea datelor primite (Zod) |
 | `handlers.ts` | Logica fiecărei rute, independentă de Next.js: primește conexiunea și datele, întoarce statutul HTTP și răspunsul |
 | `server.ts` | Legătura cu Next.js: conexiunea unică pe proces, conversia în `Response` |
+| `ics.ts` | Exportul iCalendar (Lotul 6c, D39): fișierul .ics cu fusul orar Europe/Chisinau (RFC 5545) |
 
 ### `src/scenarios/` — scenariile demonstrative
 
@@ -141,6 +142,7 @@ Actualizat: 21.11.2026.
 | `db/support.ts` | Baza de date de test (creată și ștearsă la fiecare test), o lume mică, inserări SQL directe |
 | `db/constraints.dbtest.ts` | Baza de date refuză singură suprapunerile (SQL direct, fără motor) și testele de mutație ale constrângerilor (`npm run test:db`) |
 | `db/api.dbtest.ts` | API-ul (Lotul 6a): citirea și filtrele, validarea, cererile, alternativele (inclusiv ruperea blocului), anularea, închiderea cu repararea (cazul 5) și blocarea zilelor închiderii (`npm run test:db`) |
+| `api/ics.test.ts` | Formatul fișierului .ics: structura, orele din grilă, protejarea textului, rândurile de cel mult 75 de octeți |
 | `e2e/flows.e2e.ts` | Fluxurile interfeței în Chromium (Lotul 6b): cererea acceptată și anularea, cererea refuzată cu alternativă aplicată, orarul unei subgrupe, închiderea unei săli (`npm run test:e2e`) |
 | `db/service.dbtest.ts` | Serviciul: aceleași decizii ca motorul în memorie, cereri simultane pentru ultima sală, nicio stare intermediară vizibilă, atomicitatea, idempotența, blocarea pe zi (`npm run test:db`) |
 | `demo/controller.test.ts` | Logica demo-ului |

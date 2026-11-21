@@ -75,3 +75,18 @@ test('administratorul: închiderea sălii L-201 repară orarul și propune alter
   await report.getByRole('button', { name: 'Aplică în numele profesorului' }).first().click();
   await expect(report.getByTestId('applied')).toContainText('Alternativa a fost aplicată');
 });
+
+test('exportul .ics: descărcarea orarului unei subgrupe și a rezervărilor unui profesor (D39)', async ({ page }) => {
+  await page.goto('/studenti');
+  await page.getByLabel('Unitatea').selectOption('G2/1');
+  const [file] = await Promise.all([page.waitForEvent('download'), page.getByTestId('ics-unit').click()]);
+  expect(file.suggestedFilename()).toBe('orar-G2_1.ics');
+  const text = await (await file.createReadStream()).toArray().then((c) => Buffer.concat(c).toString('utf8'));
+  expect(text).toContain('BEGIN:VCALENDAR');
+  expect(text).toContain('TZID:Europe/Chisinau');
+  await page.goto('/profesor');
+  await page.getByLabel('Profesorul').selectOption('T9');
+  const [mine] = await Promise.all([page.waitForEvent('download'), page.getByTestId('ics-teacher').click()]);
+  expect(mine.suggestedFilename()).toBe('orar-T9.ics');
+});
+

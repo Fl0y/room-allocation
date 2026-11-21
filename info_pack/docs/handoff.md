@@ -1,6 +1,6 @@
 # Starea curentă — RoomAllocation
 
-**Actualizat:** 21 noiembrie 2026 (Lotul 6b). Fișierul descrie doar starea de acum; se rescrie la fiecare etapă încheiată. Istoricul este în `journal.md`, ordinea de citire în `docs-guide.md`.
+**Actualizat:** 21 noiembrie 2026 (Lotul 6c). Fișierul descrie doar starea de acum; se rescrie la fiecare etapă încheiată. Istoricul este în `journal.md`, ordinea de citire în `docs-guide.md`.
 
 ## Ce există
 
@@ -11,7 +11,7 @@
   - 5c: `tests/db/` (34 de teste, `npm run test:db`), inclusiv concurența, atomicitatea și testele de mutație. Rezultatele: `results.md` §6.
 - **Verificat în mediul lui Claude și pe Mac:** `npm test` 103 teste; `npm run test:db` 34 de teste (PostgreSQL 16 local, respectiv 18.7 în Docker); `tsc` fără erori; setul sintetic se încarcă în baza de date fără încălcări.
 - **Dependențe noi:** `pg` 8.23.1, `@types/pg` 8.23.1 (versiuni fixate).
-- **Nu există:** API HTTP, interfețe reale (Lotul 6), date reale.
+- **Nu există:** date reale.
 
 ## Comenzile bazei de date (pe Mac)
 
@@ -23,28 +23,21 @@
 - Verificat în mediul lui Claude (`npm test` 103, `npm run test:db` 45, `next build`, HTTP) și pe Mac de autor (inclusiv tot sistemul în Docker). Rezultatele: `results.md` §7.
 - Atenție: `npm run dev` și containerul `web` folosesc același port 3000 (`README.md`).
 
-## Lotul 6b — autorizat și implementat (21.11.2026), neverificat încă pe Mac
+## Lotul 6b — încheiat (21.11.2026)
 
-- Paginile: `/` (alegerea rolului), `/profesor`, `/studenti`, `/admin` (`app/`, detaliile în `project-map.md` §2bis), după D37, D38, D42. Istoricul mutărilor în API (`GET /api/bookings` → `history`); mesajele de validare în română.
-- Testele de interfață: `tests/e2e/flows.e2e.ts` (Playwright 1.63.0, `npm run test:e2e`), rulate în mediul lui Claude (D43).
-- Verificat în mediul lui Claude: `npm test` 103, `npm run test:db` 48, `npm run test:e2e` 4, `next build`, capturi de ecran. Rezultatele: `results.md` §8.
+- Paginile `/`, `/profesor`, `/studenti`, `/admin` (`app/`, `project-map.md` §2bis); istoricul mutărilor în API; mesajele de validare în română; testele Playwright (`npm run test:e2e`, doar în mediul lui Claude, D43).
+- Verificat în mediul lui Claude (`npm test` 103, `npm run test:db` 48, `npm run test:e2e` 4) și pe Mac de autor (paginile în browser). Rezultatele: `results.md` §8.
 
-### De verificat pe Mac
+## Lotul 6c — încheiat (21.11.2026)
 
-```bash
-npm ci                            # dependența nouă: @playwright/test (fără browsere)
-npm test                          # 103
-npm run db:up && npm run db:migrate && npm run db:load -- synthetic
-npm run test:db                   # 48
-npm run dev                       # apoi http://localhost:3000: Profesor, Studenți, Administrator (Ctrl+C la final)
-npm run app:up                    # varianta în Docker (după ce serverul de dezvoltare e oprit)
-```
+- Exportul .ics (`src/api/ics.ts`, `GET /api/calendar?unit=…|teacher=…`), cu linkuri în paginile studenților și profesorului. Verificat în mediul lui Claude (`npm test` 108, `npm run test:db` 49, `npm run test:e2e` 5), pe Mac și prin importul în Google Calendar (autorul). Rezultatele: `results.md` §9.
 
-În browser: o cerere ca profesor, orarul unei grupe ca student, închiderea unei săli ca administrator. După verificare: bifa 6b și commit-ul.
+**V1 este încheiat**, cu excepția părții 3B (datele reale), care așteaptă datele de la decanat.
 
 ## Pasul următor
 
-- **6c** (export .ics, D39) — necesită autorizare.
+- 3B, când vin datele reale (convertorul după formatul primit, pseudonimizarea, comparația cu setul sintetic, săptămâna reală în simulator și în 4c).
+- Sau etapele de după V1 (`plan.md`): recurența, planificarea semestrului cu un solver (varianta b, Î3), reoptimizarea periodică, validarea pe ITC 2019, experimentele finale, aprofundarea literaturii; plus reformularea concept §4.2. Fiecare se discută și se autorizează separat.
 
 ## Puncte deschise (neblocante)
 
