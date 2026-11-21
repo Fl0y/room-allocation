@@ -7,3 +7,8 @@ CLAUDE.md
 
 # Documente de uz personal (discuții reale cu decanatul, coordonatorul)
 Claude outputs/personal/
+
+# Next.js (Lotul 6)
+.next/
+*.tsbuildinfo
+next-env.d.ts

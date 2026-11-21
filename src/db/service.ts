@@ -57,7 +57,7 @@ function toServiceDecision(d: Decision): ServiceDecision {
 }
 
 /** JSON cu cheile ordonate, ca două cereri identice să fie recunoscute indiferent de ordinea câmpurilor. */
-function canonical(x: unknown): string {
+export function canonical(x: unknown): string {
   if (Array.isArray(x)) return `[${x.map(canonical).join(',')}]`;
   if (x && typeof x === 'object')
     return `{${Object.keys(x)

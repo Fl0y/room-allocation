@@ -18,7 +18,7 @@ function fromEnvFile(name: string): string | undefined {
   return undefined;
 }
 
-export function databaseUrl(env: NodeJS.ProcessEnv = process.env): string {
+export function databaseUrl(env: Record<string, string | undefined> = process.env): string {
   return env.RA_DATABASE_URL ?? fromEnvFile('RA_DATABASE_URL') ?? DEFAULT_DATABASE_URL;
 }
 

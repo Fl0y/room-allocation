@@ -4,7 +4,7 @@ Algoritmul de alocare a sălilor universitare (proiect academic). Documentația 
 
 ## Stadiul
 
-V0 încheiat (Loturile 1–2: motorul, simularea, demo-ul). V1: partea 3A (formatul intern al datelor, setul sintetic al facultății, săptămâna în simulator) — `info_pack/docs/data-format.md`; Lotul 4 (cererea cu interval: motorul alege și perechea, ținând cont de ferestrele studenților, D29, D31); Lotul 5 (PostgreSQL în Docker, serviciul tranzacțional, testele de concurență, D35).
+V0 încheiat (Loturile 1–2: motorul, simularea, demo-ul). V1: partea 3A (formatul intern al datelor, setul sintetic al facultății, săptămâna în simulator) — `info_pack/docs/data-format.md`; Lotul 4 (cererea cu interval: motorul alege și perechea, ținând cont de ferestrele studenților, D29, D31); Lotul 5 (PostgreSQL în Docker, serviciul tranzacțional, testele de concurență, D35); Lotul 6a (aplicația Next.js și API-ul HTTP, D36–D38).
 
 ## V0 — motorul de alocare, simularea și demo-ul
 
@@ -41,8 +41,28 @@ npm run db:up                   # pornește PostgreSQL 18.7 în Docker (127.0.0.
 npm run db:migrate              # aplică schema (db/migrations/)
 npm run db:load -- synthetic    # încarcă setul sintetic în baza de date
 npm run test:db                 # testele pe baza de date reală (constrângeri, concurență, tranzacții)
-npm run db:down                 # oprește containerul (datele rămân în volum; `docker compose down -v` le șterge)
+npm run db:down                 # oprește containerele (datele rămân în volum; `docker compose down -v` le șterge)
+
+# aplicația web (Lotul 6; Next.js)
+npm run dev                     # serverul de dezvoltare, http://localhost:3000 (baza de date pornită cu db:up)
+npm run app:up                  # tot sistemul în Docker: baza de date + aplicația, http://localhost:3000
 ```
+
+Portul 3000 e folosit atât de `npm run dev`, cât și de containerul `web`: rulează doar unul odată. Serverul de dezvoltare se oprește cu Ctrl+C (Ctrl+Z doar îl suspendă și ține portul ocupat; atunci `http://localhost:3000` nu mai răspunde).
+
+## API (Lotul 6a, D38)
+
+Fără autentificare (D37); răspunsuri JSON; erorile au forma `{ "error": { "code", "message", "issues"? } }`. Strategia: scorul (D25, D31), cel mult 2 mutări.
+
+| Metodă și rută | Ce face |
+|---|---|
+| `GET /api/health` | Starea serverului și a bazei de date |
+| `GET /api/meta` | Sălile, unitățile (cu numărul de studenți), profesorii (pseudonime), zilele, grila perechilor |
+| `GET /api/bookings?day=&from=&to=&room=&unit=&teacher=` | Rezervările; filtrul `unit` include activitățile părinților și ale subgrupelor |
+| `POST /api/requests` | O cerere nouă, cu sau fără interval: `{ "request": {…}, "key"?: "…" }` → decizia motorului (201; 200 la repetare; 409 dacă aceeași cheie are alt conținut) |
+| `POST /api/alternatives` | Aplicarea unei alternative propuse (altă pereche/zi sau ruperea blocului, D20): `{ "request", "alternative" }` |
+| `DELETE /api/bookings/{id}` | Anularea: `{ "teacher": "P-001" }` (doar rezervările proprii) sau `{ "admin": true }` |
+| `GET /api/closures`, `POST /api/closures` | Închiderile de săli; închiderea nouă `{ "roomId", "from", "to", "reason" }` repară automat orarul (D19) și întoarce raportul |
 
 ## Structura
 
@@ -50,7 +70,9 @@ npm run db:down                 # oprește containerul (datele rămân în volum
 src/engine/      motorul de alocare (independent de interfață și BD)
 src/scenarios/   scenariile demonstrative (date sintetice) și rularea lor
 src/data/        formatul intern al datelor: citire, validare, construirea săptămânii (Lotul 3)
-src/db/          baza de date: conexiunea, migrațiile, citirea/scrierea, serviciul tranzacțional (Lotul 5)
+src/db/          baza de date: conexiunea, migrațiile, citirea/scrierea, serviciul și operațiile tranzacționale (Loturile 5–6)
+src/api/         API-ul: validarea și logica rutelor, independentă de Next.js (Lotul 6a)
+app/             aplicația Next.js: paginile și rutele API (Lotul 6)
 db/migrations/   schema SQL (constrângerile de excludere, triggerele)
 src/sim/         generatoarele de date sintetice, simulatorul, săptămâna și măsurătorile ei
 src/demo/        demo-ul: logica (controller.ts) și interfața (main.ts)

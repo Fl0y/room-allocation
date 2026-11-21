@@ -4,7 +4,7 @@ Ce conține fiecare folder și fișier, pe scurt. Pentru documentele din `info_p
 
 Reguli: harta descrie **rolul** fișierelor, nu detalii de implementare (fără numere de linie, fără liste de funcții), ca să nu se învechească. Când apar, se mută sau dispar fișiere, harta se actualizează în aceeași etapă (`docs-guide.md` §4). Testul `tests/docs/project-map.test.ts` (rulat cu `npm test`) pică dacă harta nu mai corespunde fișierelor; descrierile le verifică omul. Format cerut de test: fișierele din `src/`, `tests/` și `scripts/` apar în prima coloană a tabelelor, sub un titlu care conține folderul între backtick-uri; documentele, în rândul „Lista:” din §5.
 
-Actualizat: 18.11.2026.
+Actualizat: 21.11.2026.
 
 ## 1. Rădăcina
 
@@ -16,8 +16,12 @@ Actualizat: 18.11.2026.
 | `tsconfig.json` | Configurația TypeScript (verificarea tipurilor) |
 | `vitest.config.ts` | Configurația testelor (`npm test`, fără bază de date) |
 | `vitest.db.config.ts` | Configurația testelor pe baza de date (`npm run test:db`, Lotul 5) |
-| `docker-compose.yml` | Baza de date locală: PostgreSQL 18.7, doar pe 127.0.0.1:54320 (D35) |
-| `db/migrations/` | Schema bazei de date, ca migrații SQL numerotate; `001_schema.sql`: tabelele și constrângerile H1–H3, H8 |
+| `docker-compose.yml` | Sistemul local (D35): baza de date PostgreSQL 18.7 (127.0.0.1:54320) și aplicația web (127.0.0.1:3000) |
+| `Dockerfile`, `.dockerignore` | Imaginea aplicației web (Node 24.22.1, Next.js); migrațiile se aplică la pornire |
+| `next.config.ts` | Configurația Next.js |
+| `app/` | Aplicația Next.js (D36): paginile (Lotul 6b) și rutele API din `app/api/` (Lotul 6a), care doar apelează `src/api/handlers.ts`; `app/env.d.ts` aduce tipurile Next.js |
+| `next-env.d.ts`, `.next/` | Generate de Next.js; nu intră în Git |
+| `db/migrations/` | Schema bazei de date, ca migrații SQL numerotate; `001_schema.sql`: tabelele și constrângerile H1–H3, H8; `002_operations.sql`: anularea și închiderea, raportul reparării |
 | `.node-version` | Versiunea Node pentru Mac (24.22.1) |
 | `.gitignore` | Ce nu intră în Git (`node_modules/`, `out/`, `.env*`) |
 | `.env` (opțional, local) | Calea folderului de date (`RA_DATA_DIR=…`), adresa bazei de date (`RA_DATABASE_URL=…`), parola containerului (`RA_DB_PASSWORD=…`); nu intră în Git |
@@ -62,6 +66,15 @@ Actualizat: 18.11.2026.
 | `migrate.ts` | Aplicarea migrațiilor din `db/migrations/`, fiecare într-o tranzacție |
 | `store.ts` | Conversia între rândurile din baza de date și modelul motorului; încărcarea unei instanțe cu starea ei |
 | `service.ts` | **Serviciul tranzacțional**: blocarea zilei → idempotența → citirea stării → decizia motorului → scrierea mutărilor și a rezervării, totul într-o singură tranzacție |
+| `operations.ts` | Celelalte operații tranzacționale (Lotul 6a): aplicarea unei alternative (inclusiv ruperea blocului), anularea, închiderea sălii cu repararea automată; scrierea diferenței dintre două stări |
+
+### `src/api/` — API-ul HTTP (Lotul 6a, D38)
+
+| Fișier | Rol |
+|---|---|
+| `schemas.ts` | Validarea datelor primite (Zod) |
+| `handlers.ts` | Logica fiecărei rute, independentă de Next.js: primește conexiunea și datele, întoarce statutul HTTP și răspunsul |
+| `server.ts` | Legătura cu Next.js: conexiunea unică pe proces, conversia în `Response` |
 
 ### `src/scenarios/` — scenariile demonstrative
 
@@ -111,6 +124,7 @@ Actualizat: 18.11.2026.
 | `support/mini.ts` | Citirea exemplului mic pentru teste |
 | `db/support.ts` | Baza de date de test (creată și ștearsă la fiecare test), o lume mică, inserări SQL directe |
 | `db/constraints.dbtest.ts` | Baza de date refuză singură suprapunerile (SQL direct, fără motor) și testele de mutație ale constrângerilor (`npm run test:db`) |
+| `db/api.dbtest.ts` | API-ul (Lotul 6a): citirea și filtrele, validarea, cererile, alternativele (inclusiv ruperea blocului), anularea, închiderea cu repararea (cazul 5) și blocarea zilelor închiderii (`npm run test:db`) |
 | `db/service.dbtest.ts` | Serviciul: aceleași decizii ca motorul în memorie, cereri simultane pentru ultima sală, nicio stare intermediară vizibilă, atomicitatea, idempotența, blocarea pe zi (`npm run test:db`) |
 | `demo/controller.test.ts` | Logica demo-ului |
 | `docs/project-map.test.ts` | Că această hartă este la zi: fiecare fișier din `src/`, `tests/`, `scripts/` și din `info_pack/docs/` apare aici, iar fiecare fișier numit aici există |

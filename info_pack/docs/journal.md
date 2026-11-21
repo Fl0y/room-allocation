@@ -23,6 +23,33 @@ Reguli (detalii în `docs-guide.md`):
 
 ---
 
+## 2026-11-21 — Lotul 6a încheiat
+
+- Verificat (autorul, Mac): comenzile din `handoff.md`, inclusiv `npm run app:up` (containerele `db` și `web` sănătoase). O problemă întâlnită: `npm run dev` suspendat cu Ctrl+Z ținea portul 3000, iar `localhost` nu mai răspundea; rezolvată prin oprirea procesului; nota e în `README.md`.
+- Bifa 6a în `plan.md`. Commit: de făcut de autor.
+- Pasul următor: autorizarea 6b.
+
+---
+
+## 2026-11-21 — Lotul 6a: aplicația Next.js și API-ul
+
+- Context / autorizare: autorul a autorizat 6a (D36–D40).
+- Implementat: Next.js 16.4.6, React 19.3.1, Zod 4.6.7 (versiuni fixate); `app/` (pagina de start provizorie, rutele `app/api/*`), `src/api/` (`schemas.ts`, `handlers.ts`, `server.ts`), `src/db/operations.ts` (alternative, ruperea blocului, anularea, închiderea cu repararea, scrierea diferenței), `db/migrations/002_operations.sql`, `Dockerfile`, `.dockerignore`, serviciul `web` în `docker-compose.yml`, comenzile `dev`, `build`, `start`, `app:up`; `tsconfig.json` completat de Next.js; `.gitignore` (`.next/`, `next-env.d.ts`). Motorul nu s-a schimbat. Documentele: `README.md` (comenzile, tabelul API), `project-map.md`, `glossary.md`, `results.md` §7, `plan.md`, `handoff.md`.
+- Verificat (mediul lui Claude): `npm test` 103; `npm run test:db` 45 (11 noi); `next build`; verificare HTTP cu `next start` pe setul sintetic.
+- Limite: neverificat pe Mac și în containerul `web` (Docker nu rulează în mediul lui Claude); fără pagini (6b).
+- Pasul următor: verificarea pe Mac, apoi autorizarea 6b.
+
+---
+
+## 2026-11-21 — Deciziile pentru Lotul 6
+
+- Context: Lotul 5 comis de autor (`7297086`). Înaintea Lotului 6, autorul a confirmat cele 12 puncte propuse, cu recomandările lui Claude.
+- Decizii: D36 (Next.js, React, Zod, CSS Modules, același repository, `npm run dev` + serviciul `web` în Docker), D37 (roluri fără autentificare, fără aprobarea rezervărilor; închide întrebarea din P09), D38 (funcțiile: anularea, închiderea cu repararea tranzacțională, cele trei pagini), D39 (.ics pe grupă / subgrupă / profesor; importul rămâne comandă), D40 (teste API pe baza de date, Playwright pentru fluxurile principale).
+- Implementat: `decisions.md`, `plan.md` (sub-pașii 6a–6c precizați), `handoff.md`.
+- Pasul următor: autorizarea pentru 6a.
+
+---
+
 ## 2026-11-21 — Lotul 5 încheiat
 
 - Verificat (autorul, Mac): `npm ci`, `npm test` (103), `db:up` (PostgreSQL 18.7 în Docker), `db:migrate`, `db:load -- synthetic`, `test:db` (34) — toate au trecut. Bifele 5a–5c în `plan.md`.

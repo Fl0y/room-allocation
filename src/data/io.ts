@@ -12,7 +12,7 @@ export const REPO_ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '../..
 export type Section = 'synthetic' | 'real';
 
 /** Rădăcina folderului de date. */
-export function dataRoot(env: NodeJS.ProcessEnv = process.env): string {
+export function dataRoot(env: Record<string, string | undefined> = process.env): string {
   if (!env.RA_DATA_DIR) {
     const envFile = join(REPO_ROOT, '.env');
     if (existsSync(envFile)) {

@@ -87,6 +87,7 @@ Reguli: cine introduce un termen nou îl adaugă aici în aceeași etapă (`docs
 - **Blocarea zilei** (*advisory lock*) — cererile pentru aceeași zi se tratează una după alta, cele pentru zile diferite în paralel.
 - **Idempotență** — aceeași cerere (aceeași cheie) trimisă de mai multe ori produce o singură rezervare și aceeași decizie.
 - **Migrație** — un fișier SQL numerotat care schimbă schema; o migrație aplicată nu se mai modifică. *Unde:* `db/migrations/`.
+- **API** (*application programming interface*) — adresele HTTP prin care interfața (sau alt program) trimite cereri și citește rezervări. *Unde:* `app/api/`, `src/api/`, `README.md`.
 - **Test de integrare** — test pe baza de date reală, nu pe o simulare a ei. *Unde:* `tests/db/`, `npm run test:db`.
 
 ## 5. Procesul de lucru

@@ -21,16 +21,26 @@
     "db:down": "docker compose down",
     "db:migrate": "node scripts/db-migrate.ts",
     "db:load": "node scripts/db-load.ts",
-    "test:db": "vitest run --config vitest.db.config.ts"
+    "test:db": "vitest run --config vitest.db.config.ts",
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "app:up": "docker compose up -d --build --wait"
   },
   "devDependencies": {
     "@types/node": "24.19.2",
     "@types/pg": "8.23.1",
+    "@types/react": "19.3.0",
+    "@types/react-dom": "19.3.0",
     "esbuild": "0.28.2",
     "typescript": "7.0.2",
     "vitest": "5.1.0"
   },
   "dependencies": {
-    "pg": "8.23.1"
+    "next": "16.4.6",
+    "pg": "8.23.1",
+    "react": "19.3.1",
+    "react-dom": "19.3.1",
+    "zod": "4.6.7"
   }
 }

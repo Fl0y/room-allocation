@@ -1,5 +1,6 @@
-# Baza de date locală pentru V1 (Lotul 5, D35): PostgreSQL 18, legată doar la 127.0.0.1.
-# Pornire: docker compose up -d db      Oprire: docker compose down      Ștergerea datelor: docker compose down -v
+# Sistemul V1, local (D35): baza de date (Lotul 5) și aplicația web (Lotul 6, D36), legate doar la 127.0.0.1.
+# Doar baza de date: npm run db:up      Tot sistemul: npm run app:up (http://localhost:3000)
+# Oprire: docker compose down      Ștergerea datelor: docker compose down -v
 # Parola implicită (ra_dev) e doar pentru containerul local; altă parolă se pune în .env (RA_DB_PASSWORD=…),
 # fișier ignorat de Git. Datele se păstrează în volumul ra-db-data.
 services:
@@ -19,6 +20,22 @@ services:
       interval: 2s
       timeout: 3s
       retries: 30
+
+  web:
+    build: .
+    container_name: room-allocation-web
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      RA_DATABASE_URL: postgres://ra:${RA_DB_PASSWORD:-ra_dev}@db:5432/room_allocation
+    ports:
+      - "127.0.0.1:3000:3000"
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:3000/api/health').then(r => process.exit(r.ok ? 0 : 1)).catch(() => process.exit(1))"]
+      interval: 3s
+      timeout: 3s
+      retries: 40
 
 volumes:
   ra-db-data:

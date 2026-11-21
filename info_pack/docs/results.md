@@ -23,6 +23,7 @@ Reguli:
 | Cererea cu interval: motorul alege și perechea după D31 (Lotul 4) | **Verificat** (oracol exhaustiv, 600 de instanțe × 4 configurații) — §5.1 |
 | Cererea cu interval: efectul asupra ferestrelor studenților (Lotul 4c) | **Preliminar**, set inventat — §5.2 |
 | Integritatea și concurența pe baza de date (Lotul 5) | **Verificat** (teste pe PostgreSQL real) — §6 |
+| API-ul și operațiile tranzacționale (Lotul 6a) | **Verificat** (teste pe PostgreSQL real, verificare HTTP) — §7 |
 | Validarea pe date reale (ITC 2019, D24; facultatea, 3B) | Nestudiat (V1) |
 
 ## 2. Verificarea motorului pe cazurile conflictuale (verificat)
@@ -210,4 +211,16 @@ Sursa: `npm run test:db` (`tests/db/`), 21.11.2026, mediul lui Claude, PostgreSQ
 | Idempotența | Aceeași cerere de două ori sau de 6 ori simultan: o singură rezervare, aceeași decizie; aceeași cheie pentru o cerere diferită: eroare, nimic scris |
 
 Setul sintetic (299 de rezervări) se încarcă în baza de date fără nicio încălcare a constrângerilor (`npm run db:load -- synthetic`).
+
+## 7. API-ul și operațiile tranzacționale (Lotul 6a, verificat)
+
+Sursa: `npm run test:db` (`tests/db/api.dbtest.ts`, 11 teste noi; 45 în total), 21.11.2026, mediul lui Claude, PostgreSQL 16.15 local; plus o verificare HTTP cu `next build` și `next start` pe setul sintetic încărcat (rutele `health`, `meta`, `bookings`, `requests`, `bookings/{id}`, `closures` răspund cu statuturile așteptate). Confirmat de autor pe Mac, inclusiv sistemul complet în Docker (`npm run app:up`: containerele `db` și `web` sănătoase), 21.11.2026.
+
+| Funcția (D38) | Ce s-a verificat |
+|---|---|
+| Citirea | `meta` (săli, unități cu numărul de studenți, profesori, zile, grila); filtrele rezervărilor după zi, sală, profesor și unitate (o subgrupă vede și cursul fluxului) |
+| Cererile | Validarea formei (400, cu lista problemelor); acceptare (201), repetare (200), aceeași cheie cu alt conținut (409); cererea cu interval și refuzul motorului ajung ca decizii |
+| Alternativele | Altă pereche: aplicată o dată, repetarea nu mai scrie nimic. Ruperea blocului: două rezervări cu același bloc și acordul marcat, în aceeași tranzacție; dacă între timp nu mai e posibilă: refuz motivat, nimic scris |
+| Anularea | Doar profesorul rezervării (altfel 403) sau administratorul; inexistentă → 404; repetarea nu mai șterge nimic; sala devine liberă |
+| Închiderea cu repararea | Cazul 5 prin API: același raport și aceeași stare finală ca motorul în memorie; examenul fixat e mutat și își păstrează statutul (D19); sala închisă nu mai are rezervări; o cerere simultană pentru o zi din închidere așteaptă și nu primește sala închisă |
 
