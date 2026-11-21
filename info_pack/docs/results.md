@@ -22,6 +22,7 @@ Reguli:
 | Săptămâna sintetică: orarul + cereri suplimentare (Lotul 3A) | **Preliminar**, set inventat — §4 |
 | Cererea cu interval: motorul alege și perechea după D31 (Lotul 4) | **Verificat** (oracol exhaustiv, 600 de instanțe × 4 configurații) — §5.1 |
 | Cererea cu interval: efectul asupra ferestrelor studenților (Lotul 4c) | **Preliminar**, set inventat — §5.2 |
+| Integritatea și concurența pe baza de date (Lotul 5) | **Verificat** (teste pe PostgreSQL real) — §6 |
 | Validarea pe date reale (ITC 2019, D24; facultatea, 3B) | Nestudiat (V1) |
 
 ## 2. Verificarea motorului pe cazurile conflictuale (verificat)
@@ -194,4 +195,19 @@ Ferestrele în orarul inițial: 9. Diferențe pe perechi față de ora fixă (in
 - **Cu** criteriul ferestrelor, ferestrele sunt la nivelul orei fixe sau puțin sub el (−3,5 [−6,5; −0,4] la 0,5), deși se acceptă mai multe cereri; pe cerere acceptată, cu 3–4% mai puține decât la ora fixă. Câștigul este mic, pentru că ferestrele vin după mutări și sălile rare (D31) și pentru că cererile suplimentare au intervale scurte.
 - Acceptările nu se compară curat între variante: generatorul garantează că persoanele sunt libere doar la prima pereche a fiecărei cereri. Când o cerere se mută mai târziu, poate ocupa grupa sau profesorul unei cereri care vine după (refuzuri de tip „persoane ocupate”, inexistente la ora fixă). Varianta fără criteriu mută mai des și pierde mai mult din acest motiv. Câștigul de acceptare al variantei cu criteriu e deci o observație despre acest generator, nu un rezultat general.
 - Limite: un singur set inventat, cu un orar inițial foarte compact; distribuția intervalelor (1–3 perechi în plus) e o propunere.
+
+## 6. Baza de date și concurența (Lotul 5, verificat)
+
+Sursa: `npm run test:db` (`tests/db/`), 21.11.2026, mediul lui Claude, PostgreSQL 16.15 local; confirmat de autor pe Mac, cu PostgreSQL 18.7 în Docker (21.11.2026). 34 de teste trec; fiecare test lucrează pe o bază de date nouă, creată și ștearsă de test.
+
+| Criteriu (`plan.md` §4ter, Lotul 5) | Ce s-a verificat |
+|---|---|
+| 1. Baza de date refuză singură suprapunerile | SQL direct, fără motor: sală (H1), profesor (H2), grupă vs. subgrupă și flux vs. subgrupă (H3), unitate necunoscută, schimbarea orei și mutarea unei rezervări înghețate (H8) — toate refuzate; perechile alăturate, altă zi, grupele diferite și subgrupele surori sunt permise; un schimb de săli între două rezervări e valid la COMMIT |
+| 2. Cereri simultane pentru ultima sală | 12 cereri simultane pentru singurul laborator potrivit: exact una acceptată, 11 refuzate cu `ROOM_UNAVAILABLE`; o singură rezervare în baza de date. O altă conexiune nu vede nimic din mutări și din rezervarea nouă până la COMMIT. Cererile pentru aceeași zi așteaptă; cele pentru alte zile trec în paralel. Fără blocarea serviciului, a doua dintre două tranzacții suprapuse eșuează la COMMIT (constrângerea) |
+| 3. Mutările: toate sau niciuna | Întreruperea după mutări (înaintea rezervării noi): baza de date rămâne exact ca înainte, iar cererea se poate retrimite și reușește |
+| 4. Scoaterea oricărei constrângeri e detectată | Pentru fiecare constrângere și trigger scoase pe rând, încălcarea corespunzătoare trece (7 teste de mutație). Și în serviciu: fără blocarea zilei, testele de concurență și de idempotență pică; cu o blocare comună tuturor zilelor, pică testul zilelor în paralel |
+| Echivalența cu motorul | Scenariile 1–4, 6–10 și exemplul coordonatorului, prin serviciu: aceleași decizii, explicații și stare finală ca motorul în memorie |
+| Idempotența | Aceeași cerere de două ori sau de 6 ori simultan: o singură rezervare, aceeași decizie; aceeași cheie pentru o cerere diferită: eroare, nimic scris |
+
+Setul sintetic (299 de rezervări) se încarcă în baza de date fără nicio încălcare a constrângerilor (`npm run db:load -- synthetic`).
 

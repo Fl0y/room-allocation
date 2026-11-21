@@ -79,6 +79,16 @@ Reguli: cine introduce un termen nou îl adaugă aici în aceeași etapă (`docs
 - **Pseudonim** — identificatorul fictiv al unui profesor (`P-001`); numele reale nu intră în formatul intern (D28). Corespondența stă doar în `room-allocation-data/real/`.
 - **Rezultat preliminar / verificat / final** — statutul unui rezultat în `results.md`: preliminar = simulare pe date sintetice; verificat = test automat; final = protocolul complet din V1.
 
+## 4bis. Baza de date și concurența (Lotul 5)
+
+- **Tranzacție** — un grup de operații care se aplică toate sau niciuna; până la `COMMIT`, celelalte conexiuni nu văd nimic din ele. *Unde:* `src/db/service.ts`.
+- **Constrângere de excludere** (*exclusion constraint*) — regulă PostgreSQL care refuză două rânduri ce se suprapun (de exemplu aceeași sală, aceeași zi, perechi care se intersectează). Este a doua linie de apărare, după motor. *Unde:* `db/migrations/001_schema.sql`.
+- **Constrângere amânată** (*deferred constraint*) — verificată abia la `COMMIT`, ca un lanț de mutări să fie judecat doar la final.
+- **Blocarea zilei** (*advisory lock*) — cererile pentru aceeași zi se tratează una după alta, cele pentru zile diferite în paralel.
+- **Idempotență** — aceeași cerere (aceeași cheie) trimisă de mai multe ori produce o singură rezervare și aceeași decizie.
+- **Migrație** — un fișier SQL numerotat care schimbă schema; o migrație aplicată nu se mai modifică. *Unde:* `db/migrations/`.
+- **Test de integrare** — test pe baza de date reală, nu pe o simulare a ei. *Unde:* `tests/db/`, `npm run test:db`.
+
 ## 5. Procesul de lucru
 
 - **D / P / O** — decizie confirmată / propunere / întrebare deschisă, cu ID-uri în `decisions.md`.

@@ -14,10 +14,13 @@ Actualizat: 18.11.2026.
 | `README.md` | Prezentarea scurtă și comenzile |
 | `package.json`, `package-lock.json` | Dependențele (versiuni fixate) și comenzile `npm` |
 | `tsconfig.json` | Configurația TypeScript (verificarea tipurilor) |
-| `vitest.config.ts` | Configurația testelor |
+| `vitest.config.ts` | Configurația testelor (`npm test`, fără bază de date) |
+| `vitest.db.config.ts` | Configurația testelor pe baza de date (`npm run test:db`, Lotul 5) |
+| `docker-compose.yml` | Baza de date locală: PostgreSQL 18.7, doar pe 127.0.0.1:54320 (D35) |
+| `db/migrations/` | Schema bazei de date, ca migrații SQL numerotate; `001_schema.sql`: tabelele și constrângerile H1–H3, H8 |
 | `.node-version` | Versiunea Node pentru Mac (24.22.1) |
 | `.gitignore` | Ce nu intră în Git (`node_modules/`, `out/`, `.env*`) |
-| `.env` (opțional, local) | Calea folderului de date, `RA_DATA_DIR=…`; nu intră în Git |
+| `.env` (opțional, local) | Calea folderului de date (`RA_DATA_DIR=…`), adresa bazei de date (`RA_DATABASE_URL=…`), parola containerului (`RA_DB_PASSWORD=…`); nu intră în Git |
 | `info_pack/docs/` | Documentația proiectului (vezi §5) |
 | `info_pack/references/` | Loc pentru materiale de referință (gol) |
 | `out/` | Rezultatele generate de comenzi (rapoarte, demo); nu intră în Git |
@@ -50,6 +53,15 @@ Actualizat: 18.11.2026.
 | `format.ts` | **Formatul intern** (specificația: `info_pack/docs/data-format.md`): citirea și validarea fișierelor, construirea instanței motorului și a orarului ca rezervări existente, cu problemele raportate pe fișier și linie |
 | `io.ts` | Folderul datelor din afara repository-ului (`RA_DATA_DIR`, implicit `../room-allocation-data`); citirea și scrierea unui set |
 | `summary.ts` | Rezumatul unui set de date pentru raportul de validare |
+
+### `src/db/` — baza de date și serviciul tranzacțional (Lotul 5)
+
+| Fișier | Rol |
+|---|---|
+| `pool.ts` | Conexiunea la PostgreSQL (`RA_DATABASE_URL`, implicit containerul local) |
+| `migrate.ts` | Aplicarea migrațiilor din `db/migrations/`, fiecare într-o tranzacție |
+| `store.ts` | Conversia între rândurile din baza de date și modelul motorului; încărcarea unei instanțe cu starea ei |
+| `service.ts` | **Serviciul tranzacțional**: blocarea zilei → idempotența → citirea stării → decizia motorului → scrierea mutărilor și a rezervării, totul într-o singură tranzacție |
 
 ### `src/scenarios/` — scenariile demonstrative
 
@@ -97,6 +109,9 @@ Actualizat: 18.11.2026.
 | `data/io.test.ts` | Calea folderului de date, scrierea și recitirea unui set |
 | `fixtures/mini/dataset.json`, `fixtures/mini/rooms.csv`, `fixtures/mini/units.csv`, `fixtures/mini/teachers.csv`, `fixtures/mini/courses.csv`, `fixtures/mini/assignments.csv`, `fixtures/mini/timetable.csv` | **Exemplul mic fictiv** în formatul intern: datele pe care rulează testele fără folderul extern; servește și ca model al formatului |
 | `support/mini.ts` | Citirea exemplului mic pentru teste |
+| `db/support.ts` | Baza de date de test (creată și ștearsă la fiecare test), o lume mică, inserări SQL directe |
+| `db/constraints.dbtest.ts` | Baza de date refuză singură suprapunerile (SQL direct, fără motor) și testele de mutație ale constrângerilor (`npm run test:db`) |
+| `db/service.dbtest.ts` | Serviciul: aceleași decizii ca motorul în memorie, cereri simultane pentru ultima sală, nicio stare intermediară vizibilă, atomicitatea, idempotența, blocarea pe zi (`npm run test:db`) |
 | `demo/controller.test.ts` | Logica demo-ului |
 | `docs/project-map.test.ts` | Că această hartă este la zi: fiecare fișier din `src/`, `tests/`, `scripts/` și din `info_pack/docs/` apare aici, iar fiecare fișier numit aici există |
 | `oracle/bruteforce.ts` | Oracolul (căutarea exhaustivă), folosit de teste; și pentru cererile cu interval, cu ferestrele calculate independent |
@@ -113,6 +128,8 @@ Actualizat: 18.11.2026.
 | `data-check.ts` | `npm run data:check -- synthetic` (sau `real`) | Raportul de validare în `room-allocation-data/<secțiune>/reports/` |
 | `week.ts` | `npm run week -- synthetic` (sau `real`) | Măsurătorile de bază și comparația strategiilor, în `room-allocation-data/<secțiune>/reports/` |
 | `interval.ts` | `npm run interval -- synthetic` (sau `real`) | Lotul 4c: ora fixă vs. interval fără / cu criteriul ferestrelor, în `room-allocation-data/<secțiune>/reports/` |
+| `db-migrate.ts` | `npm run db:migrate` | Aplică migrațiile pe baza de date |
+| `db-load.ts` | `npm run db:load -- synthetic` (sau `real`) | Încarcă o secțiune de date în baza de date (șterge datele existente, nu și schema) |
 | `report-html.ts` | — | Elemente comune pentru rapoartele de date |
 
 ## 5. Documentația — `info_pack/docs/`

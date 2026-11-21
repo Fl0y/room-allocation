@@ -16,12 +16,21 @@
     "data:synthetic": "node scripts/data-synthetic.ts",
     "data:check": "node scripts/data-check.ts",
     "week": "node scripts/week.ts",
-    "interval": "node scripts/interval.ts"
+    "interval": "node scripts/interval.ts",
+    "db:up": "docker compose up -d --wait db",
+    "db:down": "docker compose down",
+    "db:migrate": "node scripts/db-migrate.ts",
+    "db:load": "node scripts/db-load.ts",
+    "test:db": "vitest run --config vitest.db.config.ts"
   },
   "devDependencies": {
     "@types/node": "24.19.2",
+    "@types/pg": "8.23.1",
     "esbuild": "0.28.2",
     "typescript": "7.0.2",
     "vitest": "5.1.0"
+  },
+  "dependencies": {
+    "pg": "8.23.1"
   }
 }

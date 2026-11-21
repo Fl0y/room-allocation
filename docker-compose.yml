@@ -1,0 +1,24 @@
+# Baza de date locală pentru V1 (Lotul 5, D35): PostgreSQL 18, legată doar la 127.0.0.1.
+# Pornire: docker compose up -d db      Oprire: docker compose down      Ștergerea datelor: docker compose down -v
+# Parola implicită (ra_dev) e doar pentru containerul local; altă parolă se pune în .env (RA_DB_PASSWORD=…),
+# fișier ignorat de Git. Datele se păstrează în volumul ra-db-data.
+services:
+  db:
+    image: postgres:18.7
+    container_name: room-allocation-db
+    environment:
+      POSTGRES_USER: ra
+      POSTGRES_PASSWORD: ${RA_DB_PASSWORD:-ra_dev}
+      POSTGRES_DB: room_allocation
+    ports:
+      - "127.0.0.1:54320:5432"
+    volumes:
+      - ra-db-data:/var/lib/postgresql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ra -d room_allocation"]
+      interval: 2s
+      timeout: 3s
+      retries: 30
+
+volumes:
+  ra-db-data:

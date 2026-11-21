@@ -4,7 +4,7 @@ Algoritmul de alocare a sălilor universitare (proiect academic). Documentația 
 
 ## Stadiul
 
-V0 încheiat (Loturile 1–2: motorul, simularea, demo-ul). V1: partea 3A (formatul intern al datelor, setul sintetic al facultății, săptămâna în simulator) — `info_pack/docs/data-format.md`; Lotul 4 (cererea cu interval: motorul alege și perechea, ținând cont de ferestrele studenților, D29, D31).
+V0 încheiat (Loturile 1–2: motorul, simularea, demo-ul). V1: partea 3A (formatul intern al datelor, setul sintetic al facultății, săptămâna în simulator) — `info_pack/docs/data-format.md`; Lotul 4 (cererea cu interval: motorul alege și perechea, ținând cont de ferestrele studenților, D29, D31); Lotul 5 (PostgreSQL în Docker, serviciul tranzacțional, testele de concurență, D35).
 
 ## V0 — motorul de alocare, simularea și demo-ul
 
@@ -35,6 +35,13 @@ npm run data:synthetic          # generează setul sintetic (seed 1) în synthet
 npm run data:check -- synthetic # raportul de validare (sau: real)
 npm run week -- synthetic       # orarul + cereri suplimentare, comparația strategiilor (sau: real)
 npm run interval -- synthetic   # Lotul 4: ora fixă vs. interval fără / cu criteriul ferestrelor (sau: real)
+
+# baza de date (Lotul 5; necesită Docker)
+npm run db:up                   # pornește PostgreSQL 18.7 în Docker (127.0.0.1:54320)
+npm run db:migrate              # aplică schema (db/migrations/)
+npm run db:load -- synthetic    # încarcă setul sintetic în baza de date
+npm run test:db                 # testele pe baza de date reală (constrângeri, concurență, tranzacții)
+npm run db:down                 # oprește containerul (datele rămân în volum; `docker compose down -v` le șterge)
 ```
 
 ## Structura
@@ -43,6 +50,8 @@ npm run interval -- synthetic   # Lotul 4: ora fixă vs. interval fără / cu cr
 src/engine/      motorul de alocare (independent de interfață și BD)
 src/scenarios/   scenariile demonstrative (date sintetice) și rularea lor
 src/data/        formatul intern al datelor: citire, validare, construirea săptămânii (Lotul 3)
+src/db/          baza de date: conexiunea, migrațiile, citirea/scrierea, serviciul tranzacțional (Lotul 5)
+db/migrations/   schema SQL (constrângerile de excludere, triggerele)
 src/sim/         generatoarele de date sintetice, simulatorul, săptămâna și măsurătorile ei
 src/demo/        demo-ul: logica (controller.ts) și interfața (main.ts)
 tests/engine/    testele motorului
@@ -51,6 +60,7 @@ tests/support/   generatorul de instanțe mici aleatoare, cu seed
 tests/sim/       generatoarele, simulatorul, săptămâna
 tests/data/      formatul intern
 tests/fixtures/  exemplul mic fictiv în formatul intern (testele nu depind de folderul extern)
+tests/db/        testele pe baza de date reală (npm run test:db)
 tests/demo/      logica demo-ului
 scripts/         raportul cazurilor, simularea, demo-ul, datele (generare, validare, săptămâna)
 ```

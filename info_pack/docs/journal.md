@@ -23,6 +23,32 @@ Reguli (detalii în `docs-guide.md`):
 
 ---
 
+## 2026-11-21 — Lotul 5 încheiat
+
+- Verificat (autorul, Mac): `npm ci`, `npm test` (103), `db:up` (PostgreSQL 18.7 în Docker), `db:migrate`, `db:load -- synthetic`, `test:db` (34) — toate au trecut. Bifele 5a–5c în `plan.md`.
+- Commit: de făcut de autor.
+- Pasul următor: discuția despre continuare (Lotul 6 sau 3B).
+
+---
+
+## 2026-11-21 — Lotul 5: baza de date, serviciul tranzacțional, concurența
+
+- Context / autorizare: autorul a autorizat Lotul 5 și a fost de acord ca API-ul HTTP să intre în Lotul 6, ca testele pe baza de date să ruleze pe Mac dacă mediul lui Claude nu are Docker, și ca versiunile să se fixeze la instalare.
+- Implementat: `docker-compose.yml` (postgres:18.7), `db/migrations/001_schema.sql`, `src/db/` (`pool.ts`, `migrate.ts`, `store.ts`, `service.ts`), `scripts/db-migrate.ts`, `scripts/db-load.ts`, `vitest.db.config.ts`, `tests/db/` (`support.ts`, `constraints.dbtest.ts`, `service.dbtest.ts`); comenzile `db:up`, `db:down`, `db:migrate`, `db:load`, `test:db`; dependența `pg` 8.23.1. Motorul nu s-a schimbat. Documentele: `results.md` §6, `glossary.md` §4bis, `project-map.md`, `README.md`, `plan.md` (statut), `handoff.md`.
+- Verificat (mediul lui Claude; Docker nu rulează aici, deci PostgreSQL 16.15 instalat local): `npm run test:db` 34 de teste; `npm test` 103; setul sintetic încărcat fără încălcări; mutanții serviciului (fără blocare, blocare comună tuturor zilelor) sunt detectați.
+- Limite: neverificat pe Mac și pe PostgreSQL 18.7; H4–H7 nu sunt în baza de date; fără API.
+- Note: PostgreSQL 19 a apărut la 19.11.2026; rămânem pe 18 (P07). Containerul Node 24 din planul inițial al lui 5a se mută în Lotul 6, odată cu serverul.
+- Pasul următor: verificarea pe Mac (`handoff.md`), apoi Lotul 6 sau 3B.
+
+---
+
+## 2026-11-18 — Lotul 4 încheiat
+
+- Verificat (autorul, Mac): `npm test` — 103 teste trec, inclusiv cazurile 6–10. Bifa 4b în `plan.md`; Lotul 4 încheiat.
+- Pasul următor: autorizarea Lotului 5 (back-end) sau 3B, dacă vin datele reale.
+
+---
+
 ## 2026-11-18 — Lotul 4: cazurile 6–10 aprobate, verificarea pe Mac
 
 - Context: autorul a aprobat cazurile 6–10 (intrarea de mai jos) și a verificat pe Mac: `npm test` (97 de teste) și raportul `npm run interval -- synthetic`.

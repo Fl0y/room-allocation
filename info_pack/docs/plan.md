@@ -1,6 +1,6 @@
 # Planul proiectului — RoomAllocation
 
-**Versiune:** 2.1 (18.11.2026; Lotul 3 împărțit după D33). **Statut:** V0 încheiat; V1 cu ordinea aprobată; partea 3A încheiată; Lotul 4 autorizat (18.11.2026). Bazat pe deciziile D01–D35 și P01–P17 din `decisions.md`. Singura copie activă a planului.
+**Versiune:** 2.1 (18.11.2026; Lotul 3 împărțit după D33). **Statut:** V0 încheiat; V1 cu ordinea aprobată; partea 3A și Lotul 4 încheiate (18.11.2026); Lotul 5 încheiat (21.11.2026). Bazat pe deciziile D01–D35 și P01–P17 din `decisions.md`. Singura copie activă a planului.
 Se bifează doar sarcinile efectiv finalizate și verificate. Structura feliilor se poate ajusta pe parcurs (P10).
 
 ---
@@ -55,7 +55,7 @@ Se bifează doar sarcinile efectiv finalizate și verificate. Structura feliilor
 
 ### V1 — versiunea matură
 
-**Statut (18.11.2026):** ordinea loturilor și ordinea de alegere din Lotul 4 sunt **aprobate de autor** (D30, D31); fiecare lot se autorizează separat. **Partea 3A este autorizată (18.11.2026)**; partea 3B așteaptă datele reale (autorul le solicită administrației și decanatului). **Lotul 4 este autorizat (18.11.2026)**, pe setul sintetic. Loturile 5–6 nu sunt autorizate.
+**Statut (18.11.2026):** ordinea loturilor și ordinea de alegere din Lotul 4 sunt **aprobate de autor** (D30, D31); fiecare lot se autorizează separat. **Partea 3A este autorizată (18.11.2026)**; partea 3B așteaptă datele reale (autorul le solicită administrației și decanatului). **Lotul 4 este încheiat (18.11.2026)**, pe setul sintetic. **Lotul 5 este încheiat (21.11.2026)**, fără API HTTP (acesta intră în Lotul 6, cu Next.js). Lotul 6 nu este autorizat.
 
 **Ordinea:** datele reale → algoritmul extins → back-end-ul → interfețele. Fiecare lot are 2–3 sub-pași mici, fiecare încheiat cu verificare (D17). Dacă datele reale întârzie, Lotul 4 poate începe înaintea Lotului 3, pe date sintetice (cu autorizare).
 
@@ -73,15 +73,17 @@ Se bifează doar sarcinile efectiv finalizate și verificate. Structura feliilor
 
 **Lotul 4 — Cererea cu interval și ferestrele studenților (D29, varianta a)** — model recomandat: Opus
 
-*4a și 4c verificate pe Mac de autor (18.11.2026). 4b: cazurile 6–10 aprobate de autor și transformate în teste; se bifează după `npm test` pe Mac. Pe săptămâna reală, 4c se rulează după 3B.*
+*Lotul 4 încheiat: 4a–4c verificate pe Mac de autor (18.11.2026; 103 teste). Pe săptămâna reală, 4c se rulează după 3B.*
 - [x] 4a. Motorul: cererea cu interval opțional de perechi; motorul încearcă fiecare început posibil; calculul variației ferestrelor pe subgrupă și zi; ordinea de alegere **mutări → săli rare → ferestrele studenților → locuri goale → fragmentarea programului sălii** (D31); explicația include ferestrele; alinierea termenilor din cod cu `glossary.md` („goluri izolate” pentru săli, „ferestre” pentru studenți)
-- [ ] 4b. Verificarea: oracolul exhaustiv extins la intervale, cazuri noi (grupă cu perechile 1–2 și interval 3–5 → perechea 3; conflict sală rară vs. fereastră; subgrupe cu laboratoare la ore diferite), determinism
+- [x] 4b. Verificarea: oracolul exhaustiv extins la intervale, cazuri noi (grupă cu perechile 1–2 și interval 3–5 → perechea 3; conflict sală rară vs. fereastră; subgrupe cu laboratoare la ore diferite), determinism
 - [x] 4c. Simularea: oră fixă vs. interval fără criteriul ferestrelor vs. interval cu criteriul ferestrelor, pe date sintetice și pe săptămâna reală; M = 3 ca reper (`results.md` §3.5)
 
 **Lotul 5 — Back-end-ul** — model recomandat: Opus
-- [ ] 5a. Docker (PostgreSQL 18, Node 24, imagini fixate); schema și migrațiile SQL; constrângeri de excludere în baza de date pentru sală, profesor și unitate atomică la aceeași pereche
-- [ ] 5b. Serviciul tranzacțional: blocare per zi → citirea stării → decizia motorului (neschimbat) → scrierea rezervării și a mutărilor într-o singură tranzacție; idempotența cererilor
-- [ ] 5c. Teste de integrare pe baza de date reală: cereri simultane pentru ultima sală, mutări atomice, teste de mutație (scoaterea unei constrângeri trebuie detectată)
+
+*Lotul 5 încheiat: verificat în mediul lui Claude (PostgreSQL 16 local) și pe Mac de autor (PostgreSQL 18.7 în Docker, 21.11.2026). API-ul HTTP nu face parte din lot (decizia autorului, 21.11.2026).*
+- [x] 5a. Docker (PostgreSQL 18, imagine fixată; containerul Node 24 vine cu serverul din Lotul 6); schema și migrațiile SQL; constrângeri de excludere în baza de date pentru sală, profesor și unitate atomică la aceeași pereche
+- [x] 5b. Serviciul tranzacțional: blocare per zi → citirea stării → decizia motorului (neschimbat) → scrierea rezervării și a mutărilor într-o singură tranzacție; idempotența cererilor
+- [x] 5c. Teste de integrare pe baza de date reală: cereri simultane pentru ultima sală, mutări atomice, teste de mutație (scoaterea unei constrângeri trebuie detectată)
 
 **Lotul 6 — Interfețele** — model recomandat: Sonnet
 - [ ] 6a. API (cereri cu sau fără interval, lista rezervărilor, aplicarea alternativelor, închiderea sălilor)
