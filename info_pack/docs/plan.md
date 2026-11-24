@@ -151,7 +151,7 @@ Cereri acceptate; perechi acceptate (D22); mutări per cerere acceptată; locuri
 
 - V0: TypeScript (Node 24, fără pas de compilare: Node rulează direct fișierele .ts), Vitest; demo static fără framework, cu esbuild în Lotul 2 (D26). Fără containere în V0 (D27).
 - V1: stackul P07 (Next.js, PostgreSQL, Docker, Zod), refolosind motorul V0 neschimbat.
-- Versiunile se aleg și se fixează în ziua instalării; mediul se verifică pe Mac de autor (comenzile `node`, `docker`, `git` le rulează autorul).
+- Versiunile se aleg și se fixează în ziua instalării; mediul se verifică pe Mac (până la D44 de autor; din 24.11.2026 de Claude Code, care rulează pe Mac).
 
 ## 8. Riscuri
 

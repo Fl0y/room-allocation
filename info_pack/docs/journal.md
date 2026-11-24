@@ -23,6 +23,18 @@ Reguli (detalii în `docs-guide.md`):
 
 ---
 
+## 2026-11-24 — Trecerea în Claude Code
+
+- Context / autorizare: autorul a decis continuarea în Claude Code (VS Code, pe Mac) și a scos `CLAUDE.md` din `.gitignore`; a cerut verificarea și actualizarea documentelor.
+- Decizii: D44 (Claude Code pe Mac; commit-urile le face autorul; setările proiectului și cele locale; sesiuni tematice în loc de discuții).
+- Verificat înainte: `main` = `origin/main` (`a6c5d36`), fără modificări necomise; V1 încheiat (fără 3B).
+- Implementat: `CLAUDE.md` rescris (starea V1, mediul Claude Code, regulile Git și ale datelor, sesiuni); `.claude/settings.json` (atribuire goală, comenzi de test permise, push și `reset --hard` interzise, `.env` și documentele personale interzise la citire); `.claude/settings.local.json` (local: acces la `room-allocation-data/`, interdicție pentru `real/raw/` și pseudonime); `.gitignore` (setările locale); `agent-rules.md`, `docs-guide.md`, `topic-discussions.md` (sesiuni, șablonul primei sesiuni), `decisions.md` (D44), `project-map.md`, `plan.md` (o notă), `playwright.config.ts` (comentariu), `handoff.md`. `tableflow-legacy.md` (arhivă) nu s-a modificat.
+- Limite: setările Claude Code nu au fost încă încărcate de Claude Code; atribuirea goală trebuie verificată la primul commit cerut.
+- Completare (aceeași zi, la cererea autorului): Chromium pentru Playwright e instalat pe Mac (D45, înlocuiește D43); TableFlow nu mai este referință (D46): `tableflow-legacy.md` șters, mențiunile scoase din `CLAUDE.md`, `docs-guide.md`, `project-map.md`; istoricul din `concept.md`, `decisions.md`, `journal.md` rămâne neschimbat.
+- Pasul următor: commit-ul autorului; prima sesiune Claude Code cu șablonul din `topic-discussions.md`.
+
+---
+
 ## 2026-11-21 — Lotul 6c încheiat; V1 încheiat (fără 3B)
 
 - Verificat (autorul): testele pe Mac și importul fișierelor .ics în Google Calendar — evenimentele apar corect. Bifa 6c în `plan.md`.

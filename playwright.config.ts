@@ -1,6 +1,6 @@
 // Testele de interfață (Lotul 6b, D40): fluxurile principale în Chromium, pe o bază de date de test.
 // Rulare: npm run test:e2e   (construiește aplicația, pornește scripts/e2e-server.ts, rulează tests/e2e/)
-// Deocamdată doar în mediul lui Claude (D43); pe Mac, browserele se instalează cu `npx playwright install chromium`.
+// Rulează pe Mac (Claude Code, D44); Chromium pentru Playwright e instalat (D45).
 
 import { defineConfig } from '@playwright/test';
 

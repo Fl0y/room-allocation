@@ -3,7 +3,6 @@ out/
 .DS_Store
 *.log
 .env*
-CLAUDE.md
 
 # Documente de uz personal (discuții reale cu decanatul, coordonatorul)
 Claude outputs/personal/
@@ -14,3 +13,6 @@ Claude outputs/personal/
 next-env.d.ts
 test-results/
 playwright-report/
+
+# Claude Code: setările personale (căile locale, permisiunile proprii)
+.claude/settings.local.json

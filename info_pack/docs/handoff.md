@@ -1,6 +1,6 @@
 # Starea curentă — RoomAllocation
 
-**Actualizat:** 21 noiembrie 2026 (Lotul 6c). Fișierul descrie doar starea de acum; se rescrie la fiecare etapă încheiată. Istoricul este în `journal.md`, ordinea de citire în `docs-guide.md`.
+**Actualizat:** 24 noiembrie 2026 (trecerea în Claude Code, D44). Fișierul descrie doar starea de acum; se rescrie la fiecare etapă încheiată. Istoricul este în `journal.md`, ordinea de citire în `docs-guide.md`.
 
 ## Ce există
 
@@ -33,6 +33,13 @@
 - Exportul .ics (`src/api/ics.ts`, `GET /api/calendar?unit=…|teacher=…`), cu linkuri în paginile studenților și profesorului. Verificat în mediul lui Claude (`npm test` 108, `npm run test:db` 49, `npm run test:e2e` 5), pe Mac și prin importul în Google Calendar (autorul). Rezultatele: `results.md` §9.
 
 **V1 este încheiat**, cu excepția părții 3B (datele reale), care așteaptă datele de la decanat.
+
+## Mediul de lucru (D44, 24.11.2026)
+
+- Dezvoltarea continuă în **Claude Code (VS Code), direct pe Mac**. `CLAUDE.md` e în Git și descrie noul mod de lucru; `.claude/settings.json` (în Git) și `.claude/settings.local.json` (local) configurează atribuirea și permisiunile.
+- Agentul rulează singur testele (inclusiv Playwright, Chromium instalat, D45) și Docker; commit-urile și push-ul le face autorul.
+- TableFlow nu mai este referință (D46); `tableflow-legacy.md` a fost șters.
+- Proiectul claude.ai rămâne pentru întrebări, fără modificarea fișierelor. Prima sesiune Claude Code: șablonul din `topic-discussions.md`.
 
 ## Pasul următor
 

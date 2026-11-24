@@ -10,7 +10,9 @@ Actualizat: 21.11.2026.
 
 | Fișier / folder | Rol |
 |---|---|
-| `CLAUDE.md` | Regulile permanente de lucru pentru agenții AI (citit automat) |
+| `CLAUDE.md` | Regulile permanente de lucru pentru agenții AI (citit automat de Claude Code; în Git din 24.11.2026) |
+| `.claude/settings.json` | Setările Claude Code ale proiectului (D44): fără atribuire în commit-uri, comenzile de test permise, push interzis |
+| `.claude/settings.local.json` | Setările locale Claude Code (accesul la `room-allocation-data/`, interdicții de citire); nu intră în Git |
 | `README.md` | Prezentarea scurtă și comenzile |
 | `package.json`, `package-lock.json` | Dependențele (versiuni fixate) și comenzile `npm` |
 | `tsconfig.json` | Configurația TypeScript (verificarea tipurilor) |
@@ -25,7 +27,7 @@ Actualizat: 21.11.2026.
 | `next-env.d.ts`, `.next/` | Generate de Next.js; nu intră în Git |
 | `db/migrations/` | Schema bazei de date, ca migrații SQL numerotate; `001_schema.sql`: tabelele și constrângerile H1–H3, H8; `002_operations.sql`: anularea și închiderea, raportul reparării |
 | `.node-version` | Versiunea Node pentru Mac (24.22.1) |
-| `.gitignore` | Ce nu intră în Git (`node_modules/`, `out/`, `.env*`) |
+| `.gitignore` | Ce nu intră în Git (`node_modules/`, `out/`, `.env*`, `.next/`, documentele personale, setările locale Claude Code) |
 | `.env` (opțional, local) | Calea folderului de date (`RA_DATA_DIR=…`), adresa bazei de date (`RA_DATABASE_URL=…`), parola containerului (`RA_DB_PASSWORD=…`); nu intră în Git |
 | `info_pack/docs/` | Documentația proiectului (vezi §5) |
 | `info_pack/references/` | Loc pentru materiale de referință (gol) |
@@ -170,7 +172,7 @@ Actualizat: 21.11.2026.
 
 Rolul fiecărui document și regulile de modificare: `docs-guide.md`.
 
-Lista: `docs-guide.md`, `handoff.md`, `decisions.md`, `journal.md`, `plan.md`, `results.md`, `literature.md`, `glossary.md`, `project-map.md`, `agent-rules.md`, `concept.md`, `coordinator-feedback.md`, `topic-discussions.md`, `tableflow-legacy.md`, `data-format.md`.
+Lista: `docs-guide.md`, `handoff.md`, `decisions.md`, `journal.md`, `plan.md`, `results.md`, `literature.md`, `glossary.md`, `project-map.md`, `agent-rules.md`, `concept.md`, `coordinator-feedback.md`, `topic-discussions.md`, `data-format.md`.
 
 ## 6. Ordinea de citire a codului pentru code review
 

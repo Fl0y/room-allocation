@@ -24,8 +24,8 @@ Pentru agenții AI și pentru autor: în ce ordine se citesc documentele ca să 
 | Formulezi contribuția, compari cu alte lucrări, alegi metode | `literature.md` |
 | Lucrezi pe algoritm, constrângeri sau cazuri | `concept.md` — **doar secțiunile relevante** (§3 model și constrângeri, §5 algoritm, §6 cazuri, §7 cercetare) |
 | Pregătești materiale pentru coordonator | `coordinator-feedback.md` |
-| Configurezi mediul, Docker, PostgreSQL, concurența (V1) | `tableflow-legacy.md` |
-| Pornești o discuție tematică | `topic-discussions.md` |
+| Configurezi mediul, Docker, PostgreSQL | `CLAUDE.md` (secțiunea „Mediul”), `README.md` (comenzile), `docker-compose.yml` |
+| Pornești o sesiune tematică | `topic-discussions.md` |
 | Rulezi comenzi sau cauți în cod | `README.md` (rădăcină): comenzile; `project-map.md`: rolul fiecărui fișier și ordinea de citire a codului |
 | Întâlnești un termen neclar sau introduci unul nou | `glossary.md` |
 | Lucrezi cu datele (formatul intern, setul sintetic, importul datelor reale) | `data-format.md` |
@@ -70,8 +70,7 @@ Tipuri: **viu** — se actualizează odată cu proiectul; **regulă** — se sch
 | `results.md` | viu | După rulări de teste/simulări/experimente care produc cifre noi | Se înlocuiește secțiunea respectivă, cu sursa (comandă, seed-uri, commit) |
 | `concept.md` | referință | Doar pentru alinierea cu deciziile, cu versiunea notată în antet | Editare punctuală; nu e jurnal |
 | `coordinator-feedback.md` | referință | La fiecare feedback nou al coordonatorului | Secțiune nouă datată |
-| `topic-discussions.md` | referință | Când se schimbă regulile discuțiilor | Editare punctuală |
-| `tableflow-legacy.md` | arhivă | Nu se modifică | — |
+| `topic-discussions.md` | referință | Când se schimbă regulile sesiunilor | Editare punctuală |
 | `glossary.md` | viu | Când se introduce un termen nou sau se schimbă sensul unuia | Editare punctuală; definiții scurte, cu trimitere la decizii, fără copierea regulilor |
 | `project-map.md` | viu | Când apar, se mută sau dispar fișiere | Editare punctuală; rolul fișierelor, fără numere de linie |
 | `literature.md` | viu | La fiecare aprofundare a literaturii (P14) | Pe teme; bibliografia numerotată la final; lucrările necitite integral marcate ◐ |
@@ -79,9 +78,9 @@ Tipuri: **viu** — se actualizează odată cu proiectul; **regulă** — se sch
 | `README.md` (rădăcină) | viu | Când apar comenzi, foldere sau dependențe noi | Editare punctuală |
 
 Reguli comune:
-- Discuțiile care doar pun întrebări nu modifică fișiere.
-- La un moment dat, o singură discuție sau un singur agent modifică același fișier.
-- O discuție tematică modifică doar fișierele din tema ei; o decizie din afara temei se semnalează.
+- Sesiunile care doar pun întrebări nu modifică fișiere.
+- La un moment dat, o singură sesiune sau un singur agent modifică același fișier.
+- O sesiune tematică modifică doar fișierele din tema ei; o decizie din afara temei se semnalează.
 - Folderul `Claude outputs` (rădăcină) se păstrează: copii ale rapoartelor HTML livrate; subfolderul `Claude outputs/personal/` conține documentele de uz personal ale autorului (`descriere-tema.md`, materialele pentru decanat și coordonator) și **nu intră în Git**. Nu fac parte din documentația activă și nu se actualizează automat.
 
 ## 4. Lista de verificare la încheierea unei etape
@@ -93,4 +92,4 @@ Reguli comune:
 5. `results.md`: cifrele noi, cu sursa (doar dacă există).
 6. `README.md`: comenzi sau foldere noi (doar dacă există).
 7. `project-map.md`: fișiere noi, mutate sau eliminate (doar dacă există); `glossary.md`: termeni noi (doar dacă există).
-8. Raport către autor: ce s-a implementat, ce s-a verificat (unde), ce limite rămân. Comenzile de verificare pe Mac le rulează autorul.
+8. Raport către autor: ce s-a implementat, ce s-a verificat (cu ce comenzi), ce limite rămân. Testele le rulează agentul (Claude Code, pe Mac); verificarea în browser și commit-ul le face autorul.
