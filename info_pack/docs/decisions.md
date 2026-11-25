@@ -1,6 +1,6 @@
 # Registrul deciziilor — RoomAllocation
 
-Actualizat: 15 noiembrie 2026. Registrul arată statutul afirmațiilor; nu conține rezultate de implementare (vezi `results.md`) și nici istoric (vezi `journal.md`).
+Actualizat: 24 noiembrie 2026. Registrul arată statutul afirmațiilor; nu conține rezultate de implementare (vezi `results.md`) și nici istoric (vezi `journal.md`).
 
 ## Confirmate de autor
 

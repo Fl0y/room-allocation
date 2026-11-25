@@ -4,7 +4,7 @@ Algoritmul de alocare a sălilor universitare (proiect academic). Documentația 
 
 ## Stadiul
 
-V0 încheiat (Loturile 1–2: motorul, simularea, demo-ul). V1: partea 3A (formatul intern al datelor, setul sintetic al facultății, săptămâna în simulator) — `info_pack/docs/data-format.md`; Lotul 4 (cererea cu interval: motorul alege și perechea, ținând cont de ferestrele studenților, D29, D31); Lotul 5 (PostgreSQL în Docker, serviciul tranzacțional, testele de concurență, D35); Lotul 6a (aplicația Next.js și API-ul HTTP, D36–D38).
+V0 încheiat (Loturile 1–2: motorul, simularea, demo-ul). V1: partea 3A (formatul intern al datelor, setul sintetic al facultății, săptămâna în simulator) — `info_pack/docs/data-format.md`; Lotul 4 (cererea cu interval: motorul alege și perechea, ținând cont de ferestrele studenților, D29, D31); Lotul 5 (PostgreSQL în Docker, serviciul tranzacțional, testele de concurență, D35); Lotul 6a (aplicația Next.js și API-ul HTTP, D36–D38); Lotul 6b (paginile profesorului, studenților și administratorului, testele Playwright, D42); Lotul 6c (exportul .ics, D39). **V1 este încheiat**, cu excepția părții 3B (datele reale), care așteaptă datele de la decanat.
 
 ## V0 — motorul de alocare, simularea și demo-ul
 

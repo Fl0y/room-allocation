@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "type": "module",
-  "description": "RoomAllocation — motorul de alocare a sălilor universitare (V0)",
+  "description": "RoomAllocation — motorul de alocare a sălilor universitare și sistemul V1",
   "engines": {
     "node": ">=24"
   },

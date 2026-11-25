@@ -4,7 +4,7 @@ Ce conține fiecare folder și fișier, pe scurt. Pentru documentele din `info_p
 
 Reguli: harta descrie **rolul** fișierelor, nu detalii de implementare (fără numere de linie, fără liste de funcții), ca să nu se învechească. Când apar, se mută sau dispar fișiere, harta se actualizează în aceeași etapă (`docs-guide.md` §4). Testul `tests/docs/project-map.test.ts` (rulat cu `npm test`) pică dacă harta nu mai corespunde fișierelor; descrierile le verifică omul. Format cerut de test: fișierele din `src/`, `tests/` și `scripts/` apar în prima coloană a tabelelor, sub un titlu care conține folderul între backtick-uri; documentele, în rândul „Lista:” din §5.
 
-Actualizat: 21.11.2026.
+Actualizat: 24.11.2026.
 
 ## 1. Rădăcina
 
@@ -22,7 +22,7 @@ Actualizat: 21.11.2026.
 | `Dockerfile`, `.dockerignore` | Imaginea aplicației web (Node 24.22.1, Next.js); migrațiile se aplică la pornire |
 | `next.config.ts` | Configurația Next.js |
 | `app/` | Aplicația Next.js (D36); detaliile în §2bis |
-| `playwright.config.ts` | Testele de interfață (`npm run test:e2e`, D40, D43) |
+| `playwright.config.ts` | Testele de interfață (`npm run test:e2e`, D40, D45) |
 | `test-results/`, `playwright-report/` | Generate de Playwright; nu intră în Git |
 | `next-env.d.ts`, `.next/` | Generate de Next.js; nu intră în Git |
 | `db/migrations/` | Schema bazei de date, ca migrații SQL numerotate; `001_schema.sql`: tabelele și constrângerile H1–H3, H8; `002_operations.sql`: anularea și închiderea, raportul reparării |

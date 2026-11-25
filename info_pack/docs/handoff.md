@@ -25,7 +25,7 @@
 
 ## Lotul 6b — încheiat (21.11.2026)
 
-- Paginile `/`, `/profesor`, `/studenti`, `/admin` (`app/`, `project-map.md` §2bis); istoricul mutărilor în API; mesajele de validare în română; testele Playwright (`npm run test:e2e`, doar în mediul lui Claude, D43).
+- Paginile `/`, `/profesor`, `/studenti`, `/admin` (`app/`, `project-map.md` §2bis); istoricul mutărilor în API; mesajele de validare în română; testele Playwright (`npm run test:e2e`; rulează și pe Mac, D45).
 - Verificat în mediul lui Claude (`npm test` 103, `npm run test:db` 48, `npm run test:e2e` 4) și pe Mac de autor (paginile în browser). Rezultatele: `results.md` §8.
 
 ## Lotul 6c — încheiat (21.11.2026)
