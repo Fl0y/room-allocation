@@ -6,6 +6,8 @@ Practic, în VS Code: o sesiune nouă pentru fiecare temă sau etapă (istoricul
 
 ## Șablon de pornire
 
+Varianta scurtă: skill-ul `/sesiune-tematica <tema>` (`.claude/skills/sesiune-tematica/`) aplică aceleași reguli. Șablonul de mai jos rămâne pentru sesiunile cu limite sau permisiuni speciale.
+
 Copiază textul de mai jos ca prim mesaj al sesiunii și completează câmpurile dintre `< >`.
 
 ```text

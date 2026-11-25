@@ -23,6 +23,18 @@ Reguli (detalii în `docs-guide.md`):
 
 ---
 
+## 2026-11-25 — Mediul de lucru cu AI, pasul 1; prima verificare completă în Claude Code
+
+- Context / autorizare: prima sesiune Claude Code a verificat mediul și documentele; autorul a cerut o analiză a lucrului cu AI (păstrată în documentele lui personale), a acceptat propunerile cu precizări și a autorizat implementarea.
+- Decizii: D47 (ramuri, commit-uri și PR-uri făcute de agent; merge doar autorul, „Rebase and merge”; `main` protejat), D48 (lista măsurilor pentru mediul AI), D49 (verificarea vizuală de rutină o face agentul).
+- Implementat: corecturile documentelor rămase în urmă față de D45 și V1 (handoff, plan, project-map, README, decisions, package.json; `agent-rules.md`: cazurile 1–10); `.claude/hooks/guard.ts` + `tests/tools/guard.test.ts`; `.claude/settings.json` (permisiunile pentru baza de date, Git și `gh`, hook-ul); `tests/docs/docs-coherence.test.ts`; `scripts/verify.ts` (`npm run verify`); `.github/workflows/ci.yml`; skill-urile `/verifica`, `/inchide-etapa`, `/sesiune-tematica`, `/rezultate`; regulile Git în `CLAUDE.md`, `agent-rules.md`, `docs-guide.md` §4; `glossary.md`, `topic-discussions.md`, `handoff.md` rescris pe scurt.
+- Verificat (Mac, Claude Code): `npm run verify` — `npm test` 144 (108 + 32 hook + 4 coerență), `typecheck` fără erori, `test:db` 49, `test:e2e` 5. Înainte, `test:e2e` nu rula pe Mac: Chromium instalat era 1255, iar `@playwright/test` 1.63.0 cere 1243 (rezolvat de autor cu `npx playwright install chromium`); D45 e acum confirmată efectiv.
+- Limite: CI-ul și protecția lui `main` se verifică abia pe GitHub, după primul PR; hook-ul recunoaște comenzile Git doar la începutul unei comenzi simple (textul care doar menționează Git nu e blocat, intenționat).
+- Commit: corecturile `77b1821` pe `docs/mediu-ai-1`; commit-ul 6c, rămas „de făcut” în intrarea din 21.11.2026, este `a6c5d36`.
+- Pasul următor: merge-ul PR-ului de către autor, protecția lui `main`, apoi restul D48 (`handoff.md`).
+
+---
+
 ## 2026-11-24 — Trecerea în Claude Code
 
 - Context / autorizare: autorul a decis continuarea în Claude Code (VS Code, pe Mac) și a scos `CLAUDE.md` din `.gitignore`; a cerut verificarea și actualizarea documentelor.
