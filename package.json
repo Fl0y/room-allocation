@@ -10,6 +10,7 @@
   "scripts": {
     "test": "vitest run",
     "typecheck": "tsc --noEmit",
+    "verify": "node scripts/verify.ts",
     "report": "node scripts/render-cases.ts",
     "simulate": "node scripts/simulate.ts",
     "demo": "node scripts/build-demo.ts",

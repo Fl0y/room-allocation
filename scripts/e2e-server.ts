@@ -1,4 +1,4 @@
-// Serverul pentru testele Playwright (Lotul 6b, D40, D43): o bază de date nouă cu datele cazului 5 (laboratoare,
+// Serverul pentru testele Playwright (Lotul 6b, D40, D45): o bază de date nouă cu datele cazului 5 (laboratoare,
 // grupe, rezervări, o sală de închis), apoi `next start`. La oprire, baza de date se șterge.
 // Pornit de playwright.config.ts; necesită `next build` făcut înainte și PostgreSQL pornit.
 

@@ -4,14 +4,17 @@ Ce conține fiecare folder și fișier, pe scurt. Pentru documentele din `info_p
 
 Reguli: harta descrie **rolul** fișierelor, nu detalii de implementare (fără numere de linie, fără liste de funcții), ca să nu se învechească. Când apar, se mută sau dispar fișiere, harta se actualizează în aceeași etapă (`docs-guide.md` §4). Testul `tests/docs/project-map.test.ts` (rulat cu `npm test`) pică dacă harta nu mai corespunde fișierelor; descrierile le verifică omul. Format cerut de test: fișierele din `src/`, `tests/` și `scripts/` apar în prima coloană a tabelelor, sub un titlu care conține folderul între backtick-uri; documentele, în rândul „Lista:” din §5.
 
-Actualizat: 24.11.2026.
+Actualizat: 25.11.2026.
 
 ## 1. Rădăcina
 
 | Fișier / folder | Rol |
 |---|---|
 | `CLAUDE.md` | Regulile permanente de lucru pentru agenții AI (citit automat de Claude Code; în Git din 24.11.2026) |
-| `.claude/settings.json` | Setările Claude Code ale proiectului (D44): fără atribuire în commit-uri, comenzile de test permise, push interzis |
+| `.claude/settings.json` | Setările Claude Code ale proiectului (D44, D47): fără atribuire în commit-uri, comenzile de test, ale bazei de date și Git permise (merge și push forțat interzise), hook-ul de protecție |
+| `.claude/hooks/guard.ts` | Hook-ul de protecție (D47): blochează merge-ul PR-urilor, commit-ul și push-ul pe `main`, push-ul forțat, semnăturile lui Claude, accesul la datele reale originale |
+| `.claude/skills/` | Skill-urile proiectului (D48): `/verifica`, `/inchide-etapa`, `/sesiune-tematica`, `/rezultate` |
+| `.github/workflows/ci.yml` | CI pe GitHub Actions (D48): testele, tipurile, testele pe PostgreSQL 18.7 și cele de interfață, la fiecare PR și push pe `main` |
 | `.claude/settings.local.json` | Setările locale Claude Code (accesul la `room-allocation-data/`, interdicții de citire); nu intră în Git |
 | `README.md` | Prezentarea scurtă și comenzile |
 | `package.json`, `package-lock.json` | Dependențele (versiuni fixate) și comenzile `npm` |
@@ -149,6 +152,8 @@ Actualizat: 24.11.2026.
 | `db/service.dbtest.ts` | Serviciul: aceleași decizii ca motorul în memorie, cereri simultane pentru ultima sală, nicio stare intermediară vizibilă, atomicitatea, idempotența, blocarea pe zi (`npm run test:db`) |
 | `demo/controller.test.ts` | Logica demo-ului |
 | `docs/project-map.test.ts` | Că această hartă este la zi: fiecare fișier din `src/`, `tests/`, `scripts/` și din `info_pack/docs/` apare aici, iar fiecare fișier numit aici există |
+| `docs/docs-coherence.test.ts` | Coerența documentației (D48): deciziile citate există, deciziile înlocuite nu sunt citate ca valabile, „cazurile 1–N” din reguli corespunde cazurilor din `src/scenarios/` |
+| `tools/guard.test.ts` | Hook-ul de protecție `.claude/hooks/guard.ts` (D47): ce blochează (merge, push pe `main` sau forțat, semnăturile lui Claude, datele reale) și ce permite |
 | `oracle/bruteforce.ts` | Oracolul (căutarea exhaustivă), folosit de teste; și pentru cererile cu interval, cu ferestrele calculate independent |
 | `support/random.ts` | Generatorul de instanțe mici aleatoare pentru oracol (cu oră fixă și cu interval) |
 
@@ -156,6 +161,7 @@ Actualizat: 24.11.2026.
 
 | Fișier | Comandă | Rezultat |
 |---|---|---|
+| `verify.ts` | `npm run verify` (`-- --no-db`, `-- --no-e2e`) | Verificarea completă (skill-ul `/verifica`, D48): testele, tipurile, baza de date, interfața; tabel compact, finalul ieșirii la eșec |
 | `render-cases.ts` | `npm run report` | `out/cases.html`: cazurile 1–5, înainte și după |
 | `simulate.ts` | `npm run simulate` | `out/simulation.html` și `out/simulation.json` |
 | `build-demo.ts` | `npm run demo` | `out/demo.html`: demo-ul într-o singură pagină |

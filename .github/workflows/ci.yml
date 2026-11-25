@@ -1,0 +1,69 @@
+# CI (D48): aceleași verificări ca `npm run verify`, la fiecare PR și push pe main.
+# Job-urile `teste` și `bd-interfata` sunt cerute de protecția ramurii main (D47).
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  teste:
+    name: teste
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version-file: .node-version
+          cache: npm
+      - run: npm ci
+      - run: npm test
+      - run: npm run typecheck
+
+  bd-interfata:
+    name: bd-interfata
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    services:
+      db:
+        image: postgres:18.7
+        env:
+          POSTGRES_USER: ra
+          POSTGRES_PASSWORD: ra_dev
+          POSTGRES_DB: room_allocation
+        ports:
+          - 54320:5432
+        options: >-
+          --health-cmd "pg_isready -U ra -d room_allocation"
+          --health-interval 2s
+          --health-timeout 3s
+          --health-retries 30
+    env:
+      RA_DATABASE_URL: postgres://ra:ra_dev@127.0.0.1:54320/room_allocation
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version-file: .node-version
+          cache: npm
+      - run: npm ci
+      - run: npm run test:db
+      - run: npx playwright install --with-deps chromium
+      - run: npm run test:e2e
+      - if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: |
+            playwright-report/
+            test-results/
+          retention-days: 7

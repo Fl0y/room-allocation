@@ -26,6 +26,7 @@ Necesită Node 24 (vezi `.node-version`).
 npm ci              # instalează versiunile fixate în package-lock.json
 npm test            # toate testele (unitare, cazuri, oracol exhaustiv, determinism)
 npm run typecheck   # verificarea tipurilor TypeScript
+npm run verify      # verificarea completă: teste, tipuri, baza de date, interfața (pornește/oprește PostgreSQL; -- --no-db, -- --no-e2e)
 npm run report      # generează out/cases.html (cazurile 1–5, înainte/după)
 npm run simulate    # simularea (≈1 min): out/simulation.html + out/simulation.json
 npm run demo        # construiește out/demo.html (deschide-l direct în browser)
@@ -52,6 +53,12 @@ npm run test:e2e                # testele de interfață (Playwright, Chromium; 
 Paginile: `/profesor` (cereri, decizii, alternative, rezervările proprii, exportul .ics), `/studenti` (orarul unui flux / grupe / subgrupe, exportul .ics), `/admin` (ocuparea sălilor pe zi, închiderile cu repararea). Rolul și profesorul se aleg pe pagină, fără autentificare (D37).
 
 Portul 3000 e folosit atât de `npm run dev`, cât și de containerul `web`: rulează doar unul odată. Serverul de dezvoltare se oprește cu Ctrl+C (Ctrl+Z doar îl suspendă și ține portul ocupat; atunci `http://localhost:3000` nu mai răspunde).
+
+## Lucrul cu Claude Code (D44, D47, D48)
+
+- Fiecare sarcină pe o ramură proprie, cu PR spre `main`; merge-ul îl face doar autorul („Rebase and merge”). CI-ul (`.github/workflows/ci.yml`) rulează testele, tipurile, testele pe PostgreSQL și cele de interfață la fiecare PR.
+- Skill-urile proiectului (`.claude/skills/`): `/verifica`, `/inchide-etapa`, `/sesiune-tematica <tema>`, `/rezultate`.
+- Hook-ul `.claude/hooks/guard.ts` blochează merge-ul, commit-ul și push-ul pe `main`, push-ul forțat, semnăturile lui Claude în commit-uri și accesul la datele reale originale.
 
 ## API (Lotul 6a, D38)
 
