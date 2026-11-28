@@ -92,4 +92,7 @@ Reguli comune:
 5. `results.md`: cifrele noi, cu sursa (doar dacă există).
 6. `README.md`: comenzi sau foldere noi (doar dacă există).
 7. `project-map.md`: fișiere noi, mutate sau eliminate (doar dacă există); `glossary.md`: termeni noi (doar dacă există).
-8. Raport către autor: ce s-a implementat, ce s-a verificat (cu ce comenzi), ce limite rămân. Testele le rulează agentul (Claude Code, pe Mac); verificarea în browser și commit-ul le face autorul.
+8. Raport către autor: ce s-a implementat, ce s-a verificat (cu ce comenzi), ce limite rămân. Testele și verificarea vizuală de rutină le face agentul (Claude Code, pe Mac); autorul confirmă schimbările importante de interfață (D49).
+9. Commit pe ramura sarcinii, push și PR cu raportul de la punctul 8 (D47); merge-ul îl face autorul.
+
+Lista se parcurge cu skill-ul `/inchide-etapa`; verificarea completă cu `/verifica` (`npm run verify`).

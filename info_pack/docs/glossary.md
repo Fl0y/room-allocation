@@ -97,3 +97,7 @@ Reguli: cine introduce un termen nou îl adaugă aici în aceeași etapă (`docs
 - **Lot** — un pachet mic de lucru, cu criterii de acceptare, încheiat cu verificare. *Unde:* `plan.md`.
 - **Felie verticală** (*vertical slice*) — o etapă care livrează ceva funcțional de la un capăt la altul, în loc de un strat tehnic izolat. *Unde:* P10.
 - **Agent / sub-agent** — modelul AI care lucrează în discuție / un model lansat de el pentru o sarcină delimitată. *Unde:* `agent-rules.md`.
+- **Ramură / PR** (*pull request*) — copia de lucru a unei sarcini în Git / cererea de a o aduce în `main`, pe care autorul o acceptă (merge). *Unde:* D47.
+- **CI** (*continuous integration*) — rularea automată a testelor pe GitHub la fiecare PR; `main` primește doar PR-uri cu CI trecut. *Unde:* D47, `.github/workflows/ci.yml`.
+- **Skill** — o procedură reutilizabilă pentru agent (instrucțiuni într-un `SKILL.md`), pornită cu `/nume`. *Unde:* D48, `.claude/skills/`.
+- **Hook** — o comandă rulată automat de Claude Code înaintea unei acțiuni a agentului, care o poate bloca; o garanție, spre deosebire de o regulă scrisă. *Unde:* D47, `.claude/hooks/guard.ts`.

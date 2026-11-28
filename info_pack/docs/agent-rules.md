@@ -41,7 +41,7 @@ Agentul se oprește și predă nivelului superior (sau autorului) când:
 - cerința e ambiguă sau contrazice `decisions.md`;
 - sarcina ajunge să atingă motorul sau modelul de date;
 - testele pică după 2 încercări de corectare;
-- o soluție ar schimba un comportament verificat (cazurile 1–5, oracolul, determinismul).
+- o soluție ar schimba un comportament verificat (cazurile 1–10, oracolul, determinismul).
 
 Limită: regulile ghidează alegerea modelului, dar nu o impun tehnic. Modelul sesiunii îl alege autorul (în Claude Code: `/model`); agentul principal alege modelul sub-agenților după tabelul de mai sus.
 
@@ -61,6 +61,7 @@ Limită: regulile ghidează alegerea modelului, dar nu o impun tehnic. Modelul s
 - Fără implementare înaintea autorizării explicite a autorului (`CLAUDE.md`).
 - Fără rezultate inventate. Orice cifră din rapoarte provine dintr-o rulare reală și se trece în `results.md` cu sursa.
 - Se raportează separat: ce s-a implementat, ce s-a verificat (cu ce comenzi), ce limite rămân.
-- Claude Code rulează pe Mac-ul autorului: testele, build-ul și Docker le rulează agentul însuși (D44). Verificarea vizuală în browser și importurile externe (de exemplu Google Calendar) le confirmă autorul. Commit-urile și push-ul le face autorul, dacă nu cere altfel.
-- Mesajele de commit nu conțin `Co-Authored-By` sau alte referințe la Claude.
+- Claude Code rulează pe Mac-ul autorului: testele, build-ul și Docker le rulează agentul însuși (D44). Verificarea vizuală de rutină o face agentul; autorul confirmă schimbările importante de interfață și importurile externe, de exemplu Google Calendar (D49).
+- Git după D47: ramură proprie, commit-uri pe pași verificați, push pe ramură, PR; merge-ul îl face doar autorul. Sub-agenții nu fac commit, push sau PR; le face agentul principal.
+- Mesajele de commit nu conțin `Co-Authored-By` sau alte semnături ale lui Claude.
 - Motorul de alocare rămâne independent de interfață, HTTP și baza de date.

@@ -3,13 +3,14 @@
   "version": "0.0.0",
   "private": true,
   "type": "module",
-  "description": "RoomAllocation — motorul de alocare a sălilor universitare (V0)",
+  "description": "RoomAllocation — motorul de alocare a sălilor universitare și sistemul V1",
   "engines": {
     "node": ">=24"
   },
   "scripts": {
     "test": "vitest run",
     "typecheck": "tsc --noEmit",
+    "verify": "node scripts/verify.ts",
     "report": "node scripts/render-cases.ts",
     "simulate": "node scripts/simulate.ts",
     "demo": "node scripts/build-demo.ts",

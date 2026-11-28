@@ -1,53 +1,28 @@
 # Starea curentă — RoomAllocation
 
-**Actualizat:** 24 noiembrie 2026 (trecerea în Claude Code, D44). Fișierul descrie doar starea de acum; se rescrie la fiecare etapă încheiată. Istoricul este în `journal.md`, ordinea de citire în `docs-guide.md`.
+Fișierul descrie doar starea de acum; se rescrie la fiecare etapă încheiată (maximum o pagină). Istoricul este în `journal.md`, ordinea de citire în `docs-guide.md`.
 
-## Ce există
+## Ce există și ce e verificat
 
-- **V0 încheiat**; **Lotul 3A** (formatul intern, setul sintetic) și **Lotul 4** (cererea cu interval, ferestrele studenților) încheiate și verificate pe Mac (commit-uri `a813fcb`, `dfaafe4`).
-- **Lotul 5 încheiat (21.11.2026; commit `7297086`), verificat pe Mac de autor (PostgreSQL 18.7 în Docker):**
-  - 5a: `docker-compose.yml` (PostgreSQL 18.7, doar pe 127.0.0.1:54320), `db/migrations/001_schema.sql` (tabelele; constrângerile de excludere pentru sală, profesor și unitate atomică; trigger-ul H8), `src/db/migrate.ts`, `src/db/store.ts`, `npm run db:load -- synthetic`.
-  - 5b: `src/db/service.ts` — blocarea zilei → idempotența → starea din baza de date → motorul (neschimbat) → mutările și rezervarea într-o singură tranzacție.
-  - 5c: `tests/db/` (34 de teste, `npm run test:db`), inclusiv concurența, atomicitatea și testele de mutație. Rezultatele: `results.md` §6.
-- **Verificat în mediul lui Claude și pe Mac:** `npm test` 103 teste; `npm run test:db` 34 de teste (PostgreSQL 16 local, respectiv 18.7 în Docker); `tsc` fără erori; setul sintetic se încarcă în baza de date fără încălcări.
-- **Dependențe noi:** `pg` 8.23.1, `@types/pg` 8.23.1 (versiuni fixate).
-- **Nu există:** date reale.
-
-## Comenzile bazei de date (pe Mac)
-
-`npm run db:up` → `npm run db:migrate` → `npm run db:load -- synthetic` → `npm run test:db`; oprire: `npm run db:down`.
-
-## Lotul 6a — încheiat (21.11.2026)
-
-- Aplicația Next.js 16.4.6 (React 19.3.1, Zod 4.6.7) în `app/`; API-ul (`app/api/`, logica în `src/api/handlers.ts`; lista în `README.md`); operațiile tranzacționale `src/db/operations.ts`; migrația `002_operations.sql`; `Dockerfile` și serviciul `web` (`npm run app:up`, http://localhost:3000).
-- Verificat în mediul lui Claude (`npm test` 103, `npm run test:db` 45, `next build`, HTTP) și pe Mac de autor (inclusiv tot sistemul în Docker). Rezultatele: `results.md` §7.
-- Atenție: `npm run dev` și containerul `web` folosesc același port 3000 (`README.md`).
-
-## Lotul 6b — încheiat (21.11.2026)
-
-- Paginile `/`, `/profesor`, `/studenti`, `/admin` (`app/`, `project-map.md` §2bis); istoricul mutărilor în API; mesajele de validare în română; testele Playwright (`npm run test:e2e`, doar în mediul lui Claude, D43).
-- Verificat în mediul lui Claude (`npm test` 103, `npm run test:db` 48, `npm run test:e2e` 4) și pe Mac de autor (paginile în browser). Rezultatele: `results.md` §8.
-
-## Lotul 6c — încheiat (21.11.2026)
-
-- Exportul .ics (`src/api/ics.ts`, `GET /api/calendar?unit=…|teacher=…`), cu linkuri în paginile studenților și profesorului. Verificat în mediul lui Claude (`npm test` 108, `npm run test:db` 49, `npm run test:e2e` 5), pe Mac și prin importul în Google Calendar (autorul). Rezultatele: `results.md` §9.
-
-**V1 este încheiat**, cu excepția părții 3B (datele reale), care așteaptă datele de la decanat.
-
-## Mediul de lucru (D44, 24.11.2026)
-
-- Dezvoltarea continuă în **Claude Code (VS Code), direct pe Mac**. `CLAUDE.md` e în Git și descrie noul mod de lucru; `.claude/settings.json` (în Git) și `.claude/settings.local.json` (local) configurează atribuirea și permisiunile.
-- Agentul rulează singur testele (inclusiv Playwright, Chromium instalat, D45) și Docker; commit-urile și push-ul le face autorul.
-- TableFlow nu mai este referință (D46); `tableflow-legacy.md` a fost șters.
-- Proiectul claude.ai rămâne pentru întrebări, fără modificarea fișierelor. Prima sesiune Claude Code: șablonul din `topic-discussions.md`.
+- **V0 și V1 încheiate**, cu excepția părții 3B (datele reale), care așteaptă datele de la decanat. Componentele: motorul (`src/engine/`), formatul intern și setul sintetic, cererea cu interval, PostgreSQL 18.7 în Docker cu serviciul tranzacțional, aplicația Next.js (paginile profesorului, studenților, administratorului), exportul .ics. Detaliile: `README.md`, `project-map.md`; rezultatele: `results.md`.
+- **Verificat pe Mac (25.11.2026, `npm run verify`):** `npm test` 144 · `typecheck` fără erori · `test:db` 49 · `test:e2e` 5.
+- **Mediul de lucru cu AI (D47–D49), pasul 1 făcut** pe ramura `docs/mediu-ai-1`: fluxul Git cu ramuri și PR-uri, hook-ul de protecție, permisiunile, testul de coerență a documentației, CI-ul, skill-urile `/verifica`, `/inchide-etapa`, `/sesiune-tematica`, `/rezultate`.
 
 ## Pasul următor
 
-- 3B, când vin datele reale (convertorul după formatul primit, pseudonimizarea, comparația cu setul sintetic, săptămâna reală în simulator și în 4c).
-- Sau etapele de după V1 (`plan.md`): recurența, planificarea semestrului cu un solver (varianta b, Î3), reoptimizarea periodică, validarea pe ITC 2019, experimentele finale, aprofundarea literaturii; plus reformularea concept §4.2. Fiecare se discută și se autorizează separat.
+1. Autorul face merge PR-ului `docs/mediu-ai-1` („Rebase and merge”), după ce CI-ul trece.
+2. Agentul configurează protecția lui `main` (PR + CI-ul `teste` și `bd-interfata`, fără aprobare cerută) și ștergerea automată a ramurilor (D47).
+3. Restul D48, fiecare prin PR: `CLAUDE.md` scurt + `CLAUDE.md` în `src/engine/`, `src/db/`, `app/`; rezumatul deciziilor active în `decisions.md` (verificat de test) și corectarea estimării de ≈ 25 KB din `docs-guide.md`; sub-agentul `recenzent-motor`; specificațiile (`info_pack/specs/`) și ADR-urile; prioritatea 3 (jurnalul arhivat pe luni, planul comprimat, fără date „Actualizat” manuale, rezultatele ca JSON).
+4. Apoi: 3B, când vin datele reale (prima specificație), sau etapele de după V1 din `plan.md`, fiecare autorizată separat.
+
+## De știut înainte de lucru
+
+- Commit-urile, push-ul și PR-urile le face agentul, pe ramuri; merge-ul doar autorul (D47). Hook-ul `.claude/hooks/guard.ts` blochează încălcările.
+- `npm run dev` și containerul `web` folosesc același port 3000 (`README.md`).
+- `test:e2e` cere Chromium 1243 (versiunea lui `@playwright/test` 1.63.0); dacă lipsește: `npx playwright install chromium`.
 
 ## Puncte deschise (neblocante)
 
 - H4–H7 (capacitate, tip, echipamente, săli închise, blocuri) sunt verificate de motor și de verificatorul independent, nu de baza de date.
-- PostgreSQL 19 a apărut la 19.11.2026; proiectul rămâne pe 18 (P07, D27), versiunea curentă 18.7.
+- PostgreSQL 19 a apărut la 19.11.2026; proiectul rămâne pe 18 (P07, D27).
 - Concept §4.2 (H7 face problema dificilă) trebuie reformulat prudent (`literature.md` §2).

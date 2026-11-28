@@ -1,6 +1,6 @@
 # Planul proiectului — RoomAllocation
 
-**Versiune:** 2.1 (18.11.2026; Lotul 3 împărțit după D33). **Statut:** V0 încheiat; V1 cu ordinea aprobată; partea 3A și Lotul 4 încheiate (18.11.2026); Lotul 5 încheiat (21.11.2026). Bazat pe deciziile D01–D43 și P01–P17 din `decisions.md`. Singura copie activă a planului.
+**Versiune:** 2.1 (18.11.2026; Lotul 3 împărțit după D33). **Statut:** V0 încheiat; V1 cu ordinea aprobată; partea 3A și Lotul 4 încheiate (18.11.2026); Loturile 5 și 6 (6a–6c) încheiate (21.11.2026): V1 încheiat, cu excepția părții 3B (datele reale). Bazat pe deciziile D01–D46 și P01–P17 din `decisions.md`. Singura copie activă a planului.
 Se bifează doar sarcinile efectiv finalizate și verificate. Structura feliilor se poate ajusta pe parcurs (P10).
 
 ---
@@ -87,7 +87,7 @@ Se bifează doar sarcinile efectiv finalizate și verificate. Structura feliilor
 
 **Lotul 6 — Interfețele** — model recomandat: Sonnet
 - [x] 6a. *(verificată în mediul lui Claude și pe Mac de autor, inclusiv `npm run app:up`, 21.11.2026)* Aplicația Next.js (D36) și API-ul: cereri cu sau fără interval, lista rezervărilor, aplicarea alternativelor, anularea, închiderea sălilor cu repararea automată într-o tranzacție (D38); serviciul `web` în Docker; teste API pe baza de date reală (D40)
-- [x] 6b. *(verificată în mediul lui Claude și pe Mac de autor, 21.11.2026)* Dashboard-ul profesorului, panoul studenților (orar pe flux/grupă/subgrupă), pagina de administrare (grila săli × perechi, închideri); roluri fără autentificare, fără aprobare (D37); detaliile în D42; teste Playwright în mediul lui Claude (D40, D43)
+- [x] 6b. *(verificată în mediul lui Claude și pe Mac de autor, 21.11.2026)* Dashboard-ul profesorului, panoul studenților (orar pe flux/grupă/subgrupă), pagina de administrare (grila săli × perechi, închideri); roluri fără autentificare, fără aprobare (D37); detaliile în D42; teste Playwright (D40; inițial doar în mediul lui Claude, D43; acum și pe Mac, D45)
 - [x] 6c. *(verificată în mediul lui Claude, pe Mac și prin importul în Google Calendar de autor, 21.11.2026)* Export .ics pe grupă / subgrupă / profesor (D39); importul rămâne `npm run db:load`
 
 **După V1 (versiuni ulterioare):** recurența (D16); planificarea semestrului — varianta (b) — cu un solver existent (CP-SAT; tehnologia de integrare se alege atunci), comparată cu varianta online (Î3); reoptimizarea periodică vs. mutările la fiecare cerere; validarea pe ITC 2019 (D24); experimentele finale (seed-uri separate pentru calibrare, intervale de încredere); aprofundarea literaturii (`literature.md` §9).

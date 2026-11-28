@@ -26,7 +26,7 @@ Datele: setul sintetic se generează cu seed; datele reale ale facultății (par
 
 - Claude Code rulează direct în acest folder, pe Mac (macOS, Apple Silicon): poate rula singur `npm test`, `npm run typecheck`, `npm run test:db`, `npm run test:e2e` (Chromium pentru Playwright e instalat), `docker compose`. Verifică mediul înainte de a presupune (Node 24 din `.node-version`, Docker Desktop pornit pentru baza de date).
 - Baza de date de dezvoltare: `npm run db:up` (PostgreSQL 18.7 în Docker, 127.0.0.1:54320). Portul 3000 e folosit fie de `npm run dev`, fie de containerul `web` — nu de amândouă (`README.md`). Procesele pornite de tine (de exemplu `npm run dev`) le oprești la final.
-- **Git:** commit-urile și push-ul le face autorul, dacă nu cere altfel. Dacă autorul cere un commit, mesajul nu conține `Co-Authored-By`, „Generated with Claude Code” sau alte referințe la Claude (setarea `attribution` din `.claude/settings.json`; verifică mesajul înainte). Nu face niciodată `push --force` și nu rescrie istoricul.
+- **Git (D47):** fiecare sarcină pe o ramură proprie (`etapa/…`, `docs/…`, `fix/…`), creată din `main` actualizat; commit la fiecare pas verificat, push pe ramură, apoi PR după `/verifica` (ce s-a implementat, ce s-a verificat, ce limite rămân). Merge-ul îl face doar autorul; agentul nu face merge, commit sau push pe `main`, `push --force` și nu rescrie istoricul publicat. Mesajele de commit nu conțin `Co-Authored-By`, „Generated with” sau alte semnături ale lui Claude. Hook-ul `.claude/hooks/guard.ts` blochează încălcările.
 - Folderul de date `../room-allocation-data/` se folosește doar pentru `synthetic/` și `real/canonical/`; fișierele originale (`real/raw/`) și corespondența pseudonimelor nu se citesc.
 
 ## Sesiuni
